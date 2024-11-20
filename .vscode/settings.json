@@ -11,5 +11,6 @@
   "nuxtr.vueFiles.style.addStyleTag": false,
   "nuxtr.vueFiles.style.alwaysScoped": true,
   "nuxtr.openItemsAfterCreation": true,
-  "nuxtr.defaultPackageManager": "pnpm"
+  "nuxtr.defaultPackageManager": "pnpm",
+  "eslint.useFlatConfig": true
 }

@@ -3,6 +3,11 @@ import { z } from 'zod'
 
 export const env = createEnv({
   server: {
+    DEV_LOGGER: z
+      .string()
+      .transform((val) => val === 'true')
+      .pipe(z.boolean())
+      .optional(),
     BASE_URL: z.string().url(),
     RPID: z.string(),
     APP_NAME: z.string(),

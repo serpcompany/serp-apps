@@ -10,6 +10,7 @@
     "deploy": "npx nuxthub deploy",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "db:generate": "drizzle-kit generate"
   },
@@ -18,8 +19,8 @@
     "@aws-sdk/s3-request-presigner": "3.693.0",
     "@iconify-json/lucide": "^1.2.15",
     "@lemonsqueezy/lemonsqueezy.js": "4.0.0",
-    "@nuxt/eslint": "^0.7.0",
-    "@nuxt/ui": "3.0.0-alpha.8",
+    "@nuxt/eslint": "^0.7.1",
+    "@nuxt/ui": "3.0.0-alpha.9",
     "@nuxthub/core": "^0.8.7",
     "@t3-oss/env-nuxt": "^0.11.1",
     "@vitejs/plugin-vue": "^5.2.0",
@@ -27,12 +28,14 @@
     "@vue-email/render": "^0.0.9",
     "add": "^2.0.6",
     "drizzle-orm": "0.36.3",
+    "drizzle-zod": "^0.5.1",
     "nanoid": "5.0.8",
-    "nuxt": "^3.14.159",
+    "nuxt": "^3.14.1592",
     "nuxt-auth-utils": "0.5.5",
     "pnpm": "^9.13.2",
     "radix-vue": "1.9.9",
     "resend": "4.0.1-alpha.0",
+    "simple-git-hooks": "2.11.1",
     "stripe": "17.3.1",
     "use-email": "^0.0.8",
     "vue": "^3.5.13",
@@ -41,17 +44,15 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.7.0",
     "@vueuse/core": "^11.2.0",
     "@vueuse/nuxt": "11.2.0",
     "drizzle-kit": "0.28.1",
-    "eslint": "^9.15.0",
     "nuxthub-ratelimit": "^1.0.4",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.8",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "typescript": "^5.6.3",
     "vue-tsc": "^2.1.10",
-    "wrangler": "^3.87.0"
+    "wrangler": "^3.88.0"
   },
   "packageManager": "pnpm@9.12.3"
 }

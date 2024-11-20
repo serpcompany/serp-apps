@@ -25,7 +25,7 @@ export const emailVerificationCodes = sqliteTable('email_verification_codes', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  code: text('code').notNull(),
+  code: text('code', { length: 32 }).notNull(),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 })
 
@@ -34,7 +34,7 @@ export const passwordResetTokens = sqliteTable('password_reset_tokens', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  code: integer('code').notNull(),
+  code: text('code', { length: 32 }).notNull(),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 })
 
@@ -46,7 +46,7 @@ export const oneTimePasswords = sqliteTable('one_time_passwords', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   identifier: text('identifier').notNull(),
-  code: text('code').notNull(),
+  code: text('code', { length: 6 }).notNull(),
   type: text('type').notNull().default(OneTimePasswordTypes.signup),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 })
