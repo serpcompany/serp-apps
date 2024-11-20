@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { users } from './users'
+import { teams } from './teams'
 
 export const posts = sqliteTable('posts', {
   id: text('id')
@@ -9,6 +10,9 @@ export const posts = sqliteTable('posts', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  teamId: text('teamId')
+    .notNull()
+    .references(() => teams.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   content: text('content').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
