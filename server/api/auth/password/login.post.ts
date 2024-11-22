@@ -41,8 +41,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'User not found',
     })
   }
-  console.log('user', result.data)
-  console.log(user)
 
   // 3. Check if user uses OAuth (should use OAuth login instead)
   if (!user.hashedPassword && user.emailVerified) {
@@ -103,8 +101,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Failed to process user data',
     })
   }
-
   await setUserSession(event, { user: sanitizedUser })
-
-  return sendRedirect(event, '/dashboard')
+  return sendNoContent(event)
 })

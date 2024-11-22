@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineNuxtConfig({
   modules: ['@nuxthub/core', '@nuxt/ui', '@vueuse/nuxt', 'nuxt-auth-utils'],
+  colorMode: {
+    preference: 'system',
+  },
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {

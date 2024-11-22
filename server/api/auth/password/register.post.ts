@@ -4,11 +4,10 @@
 // 3. Hash the password (uses the hashPassword util provided by nuxt-auth-utils)
 // 4. Create user (@method createUserWithPassword)
 // 5. Create verification code (@method generateAndSaveVerificationCode)
-// 6. Create One Time Password code (@method generateAndSaveOneTimePassword)
-// 7. Render email template (@method render)
-// 8. Send verification email (@method sendEmail)
-// 9. Sanitize user data (@method sanitizeUser)
-// 10. Return user (email, name)
+// 6. Render email template (@method render)
+// 7. Send verification email (@method sendEmail)
+// 8. Sanitize user data (@method sanitizeUser)
+// 9. Return user (email, name)
 
 // Used in:
 // - app/pages/auth/register.vue
@@ -20,11 +19,7 @@ import {
   findUserByEmail,
   createUserWithPassword,
 } from '@@/server/database/actions/users'
-import {
-  generateAndSaveVerificationCode,
-  generateAndSaveOneTimePassword,
-} from '@@/server/database/actions/auth'
-import { OneTimePasswordTypes } from '@@/constants'
+import { generateAndSaveVerificationCode } from '@@/server/database/actions/auth'
 import { nanoid } from 'nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
@@ -62,33 +57,22 @@ export default defineEventHandler(async (event) => {
     hashedPassword,
   })
   const emailVerificationCode = nanoid(32)
-  const oneTimePassword = nanoid(6)
 
   await generateAndSaveVerificationCode({
     userId: user.id,
     code: emailVerificationCode,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
-  })
-
-  await generateAndSaveOneTimePassword({
-    userId: user.id,
-    code: oneTimePassword,
-    type: OneTimePasswordTypes.signup,
-    identifier: result.data.email,
     expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
   })
 
   const htmlTemplate = await render(EmailVerification, {
     verificationCode: emailVerificationCode,
-    otp: oneTimePassword,
   })
 
-  if (!env.DEV_LOGGER) {
+  if (env.DEV_LOGGER) {
     console.table({
       email: result.data.email,
       name: result.data.name,
-      emailVerificationCode,
-      oneTimePassword,
+      verificationLink: `${env.BASE_URL}/api/auth/verify?token=${emailVerificationCode}`,
     })
   } else {
     await sendEmail({

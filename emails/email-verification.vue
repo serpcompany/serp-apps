@@ -13,12 +13,10 @@ import {
 import { env } from '@@/env'
 
 interface EmailVerificationProps {
-  otp?: string
   verificationCode?: string
 }
 
 withDefaults(defineProps<EmailVerificationProps>(), {
-  otp: '',
   verificationCode: '',
 })
 
@@ -87,16 +85,18 @@ const code = {
       <Container :style="container">
         <Heading :style="h1"> Verify your email </Heading>
         <Link
-          :href="`${env.BASE_URL}/auth/verify/magic-link?code=${verificationCode}`"
+          :href="`${env.BASE_URL}/auth/verify?code=${verificationCode}`"
           target="_blank"
           :style="{ ...link, display: 'block', marginBottom: '16px' }"
         >
           Click here to verify your email
         </Link>
         <Text :style="{ ...text, marginBottom: '14px' }">
-          Or, copy and paste this temporary verification code:
+          Or, copy and paste this link into your browser:
         </Text>
-        <code :style="code">{{ otp }}</code>
+        <code :style="code">{{
+          `${env.BASE_URL}/api/auth/verify?token=${verificationCode}`
+        }}</code>
         <Text
           :style="{
             ...text,

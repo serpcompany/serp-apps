@@ -62,3 +62,31 @@ export async function updateLastActiveTimestamp(userId: string): Promise<InsertU
     throw new Error('Failed to update last active')
   }
 }
+
+export async function findUserById(id: string) {
+  try {
+    const [user] = await useDB()
+      .select()
+      .from(tables.users)
+      .where(eq(tables.users.id, id))
+    return user || null
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to find user by ID')
+  }
+}
+
+export async function verifyUser(userId: string) {
+  try {
+    const record = await useDB()
+      .update(tables.users)
+      .set({ emailVerified: true })
+      .where(eq(tables.users.id, userId))
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to verify user')
+  }
+}
