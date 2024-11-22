@@ -7,7 +7,7 @@ export const oauthAccounts = sqliteTable('oauth_accounts', {
   id: text('id')
     .primaryKey()
     .$default(() => nanoid()),
-  providerId: text('providerId').notNull(),
+  provider: text('provider').notNull(),
   providerUserId: text('providerUserId').notNull(),
   userId: text('userId')
     .notNull()

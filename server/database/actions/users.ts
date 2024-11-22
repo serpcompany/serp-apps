@@ -34,3 +34,31 @@ export async function createUserWithPassword(payload: InsertUser) {
     throw new Error('Failed to upsert user')
   }
 }
+
+export async function findLinkedAccountsByUserId(userId: string) {
+  try {
+    const linkedAccounts = await useDB()
+      .select()
+      .from(tables.oauthAccounts)
+      .where(eq(tables.oauthAccounts.userId, userId))
+    return linkedAccounts
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to find linked accounts by user ID')
+  }
+}
+
+export async function updateLastActiveTimestamp(userId: string): Promise<InsertUser> {
+  try {
+    const record = await useDB()
+      .update(tables.users)
+      .set({ lastActive: new Date() })
+      .where(eq(tables.users.id, userId))
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to update last active')
+  }
+}

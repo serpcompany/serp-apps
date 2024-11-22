@@ -1,3 +1,18 @@
+// flow
+// 1. Validate body (email, name, password)
+// 2. Check if user exists (@method findUserByEmail)
+// 3. Hash the password (uses the hashPassword util provided by nuxt-auth-utils)
+// 4. Create user (@method createUserWithPassword)
+// 5. Create verification code (@method generateAndSaveVerificationCode)
+// 6. Create One Time Password code (@method generateAndSaveOneTimePassword)
+// 7. Render email template (@method render)
+// 8. Send verification email (@method sendEmail)
+// 9. Sanitize user data (@method sanitizeUser)
+// 10. Return user (email, name)
+
+// Used in:
+// - app/pages/auth/register.vue
+
 import { registerUserSchema } from '@@/shared/validations/auth'
 import { sendEmail } from '@@/server/services/email'
 import { env } from '@@/env'
@@ -13,19 +28,9 @@ import { OneTimePasswordTypes } from '@@/constants'
 import { nanoid } from 'nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
+import { sanitizeUser } from '@@/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  // flow
-  // 1. Validate body
-  // 2. Check if user exists
-  // 3. Hash the password
-  // 4. Create user
-  // 5. Create verification code
-  // 6. Create One Time Password code
-  // 7. Render email template
-  // 8. Send verification email
-  // 9. Return user
-
   // 1. Validate body
   const result = await readValidatedBody(event, (body) =>
     registerUserSchema.safeParse(body),
@@ -92,5 +97,6 @@ export default defineEventHandler(async (event) => {
       html: htmlTemplate,
     })
   }
-  return result.data
+  setResponseStatus(event, 201)
+  return sanitizeUser(user)
 })

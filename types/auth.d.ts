@@ -1,21 +1,7 @@
-import type { UserRole } from '../constants'
+import type { User as DrizzleUser } from './database'
 
 declare module '#auth-utils' {
-  interface User {
-    id: string
-    role: UserRole
-    email: string
-    emailVerified: boolean
-    name: string
-    avatarUrl?: string
-    hashedPassword?: string
-    banned: boolean
-    bannedReason?: string
-    onboarded?: boolean
-    createdAt?: Date
-    updatedAt?: Date
-    lastActive?: Date
-  }
+  interface User extends Omit<DrizzleUser, 'hashedPassword'> {}
 }
 
 export {}
