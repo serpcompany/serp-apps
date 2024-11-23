@@ -4,27 +4,18 @@
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <div class="text-center">
         <p class="text-lg font-bold">Sign in to your account</p>
-        <p class="text-sm text-gray-500">
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Welcome back! Please sign in to continue.
         </p>
       </div>
       <UForm
-        :schema="loginUserSchema"
+        :schema="magicLinkLoginSchema"
         :state="state"
         class="mt-8 space-y-4"
         @submit="onSubmit"
       >
         <UFormField label="Email" name="email">
           <UInput v-model="state.email" class="w-full" size="lg" />
-        </UFormField>
-
-        <UFormField label="Password" name="password">
-          <UInput
-            v-model="state.password"
-            type="password"
-            class="w-full"
-            size="lg"
-          />
         </UFormField>
 
         <UButton
@@ -34,8 +25,9 @@
           color="neutral"
           class="cursor-pointer"
           size="lg"
+          icon="i-lucide-fingerprint"
         >
-          Submit
+          Sign in with Passkey
         </UButton>
       </UForm>
     </div>
@@ -44,34 +36,18 @@
 
 <script setup lang="ts">
 import { z } from 'zod'
-
 import type { FormSubmitEvent } from '#ui/types'
-import { loginUserSchema } from '@@/shared/validations/auth'
+import { magicLinkLoginSchema } from '@@/shared/validations/auth'
 import { toast } from 'vue-sonner'
-type Schema = z.output<typeof loginUserSchema>
-
 const { fetch: refreshSession } = useUserSession()
+type LoginSchema = z.output<typeof magicLinkLoginSchema>
 const loading = ref(false)
 
-const state = reactive<Partial<Schema>>({
+const state = reactive<Partial<LoginSchema>>({
   email: undefined,
-  password: undefined,
 })
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
-  try {
-    loading.value = true
-    await $fetch('/api/auth/password/login', {
-      method: 'POST',
-      body: event.data,
-    })
-    await refreshSession()
-    toast('Logged in')
-    navigateTo('/dashboard')
-  } catch (error) {
-    toast.error((error as any).data.message)
-  } finally {
-    loading.value = false
-  }
+async function onSubmit(event: FormSubmitEvent<LoginSchema>) {
+  console.log(event.data)
 }
 </script>
