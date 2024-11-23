@@ -7,7 +7,7 @@
   },
   "nuxtr.vueFiles.firstTag": "template",
   "nuxtr.vueFiles.script.type": "setup",
-  "nuxtr.vueFiles.script.defaultLanguage": "js",
+  "nuxtr.vueFiles.script.defaultLanguage": "ts",
   "nuxtr.vueFiles.style.addStyleTag": false,
   "nuxtr.vueFiles.style.alwaysScoped": true,
   "nuxtr.openItemsAfterCreation": true,

@@ -19,26 +19,19 @@ import {
   findUserByEmail,
   createUserWithPassword,
 } from '@@/server/database/actions/users'
-import { generateAndSaveVerificationCode } from '@@/server/database/actions/auth'
-import { nanoid } from 'nanoid'
+import { saveEmailVerificationCode } from '@@/server/database/actions/auth'
+import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
 import { sanitizeUser } from '@@/server/utils/auth'
+import { validateBody } from '@@/server/utils/bodyValidation'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
-  const result = await readValidatedBody(event, (body) =>
-    registerUserSchema.safeParse(body),
-  )
-  if (!result.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid input',
-      data: result.error.issues,
-    })
-  }
+  const data = await validateBody(event, registerUserSchema)
+
   // 2. Check if user exists
-  const existingUser = await findUserByEmail(result.data.email)
+  const existingUser = await findUserByEmail(data.email)
   if (existingUser) {
     throw createError({
       statusCode: 400,
@@ -47,18 +40,18 @@ export default defineEventHandler(async (event) => {
   }
 
   // 3. Hash the password
-  const hashedPassword = await hashPassword(result.data.password)
+  const hashedPassword = await hashPassword(data.password)
 
   // 4. Create user
 
   const user = await createUserWithPassword({
-    email: result.data.email,
-    name: result.data.name,
+    email: data.email,
+    name: data.name,
     hashedPassword,
   })
-  const emailVerificationCode = nanoid(32)
+  const emailVerificationCode = generateAlphaNumericCode(32)
 
-  await generateAndSaveVerificationCode({
+  await saveEmailVerificationCode({
     userId: user.id,
     code: emailVerificationCode,
     expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
@@ -70,14 +63,14 @@ export default defineEventHandler(async (event) => {
 
   if (env.DEV_LOGGER) {
     console.table({
-      email: result.data.email,
-      name: result.data.name,
+      email: data.email,
+      name: data.name,
       verificationLink: `${env.BASE_URL}/api/auth/verify?token=${emailVerificationCode}`,
     })
   } else {
     await sendEmail({
       subject: `Welcome to the ${env.APP_NAME}`,
-      to: result.data.email,
+      to: data.email,
       html: htmlTemplate,
     })
   }

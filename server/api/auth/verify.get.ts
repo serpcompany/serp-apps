@@ -19,7 +19,10 @@ import {
   verifyUser,
   updateLastActiveTimestamp,
 } from '@@/server/database/actions/users'
-import { findAndDeleteEmailVerificationCode } from '@@/server/database/actions/auth'
+import {
+  findEmailVerificationCode,
+  deleteEmailVerificationCode,
+} from '@@/server/database/actions/auth'
 
 export default defineEventHandler(async (event) => {
   const { token } = getQuery(event)
@@ -27,7 +30,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Missing token' })
   }
 
-  const storedToken = await findAndDeleteEmailVerificationCode(token as string)
+  const storedToken = await findEmailVerificationCode(token as string)
   if (!storedToken) {
     throw createError({
       statusCode: 400,
@@ -61,6 +64,6 @@ export default defineEventHandler(async (event) => {
   await updateLastActiveTimestamp(user.id)
   const transformedUser = sanitizeUser(user)
   await setUserSession(event, { user: transformedUser })
-
+  await deleteEmailVerificationCode(token as string)
   return sendRedirect(event, '/dashboard')
 })

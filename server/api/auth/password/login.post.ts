@@ -19,22 +19,14 @@ import {
   updateLastActiveTimestamp,
 } from '@@/server/database/actions/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
+import { validateBody } from '@@/server/utils/bodyValidation'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
-  const result = await readValidatedBody(event, (body) =>
-    loginUserSchema.safeParse(body),
-  )
-  if (!result.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid input',
-      data: result.error.issues,
-    })
-  }
+  const data = await validateBody(event, loginUserSchema)
 
   // 2. Find user by email
-  const user = await findUserByEmail(result.data.email)
+  const user = await findUserByEmail(data.email)
   if (!user) {
     throw createError({
       statusCode: 400,
@@ -64,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
   const isPasswordCorrect = await verifyPassword(
     user.hashedPassword,
-    result.data.password,
+    data.password,
   )
 
   if (!isPasswordCorrect) {

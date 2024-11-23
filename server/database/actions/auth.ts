@@ -2,9 +2,10 @@ import { eq } from 'drizzle-orm'
 import type {
   InsertEmailVerificationCodes,
   InsertOneTimePasswords,
+  OneTimePasswords,
 } from '../../../types/database'
 
-export const generateAndSaveVerificationCode = async (
+export const saveEmailVerificationCode = async (
   payload: InsertEmailVerificationCodes,
 ) => {
   try {
@@ -20,9 +21,7 @@ export const generateAndSaveVerificationCode = async (
   }
 }
 
-export const generateAndSaveOneTimePassword = async (
-  payload: InsertOneTimePasswords,
-) => {
+export const saveOneTimePassword = async (payload: InsertOneTimePasswords) => {
   try {
     const record = await useDB()
       .insert(tables.oneTimePasswords)
@@ -49,30 +48,37 @@ export const findEmailVerificationCode = async (token: string) => {
   }
 }
 
-export const deleteEmailVerificationCode = async (id: string) => {
+export const deleteEmailVerificationCode = async (token: string) => {
   try {
     await useDB()
       .delete(tables.emailVerificationCodes)
-      .where(eq(tables.emailVerificationCodes.id, id))
+      .where(eq(tables.emailVerificationCodes.code, token))
   } catch (error) {
     console.error(error)
     throw new Error('Failed to delete verification code')
   }
 }
 
-export const findAndDeleteEmailVerificationCode = async (token: string) => {
+export const findOneTimePassword = async (code: string) => {
   try {
     const [record] = await useDB()
-      .delete(tables.emailVerificationCodes)
-      .where(eq(tables.emailVerificationCodes.code, token))
-      .returning({
-        id: tables.emailVerificationCodes.id,
-        userId: tables.emailVerificationCodes.userId,
-        expiresAt: tables.emailVerificationCodes.expiresAt,
-      })
+      .select()
+      .from(tables.oneTimePasswords)
+      .where(eq(tables.oneTimePasswords.code, code))
     return record || null
   } catch (error) {
     console.error(error)
-    throw new Error('Failed to process verification code')
+    throw new Error('Failed to find one time password')
+  }
+}
+
+export const deleteOneTimePassword = async (code: string) => {
+  try {
+    await useDB()
+      .delete(tables.oneTimePasswords)
+      .where(eq(tables.oneTimePasswords.code, code))
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to delete one time password')
   }
 }
