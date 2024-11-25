@@ -41,6 +41,7 @@ export const handleOAuthSuccess = async (
       email: oauthUser.email,
       name: oauthUser.name,
       avatarUrl: oauthUser.avatarUrl,
+      emailVerified: true,
     })
   }
 
