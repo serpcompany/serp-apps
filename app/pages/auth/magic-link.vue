@@ -1,6 +1,6 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
-    <div class="mx-auto max-w-2xl space-y-4">
+    <div class="mx-auto max-w-sm w-full space-y-4">
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <template v-if="mode === 'login'">
         <div class="text-center">
@@ -10,7 +10,7 @@
           </p>
         </div>
         <UForm
-          :schema="magicLinkLoginSchema"
+          :schema="emailSchema"
           :state="loginState"
           class="mt-8 space-y-4"
           @submit="onLoginSubmit"
@@ -75,13 +75,13 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import {
-  magicLinkLoginSchema,
+  emailSchema,
   otpLoginSchema,
 } from '@@/shared/validations/auth'
 import { toast } from 'vue-sonner'
 
 const { fetch: refreshSession } = useUserSession()
-type LoginSchema = z.output<typeof magicLinkLoginSchema>
+type LoginSchema = z.output<typeof emailSchema>
 
 type OtpSchema = z.output<typeof otpLoginSchema>
 const mode = ref<'login' | 'otp'>('login')

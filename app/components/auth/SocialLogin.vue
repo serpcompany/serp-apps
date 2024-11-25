@@ -1,0 +1,19 @@
+<template>
+  <div class="space-y-2">
+    <AuthSocialLoginButton
+      label="Google"
+      icon="i-mdi-google"
+      provider="google"
+    />
+    <AuthSocialLoginButton
+      label="Github"
+      icon="i-mdi-github"
+      provider="github"
+    />
+    <AuthSocialLoginButton
+      label="Discord"
+      icon="i-simple-icons-discord"
+      provider="discord"
+    />
+  </div>
+</template>

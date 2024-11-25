@@ -5,7 +5,6 @@
     <NuxtLink class="block hover:underline" to="/auth/magic-link"> Login (Magic Link) </NuxtLink>
     <NuxtLink class="block hover:underline" to="/auth/login-passkey"> Login (Passkey) </NuxtLink>
     <NuxtLink class="block hover:underline" to="/auth/social-login"> Social Login </NuxtLink>
-    <NuxtLink class="block hover:underline" to="/auth/login"> All Auth Options </NuxtLink>
     <NuxtLink class="block hover:underline" to="/auth/register"> Register </NuxtLink>
     <NuxtLink class="block hover:underline" to="/dashboard"> Dashboard </NuxtLink>
   </UContainer>

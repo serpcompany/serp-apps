@@ -15,7 +15,7 @@
 // Used in:
 // - app/components/auth/MagicLinkLogin.vue
 
-import { magicLinkLoginSchema } from '@@/shared/validations/auth'
+import { emailSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { sendEmail } from '@@/server/services/email'
 import {
@@ -34,7 +34,7 @@ import { render } from '@vue-email/render'
 import { env } from '@@/env'
 
 export default defineEventHandler(async (event) => {
-  const data = await validateBody(event, magicLinkLoginSchema)
+  const data = await validateBody(event, emailSchema)
 
   const user = await findUserByEmail(data.email)
   if (!user) {

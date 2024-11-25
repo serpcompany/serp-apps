@@ -1,6 +1,6 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
-    <div class="mx-auto max-w-2xl space-y-4">
+    <div class="mx-auto max-w-sm w-full space-y-4">
       <template v-if="!registered">
         <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
         <div class="text-center">

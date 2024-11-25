@@ -1,6 +1,6 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
-    <div class="mx-auto max-w-2xl space-y-4">
+    <div class="mx-auto max-w-sm w-full space-y-4">
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <div class="text-center">
         <p class="text-lg font-bold">Sign in to your account</p>
@@ -25,6 +25,16 @@
             class="w-full"
             size="lg"
           />
+          <template #hint>
+            <UButton
+              variant="link"
+              to="/auth/forgot-password"
+              label="Forgot password?"
+              size="xs"
+              color="neutral"
+              class="text-neutral-500"
+            />
+          </template>
         </UFormField>
 
         <UButton
@@ -38,6 +48,24 @@
           Submit
         </UButton>
       </UForm>
+      <USeparator label="or continue with" />
+      <div class="space-y-2">
+        <AuthSocialLoginButton
+          label="Google"
+          icon="i-mdi-google"
+          provider="google"
+        />
+        <AuthSocialLoginButton
+          label="Github"
+          icon="i-mdi-github"
+          provider="github"
+        />
+        <AuthSocialLoginButton
+          label="Discord"
+          icon="i-simple-icons-discord"
+          provider="discord"
+        />
+      </div>
     </div>
   </main>
 </template>
@@ -69,7 +97,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     toast('Logged in')
     navigateTo('/dashboard')
   } catch (error) {
-    toast.error((error as any).data.message)
+    toast.error('Something went wrong', {
+      description: (error as any).data.message,
+    })
   } finally {
     loading.value = false
   }

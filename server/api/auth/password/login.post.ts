@@ -50,7 +50,8 @@ export default defineEventHandler(async (event) => {
   if (!user.hashedPassword) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Invalid login method',
+      statusMessage:
+        'This account was registered via a social login (e.g., Google, GitHub). Please use the same method to log in.',
     })
   }
 

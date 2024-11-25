@@ -1,4 +1,0 @@
-<template>
-  <!-- <AuthLoginEmailPassword /> -->
-  <AuthMagicLinkLogin />
-</template>

@@ -1,11 +1,11 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
-    <div class="mx-auto max-w-sm w-full space-y-4">
+    <div class="mx-auto w-full max-w-sm space-y-4">
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <div class="text-center">
-        <p class="text-lg font-bold">Sign in to your account</p>
+        <p class="text-lg font-bold">Reset your password</p>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Welcome back! Please sign in to continue.
+          Enter your email below to reset your password.
         </p>
       </div>
       <UForm
@@ -25,9 +25,8 @@
           color="neutral"
           class="cursor-pointer"
           size="lg"
-          icon="i-lucide-fingerprint"
         >
-          Sign in with Passkey
+          Send password reset instructions
         </UButton>
       </UForm>
     </div>
@@ -39,27 +38,24 @@ import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema } from '@@/shared/validations/auth'
 import { toast } from 'vue-sonner'
-const { fetch: refreshSession } = useUserSession()
-const { authenticate } = useWebAuthn({
-  authenticateEndpoint: '/api/auth/webauthn/authenticate',
-})
 
-type LoginSchema = z.output<typeof emailSchema>
+type PasswordResetSchema = z.output<typeof emailSchema>
 const loading = ref(false)
 
-const state = reactive<Partial<LoginSchema>>({
+const state = reactive<Partial<PasswordResetSchema>>({
   email: undefined,
 })
 
-const onSubmit = async (event: FormSubmitEvent<LoginSchema>): Promise<void> => {
+const onSubmit = async (
+  event: FormSubmitEvent<PasswordResetSchema>,
+): Promise<void> => {
   try {
     loading.value = true
-    await authenticate(event.data.email)
-    await refreshSession()
-    toast.success('Logged in successfully')
-    await navigateTo(`/dashboard`)
+    toast.success('Password reset instructions sent')
   } catch (error: any) {
-    toast.error(error.data.message || 'Failed to authenticate with passkey')
+    toast.error(
+      error.data.message || 'Failed to send password reset instructions',
+    )
   } finally {
     loading.value = false
   }

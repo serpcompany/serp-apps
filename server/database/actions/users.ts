@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import type { User, InsertUser } from '../../../types/database'
 
-export async function findUserByEmail(email: string): Promise<User | null> {
+export const findUserByEmail = async (email: string): Promise<User | null> => {
   try {
     const [existingUser] = await useDB()
       .select()
@@ -14,7 +14,7 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   }
 }
 
-export async function createUserWithPassword(payload: InsertUser) {
+export const createUserWithPassword = async (payload: InsertUser) => {
   try {
     const record = await useDB()
       .insert(tables.users)
@@ -35,7 +35,7 @@ export async function createUserWithPassword(payload: InsertUser) {
   }
 }
 
-export async function findLinkedAccountsByUserId(userId: string) {
+export const findLinkedAccountsByUserId = async (userId: string) => {
   try {
     const linkedAccounts = await useDB()
       .select()
@@ -48,7 +48,9 @@ export async function findLinkedAccountsByUserId(userId: string) {
   }
 }
 
-export async function updateLastActiveTimestamp(userId: string): Promise<InsertUser> {
+export const updateLastActiveTimestamp = async (
+  userId: string,
+): Promise<InsertUser> => {
   try {
     const record = await useDB()
       .update(tables.users)
@@ -63,7 +65,7 @@ export async function updateLastActiveTimestamp(userId: string): Promise<InsertU
   }
 }
 
-export async function findUserById(id: string) {
+export const findUserById = async (id: string) => {
   try {
     const [user] = await useDB()
       .select()
@@ -76,7 +78,7 @@ export async function findUserById(id: string) {
   }
 }
 
-export async function verifyUser(userId: string) {
+export const verifyUser = async (userId: string) => {
   try {
     const record = await useDB()
       .update(tables.users)
@@ -88,5 +90,65 @@ export async function verifyUser(userId: string) {
   } catch (error) {
     console.error(error)
     throw new Error('Failed to verify user')
+  }
+}
+
+export const createUserWithOAuth = async (payload: InsertUser) => {
+  try {
+    const record = await useDB()
+      .insert(tables.users)
+      .values(payload)
+      .onConflictDoUpdate({
+        target: tables.users.email,
+        set: {
+          name: payload.name,
+          avatarUrl: payload.avatarUrl,
+          emailVerified: true,
+        },
+      })
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to create user with OAuth')
+  }
+}
+
+export const updateUser = async (userId: string, payload: Partial<User>) => {
+  try {
+    const record = await useDB()
+      .update(tables.users)
+      .set(payload)
+      .where(eq(tables.users.id, userId))
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to update user')
+  }
+}
+
+export const linkOAuthAccount = async (
+  userId: string,
+  provider: string,
+  providerUserId: string,
+) => {
+  try {
+    const record = await useDB()
+      .insert(tables.oauthAccounts)
+      .values({
+        userId,
+        provider,
+        providerUserId,
+      })
+      .onConflictDoNothing()
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to link OAuth account')
   }
 }
