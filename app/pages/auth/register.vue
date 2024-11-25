@@ -1,6 +1,6 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
-    <div class="mx-auto max-w-sm w-full space-y-4">
+    <div class="mx-auto w-full max-w-sm space-y-4">
       <template v-if="!registered">
         <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
         <div class="text-center">
@@ -48,8 +48,8 @@
         class="flex flex-col items-center justify-center rounded-md border border-gray-200 bg-neutral-100 p-4 dark:border-white/10"
       >
         <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
-        <p class="text-lg font-bold mt-4">Check your email</p>
-        <p class="text-sm text-gray-500 mt-1">
+        <p class="mt-4 text-lg font-bold">Check your email</p>
+        <p class="mt-1 text-sm text-gray-500">
           We've sent you an email to verify your account.
         </p>
       </div>

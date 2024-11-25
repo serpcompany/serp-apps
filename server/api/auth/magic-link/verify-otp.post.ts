@@ -10,7 +10,6 @@
 // Used in:
 // - app/components/auth/MagicLinkLogin.vue
 
-
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { otpLoginSchema } from '@@/shared/validations/auth'
 import {

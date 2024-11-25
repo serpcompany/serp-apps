@@ -26,7 +26,7 @@
           class="cursor-pointer"
           size="lg"
         >
-          Send password reset instructions
+          Send reset instructions
         </UButton>
       </UForm>
     </div>

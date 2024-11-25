@@ -1,6 +1,6 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
-    <div class="mx-auto max-w-sm w-full space-y-4">
+    <div class="mx-auto w-full max-w-sm space-y-4">
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <template v-if="mode === 'login'">
         <div class="text-center">
@@ -74,10 +74,7 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
-import {
-  emailSchema,
-  otpLoginSchema,
-} from '@@/shared/validations/auth'
+import { emailSchema, otpLoginSchema } from '@@/shared/validations/auth'
 import { toast } from 'vue-sonner'
 
 const { fetch: refreshSession } = useUserSession()
