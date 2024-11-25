@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
   if (!resetToken || resetToken.expiresAt < new Date()) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Invalid or expired reset token',
+      statusMessage: 'This link has expired',
     })
   }
 
