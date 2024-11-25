@@ -23,7 +23,7 @@
             v-model="state.password"
             type="password"
             class="w-full"
-            size="lg"
+            size="lg" 
           />
           <template #hint>
             <UButton

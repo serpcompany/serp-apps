@@ -1,7 +1,7 @@
 <template>
   <UContainer class="space-y-4 py-12">
     <p class="text-7xl font-bold">Supersaas V3</p>
-    <NuxtLink class="block hover:underline" to="/auth/login-email-password">
+    <NuxtLink class="block hover:underline" to="/auth/login">
       Login (Email/Password)
     </NuxtLink>
     <NuxtLink class="block hover:underline" to="/auth/magic-link">
