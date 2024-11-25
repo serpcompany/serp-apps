@@ -95,7 +95,7 @@ const code = {
           Or, copy and paste this link into your browser:
         </Text>
         <code :style="code">{{
-          `${env.BASE_URL}/api/auth/verify?token=${verificationCode}`
+          `${env.BASE_URL}/api/auth/verify-account?token=${verificationCode}`
         }}</code>
         <Text
           :style="{

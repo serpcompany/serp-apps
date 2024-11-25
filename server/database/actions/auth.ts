@@ -4,6 +4,7 @@ import type {
   InsertOneTimePasswords,
 } from '../../../types/database'
 import type { WebAuthnCredential } from '#auth-utils'
+import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 
 export const saveEmailVerificationCode = async (
   payload: InsertEmailVerificationCodes,
@@ -195,5 +196,48 @@ export const deleteCredential = async (
   } catch (error) {
     console.error(error)
     throw new Error(`Failed to delete credential: ${error}`)
+  }
+}
+
+export const createPasswordResetToken = async (userId: string) => {
+  try {
+    const token = generateAlphaNumericCode(32)
+    const record = await useDB()
+      .insert(tables.passwordResetTokens)
+      .values({
+        userId,
+        code: token,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
+      })
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to create password reset token')
+  }
+}
+
+export const findPasswordResetToken = async (token: string) => {
+  try {
+    const [record] = await useDB()
+      .select()
+      .from(tables.passwordResetTokens)
+      .where(eq(tables.passwordResetTokens.code, token))
+    return record || null
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to find password reset token')
+  }
+}
+
+export const deletePasswordResetToken = async (token: string) => {
+  try {
+    await useDB()
+      .delete(tables.passwordResetTokens)
+      .where(eq(tables.passwordResetTokens.code, token))
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to delete password reset token')
   }
 }

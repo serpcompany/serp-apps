@@ -5,17 +5,22 @@
       <div class="text-center">
         <p class="text-lg font-bold">Reset your password</p>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Enter your email below to reset your password.
+          Enter your new password below.
         </p>
       </div>
       <UForm
-        :schema="emailSchema"
+        :schema="resetPasswordSchema"
         :state="state"
         class="mt-8 space-y-4"
         @submit="onSubmit"
       >
-        <UFormField label="Email" name="email">
-          <UInput v-model="state.email" class="w-full" size="lg" />
+        <UFormField label="New Password" name="password">
+          <UInput
+            v-model="state.password"
+            type="password"
+            class="w-full"
+            size="lg"
+          />
         </UFormField>
 
         <UButton
@@ -26,7 +31,7 @@
           class="cursor-pointer"
           size="lg"
         >
-          Send reset instructions
+          Reset Password
         </UButton>
       </UForm>
     </div>
@@ -36,32 +41,34 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
-import { emailSchema } from '@@/shared/validations/auth'
 import { toast } from 'vue-sonner'
-
-type PasswordResetSchema = z.output<typeof emailSchema>
+const route = useRoute()
 const loading = ref(false)
 
-const state = reactive<Partial<PasswordResetSchema>>({
-  email: undefined,
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-const onSubmit = async (
-  event: FormSubmitEvent<PasswordResetSchema>,
-): Promise<void> => {
+type Schema = z.output<typeof resetPasswordSchema>
+
+const state = reactive<Partial<Schema>>({
+  password: undefined,
+})
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     loading.value = true
-    await $fetch('/api/auth/password/forgot', {
+    await $fetch('/api/auth/password/reset', {
       method: 'POST',
-      body: event.data,
+      body: {
+        token: route.query.token,
+        password: event.data.password,
+      },
     })
-    toast.success(
-      'If the email is correct, you will receive a password reset link.',
-    )
+    toast.success('Password reset successfully')
+    navigateTo('/auth/login')
   } catch (error: any) {
-    toast.error(
-      error.data.message || 'Failed to send password reset instructions',
-    )
+    toast.error(error.data?.message || 'Failed to reset password')
   } finally {
     loading.value = false
   }

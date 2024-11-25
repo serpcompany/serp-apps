@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
   if (env.DEV_LOGGER) {
     console.table({
       email: data.email,
-      verificationLink: `${env.BASE_URL}/api/auth/verify?token=${emailVerificationCode}`,
+      verificationLink: `${env.BASE_URL}/api/auth/verify-account?token=${emailVerificationCode}`,
       oneTimePassword,
     })
   } else {

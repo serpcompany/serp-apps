@@ -65,7 +65,7 @@ export default defineEventHandler(async (event) => {
     console.table({
       email: data.email,
       name: data.name,
-      verificationLink: `${env.BASE_URL}/api/auth/verify?token=${emailVerificationCode}`,
+      verificationLink: `${env.BASE_URL}/api/auth/verify-account?token=${emailVerificationCode}`,
     })
   } else {
     await sendEmail({
