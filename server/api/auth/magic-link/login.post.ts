@@ -29,7 +29,6 @@ import {
 } from '@@/server/database/actions/auth'
 import { OneTimePasswordTypes } from '@@/constants'
 import EmailVerification from '@@/emails/magic-link.vue'
-import { sanitizeUser } from '@@/server/utils/auth'
 import { render } from '@vue-email/render'
 import { env } from '@@/env'
 

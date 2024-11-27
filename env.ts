@@ -30,5 +30,13 @@ export const env = createEnv({
       'plunk',
     ]),
     PAYMENT_PROVIDER: z.enum(['stripe', 'lemonsqueezy']),
+    TWILIO_ACCOUNT_SID: z.string().min(1),
+    TWILIO_AUTH_TOKEN: z.string().min(1),
+    TWILIO_PHONE_NUMBER: z
+      .string()
+      .regex(
+        /^\+[1-9]\d{1,14}$/,
+        'Phone number must be in E.164 format (e.g. +12125551234)',
+      ),
   },
 })

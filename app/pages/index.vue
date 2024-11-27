@@ -13,6 +13,12 @@
     <NuxtLink class="block hover:underline" to="/auth/social-login">
       Social Login
     </NuxtLink>
+    <NuxtLink class="block hover:underline" to="/auth/login-phone">
+      Phone Number Login
+    </NuxtLink>
+    <NuxtLink class="block hover:underline" to="/auth/social-login">
+      Social Login
+    </NuxtLink>
     <NuxtLink class="block hover:underline" to="/auth/register">
       Register
     </NuxtLink>

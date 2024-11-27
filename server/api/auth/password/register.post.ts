@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   if (existingUser) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'User already exists',
+      statusMessage: 'An account with this email already exists, please login.',
     })
   }
 

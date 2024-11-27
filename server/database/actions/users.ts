@@ -152,3 +152,16 @@ export const linkOAuthAccount = async (
     throw new Error('Failed to link OAuth account')
   }
 }
+
+export const findUserByPhoneNumber = async (phoneNumber: string) => {
+  try {
+    const [user] = await useDB()
+      .select()
+      .from(tables.users)
+      .where(eq(tables.users.phoneNumber, phoneNumber))
+    return user || null
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to find user by phone number')
+  }
+}
