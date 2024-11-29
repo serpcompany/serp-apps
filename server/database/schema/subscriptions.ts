@@ -1,15 +1,15 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { nanoid } from 'nanoid'
 import { SubscriptionStatus } from '../../../constants'
-import { users } from './users'
+import { teams } from './teams'
 
 export const subscriptions = sqliteTable('subscriptions', {
   id: text('id')
     .primaryKey()
     .$default(() => nanoid()),
-  userId: text('userId')
+  teamId: text('teamId')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => teams.id, { onDelete: 'cascade' }),
   customerId: text('customerId').notNull(),
   status: text('status').notNull().default(SubscriptionStatus.TRIALING),
   planId: text('planId').notNull(),

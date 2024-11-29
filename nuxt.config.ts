@@ -11,6 +11,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     fromEmail: process.env.FROM_EMAIL,
     emailProvider: process.env.EMAIL_PROVIDER,
+    // @ts-expect-error - We're just extending the type
+    session: {
+      maxAge: 60 * 60 * 24 * 7, // Session expires after 7 days - change it accordingly
+    },
   },
   future: { compatibilityVersion: 4 },
   compatibilityDate: '2024-07-30',

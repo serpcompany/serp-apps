@@ -19,6 +19,15 @@ export const users = sqliteTable('users', {
   phoneNumber: text('phoneNumber').unique(),
   bannedUntil: integer('bannedUntil', { mode: 'timestamp' }),
   onboarded: integer('onboarded', { mode: 'boolean' }).notNull().default(false),
+  // User Preferences
+  lastSelectedTeamId: text('lastSelectedTeamId'),
+  theme: text('theme').default('system'),
+  emailNotifications: integer('emailNotifications', {
+    mode: 'boolean',
+  }).default(true),
+  pushNotifications: integer('pushNotifications', { mode: 'boolean' }).default(
+    true,
+  ),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),

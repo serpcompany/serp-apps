@@ -1,7 +1,7 @@
 export default defineAppConfig({
   ui: {
     icons: {
-      loading: 'i-lucide-loader-circle',
+      loading: 'i-lucide-loader',
     },
     button: {
       slots: {

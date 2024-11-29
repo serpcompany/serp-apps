@@ -24,6 +24,8 @@ export type OneTimePasswords = typeof tables.oneTimePasswords.$inferSelect
 export type InsertOneTimePasswords = typeof tables.oneTimePasswords.$inferInsert
 export type Image = typeof tables.images.$inferSelect
 export type InsertImage = typeof tables.images.$inferInsert
+export type Team = typeof tables.teams.$inferSelect
+export type InsertTeam = typeof tables.teams.$inferInsert
 
 // Zod schemas
 export const insertUserSchema = createInsertSchema(tables.users)
@@ -71,3 +73,6 @@ export const selectOneTimePasswordsSchema = createSelectSchema(
 
 export const insertImageSchema = createInsertSchema(tables.images)
 export const selectImageSchema = createSelectSchema(tables.images)
+
+export const insertTeamSchema = createInsertSchema(tables.teams)
+export const selectTeamSchema = createSelectSchema(tables.teams)
