@@ -3,4 +3,10 @@
 
 @theme {
   --font-family-sans: 'Inter', sans-serif;
+  --sidebar-width: 16rem;
+  --sidebar-width-icon: 3rem;
+}
+
+body {
+  @apply bg-white dark:bg-zinc-950;
 }

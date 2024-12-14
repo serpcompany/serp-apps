@@ -4,7 +4,7 @@
     name="logo"
     help="Recommended size: 1 MB, 1:1 aspect ratio"
   >
-    <div class="flex items-center">
+    <div class="relative flex items-center space-x-2">
       <UAvatar
         :src="fileUrl || model"
         icon="i-lucide-upload"
@@ -16,10 +16,18 @@
         type="button"
         color="neutral"
         variant="soft"
-        label="Upload"
-        class="ml-2"
+        :label="fileUrl ? 'Change' : 'Upload'"
         size="sm"
         @click="open"
+      />
+      <UButton
+        v-if="fileUrl"
+        type="button"
+        color="error"
+        variant="soft"
+        label="Remove"
+        size="sm"
+        @click="remove"
       />
     </div>
   </UFormField>
@@ -52,4 +60,9 @@ onChange(() => {
     emit('update:file', file)
   }
 })
+
+const remove = () => {
+  fileUrl.value = null
+  emit('update:file', '')
+}
 </script>

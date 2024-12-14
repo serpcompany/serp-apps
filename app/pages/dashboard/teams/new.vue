@@ -83,7 +83,10 @@ async function uploadLogo() {
     })
     return response
   } catch (error) {
-    throw new Error('Failed to upload logo')
+    toast.error('Failed to upload logo', {
+      description: error.data.message,
+    })
+    console.log(error)
   }
 }
 
