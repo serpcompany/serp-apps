@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <h1>Teams</h1>
-  </div>
+  <UContainer class="space-y-4 py-12">
+    <div>here are all your teams you are a member of</div>
+  </UContainer>
 </template>
 
-<script lang="ts" setup>
-
-</script>
+<script lang="ts" setup></script>

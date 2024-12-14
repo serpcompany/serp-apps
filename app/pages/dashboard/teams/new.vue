@@ -13,27 +13,11 @@
         class="mx-auto mt-12 max-w-md space-y-4"
         @submit="onSubmit"
       >
-        <UFormField
-          label="Team Logo"
-          name="logo"
-          help="Recommended size: 1 MB, 1:1 aspect ratio"
-        >
-          <UAvatar
-            :src="state.logo"
-            icon="i-lucide-upload"
-            size="3xl"
-            class="border border-zinc-200 ring-[2px] ring-zinc-500/10"
-            :alt="state.name"
-          />
-          <UButton
-            type="button"
-            color="neutral"
-            variant="subtle"
-            label="Upload"
-            class="ml-2"
-            size="sm"
-          />
-        </UFormField>
+        <TeamsAvatarUpload
+          v-model="state.logo"
+          :name="state.name"
+          @update:file="selectedFile = $event"
+        />
 
         <UFormField label="Team name" name="name">
           <UInput v-model="state.name" class="w-full" size="lg" />
@@ -43,7 +27,14 @@
           <UInput v-model="state.slug" class="w-full" size="lg" />
         </UFormField>
 
-        <UButton color="neutral" type="submit" size="lg" block>
+        <UButton
+          color="neutral"
+          type="submit"
+          size="lg"
+          block
+          :loading="loading"
+          :disabled="loading"
+        >
           Submit
         </UButton>
       </UForm>
@@ -54,6 +45,7 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
+import { toast } from 'vue-sonner'
 const schema = z.object({
   name: z.string().min(1, 'Team name is required'),
   logo: z.string().optional(),
@@ -67,6 +59,8 @@ const schema = z.object({
 })
 
 const host = computed(() => window.location.host)
+const loading = ref(false)
+const selectedFile = ref<File | null>(null)
 
 type Schema = z.output<typeof schema>
 
@@ -76,13 +70,49 @@ const state = reactive<Partial<Schema>>({
   slug: '',
 })
 
-const toast = useToast()
+async function uploadLogo() {
+  if (!selectedFile.value) return
+
+  const formData = new FormData()
+  formData.append('image', selectedFile.value)
+
+  try {
+    const response = await $fetch('/api/teams/upload-logo', {
+      method: 'POST',
+      body: formData,
+    })
+    return response
+  } catch (error) {
+    throw new Error('Failed to upload logo')
+  }
+}
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  toast.add({
-    title: 'Success',
-    description: 'The form has been submitted.',
-    color: 'success',
-  })
-  console.log(event.data)
+  try {
+    loading.value = true
+
+    // Upload logo if file is selected
+    if (selectedFile.value) {
+      const logoPath = await uploadLogo()
+      state.logo = logoPath
+    }
+
+    // Create team
+    await $fetch('/api/teams', {
+      method: 'POST',
+      body: event.data,
+    })
+
+    toast.success('Success', {
+      description: 'Team created successfully',
+    })
+
+    // Optionally redirect to teams list
+    navigateTo('/dashboard/teams')
+  } catch (error) {
+    toast.error(error.message || 'Failed to create team')
+  } finally {
+    loading.value = false
+  }
 }
 </script>

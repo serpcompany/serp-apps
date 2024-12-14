@@ -9,7 +9,6 @@ export const env = createEnv({
       .pipe(z.boolean())
       .optional(),
     BASE_URL: z.string().url(),
-    RPID: z.string(),
     APP_NAME: z.string(),
     APP_DESCRIPTION: z.string(),
     LOGO_URL: z.string().url(),
