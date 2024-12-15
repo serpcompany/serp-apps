@@ -5,7 +5,12 @@ export const findUserTeams = async (userId: string) => {
   try {
     const teams = await useDB()
       .select({
-        teams: tables.teams,
+        id: tables.teams.id,
+        name: tables.teams.name,
+        ownerId: tables.teams.ownerId,
+        logo: tables.teams.logo,
+        createdAt: tables.teams.createdAt,
+        updatedAt: tables.teams.updatedAt,
         role: tables.teamMembers.role,
       })
       .from(tables.teams)

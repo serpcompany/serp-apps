@@ -1,7 +1,7 @@
 <template>
-  <UContainer class="p-4">
-    <p class="text-xl font-bold">Welcome {{ user?.name }}</p>
-  </UContainer>
+  <AppContainer :title="`Welcome ${user?.name}`">
+    <p>Home page here</p>
+  </AppContainer>
 </template>
 
 <script setup lang="ts">

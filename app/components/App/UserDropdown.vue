@@ -52,7 +52,7 @@ const items = ref([
   ],
   [
     {
-      label: 'Theme', 
+      label: 'Theme',
       icon: 'i-lucide-moon',
       children: [
         [
@@ -78,12 +78,6 @@ const items = ref([
     },
   ],
   [
-    {
-      label: 'GitHub',
-      icon: 'i-lucide-github',
-      to: 'https://github.com/nuxt/ui',
-      target: '_blank',
-    },
     {
       label: 'Support',
       icon: 'i-lucide-life-buoy',

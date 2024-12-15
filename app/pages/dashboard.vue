@@ -12,6 +12,6 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-const { data: userTeams } = await useFetch('/api/teams/user-teams')
-useState('teams', () => userTeams.value?.teams ?? [])
+const { data } = await useFetch('/api/teams/user-teams')
+useState('teams', () => data.value)
 </script>

@@ -1,9 +1,5 @@
 <template>
-  <UFormField
-    label="Team Logo"
-    name="logo"
-    help="Recommended size: 1 MB, 1:1 aspect ratio"
-  >
+  <UFormField name="logo" help="Recommended size: 1 MB, 1:1 aspect ratio">
     <div class="relative flex items-center space-x-2">
       <UAvatar
         :src="fileUrl || model"

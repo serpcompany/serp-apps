@@ -10,11 +10,7 @@ export const teams = sqliteTable('teams', {
   ownerId: text('ownerId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  slug: text('slug').notNull(),
   logo: text('logo'),
-  isPersonal: integer('is_personal', { mode: 'boolean' })
-    .notNull()
-    .default(false),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),

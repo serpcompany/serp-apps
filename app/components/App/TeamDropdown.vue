@@ -1,16 +1,8 @@
 <template>
-  <UDropdownMenu
-    :items="items"
-    :ui="{
-      content: 'w-[240px]',
-    }"
-  >
+  <UDropdownMenu :items="items" :ui="{ content: 'w-[240px]' }">
     <UButton
-      label="Linear"
-      :avatar="{
-        src: 'https://logo.clearbit.com/https://linear.app',
-        size: 'xs',
-      }"
+      :label="activeTeam?.name"
+      :avatar="getAvatarProps(activeTeam)"
       color="neutral"
       variant="ghost"
       class="w-full hover:bg-zinc-200/80 dark:hover:bg-white/10"
@@ -21,36 +13,50 @@
 </template>
 
 <script lang="ts" setup>
-const items = ref([
-  [
-    {
-      label: 'Linear',
-      avatar: {
-        src: 'https://logo.clearbit.com/https://linear.app',
-        size: '2xs',
-      },
+import type { Team } from '@@/types/database.js'
+import type { DropdownMenuItem } from '#ui/types'
+
+const COOKIE_OPTIONS = {
+  maxAge: 60 * 60 * 24 * 30, // 30 days
+  path: '/',
+} as const
+
+
+const teams = useState<Team[]>('teams')
+const selectedTeamCookie = useCookie<string>('selectedTeam', COOKIE_OPTIONS)
+
+const getAvatarUrl = (team?: Team): string => {
+  if (!team?.name) return ''
+  return team.logo
+    ? `/images/${team.logo}`
+    : `https://api.dicebear.com/9.x/glass/svg?seed=${team.name}`
+}
+
+const getAvatarProps = (team?: Team) => ({
+  src: getAvatarUrl(team),
+  size: 'xs' as const,
+})
+
+const activeTeam = computed(() => {
+  const selectedId = selectedTeamCookie.value
+  return selectedId
+    ? teams.value?.find((team) => team.id === selectedId) || teams.value?.[0]
+    : teams.value?.[0]
+})
+
+const items = computed<DropdownMenuItem[]>(() => {
+  if (!teams.value) return []
+
+  return teams.value.map((team) => ({
+    label: team.name,
+    avatar: {
+      src: getAvatarUrl(team),
+      size: '2xs' as const,
     },
-    {
-      label: 'Jio',
-      avatar: {
-        src: 'https://logo.clearbit.com/https://jio.com',
-        size: '2xs',
-      },
+    onSelect() {
+      selectedTeamCookie.value = team.id
+      window.location.reload()
     },
-    {
-      label: 'Mintlify',
-      avatar: {
-        src: 'https://logo.clearbit.com/https://mintlify.com',
-        size: '2xs',
-      },
-    },
-  ],
-  [
-    {
-      label: 'Create space',
-      icon: 'i-lucide-plus-circle',
-      to: '/dashboard/teams/new',
-    },
-  ],
-])
+  }))
+})
 </script>

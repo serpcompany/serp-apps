@@ -23,10 +23,6 @@
           <UInput v-model="state.name" class="w-full" size="lg" />
         </UFormField>
 
-        <UFormField label="Slug" name="slug" :help="`${host}/${state.slug}`">
-          <UInput v-model="state.slug" class="w-full" size="lg" />
-        </UFormField>
-
         <UButton
           color="neutral"
           type="submit"
@@ -43,79 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
-import { toast } from 'vue-sonner'
-const schema = z.object({
-  name: z.string().min(1, 'Team name is required'),
-  logo: z.string().optional(),
-  slug: z
-    .string()
-    .min(1, 'Team slug is required')
-    .regex(
-      /^[a-zA-Z0-9-_]+$/,
-      'Only letters, numbers, hyphens and underscores allowed',
-    ),
-})
+import type { TeamSchema } from '~/composables/useTeams'
 
-const host = computed(() => window.location.host)
-const loading = ref(false)
-const selectedFile = ref<File | null>(null)
+const { schema, state, loading, selectedFile, createTeam } = useTeams()
 
-type Schema = z.output<typeof schema>
-
-const state = reactive<Partial<Schema>>({
-  name: '',
-  logo: '',
-  slug: '',
-})
-
-async function uploadLogo() {
-  if (!selectedFile.value) return
-
-  const formData = new FormData()
-  formData.append('image', selectedFile.value)
-
-  try {
-    const response = await $fetch('/api/teams/upload-logo', {
-      method: 'POST',
-      body: formData,
-    })
-    return response
-  } catch (error) {
-    toast.error('Failed to upload logo', {
-      description: error.data.message,
-    })
-    console.log(error)
-  }
-}
-
-async function onSubmit(event: FormSubmitEvent<Schema>) {
-  try {
-    loading.value = true
-
-    // Upload logo if file is selected
-    if (selectedFile.value) {
-      const logoPath = await uploadLogo()
-      state.logo = logoPath
-    }
-
-    // Create team
-    await $fetch('/api/teams', {
-      method: 'POST',
-      body: event.data,
-    })
-
-    toast.success('Success', {
-      description: 'Team created successfully',
-    })
-
-    // Optionally redirect to teams list
-    navigateTo('/dashboard/teams')
-  } catch (error) {
-    toast.error(error.message || 'Failed to create team')
-  } finally {
-    loading.value = false
-  }
+const onSubmit = async (event: FormSubmitEvent<TeamSchema>) => {
+  await createTeam(event.data)
 }
 </script>
