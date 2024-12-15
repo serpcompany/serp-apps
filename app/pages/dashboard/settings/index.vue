@@ -1,6 +1,9 @@
 <template>
   <AppContainer title="Team Settings">
-    <AppTeamSettings />
+    <div class="space-y-8">
+      <AppTeamSettings />
+      <AppTeamDelete />
+    </div>
   </AppContainer>
 </template>
 

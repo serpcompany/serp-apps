@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 py-2">
+  <div class="p-4">
     <header class="flex items-center gap-2">
       <UButton
         icon="i-lucide-menu"

@@ -1,5 +1,5 @@
 import { eq, or } from 'drizzle-orm'
-import type { InsertTeam } from '../../../types/database'
+import type { Team, InsertTeam } from '../../../types/database'
 
 export const findUserTeams = async (userId: string) => {
   try {
@@ -50,5 +50,20 @@ export const createTeam = async (payload: InsertTeam) => {
   } catch (error) {
     console.error(error)
     throw new Error('Failed to create team')
+  }
+}
+
+export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
+  try {
+    const record = await useDB()
+      .update(tables.teams)
+      .set(payload)
+      .where(eq(tables.teams.id, teamId))
+      .returning()
+      .get()
+    return record
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to update team')
   }
 }

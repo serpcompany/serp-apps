@@ -7,56 +7,42 @@
       variant="ghost"
       class="w-full hover:bg-zinc-200/80 dark:hover:bg-white/10"
       block
-      trailing-icon="i-lucide-chevron-down"
+      trailing-icon="i-lucide-chevrons-up-down"
     />
   </UDropdownMenu>
 </template>
 
 <script lang="ts" setup>
 import type { Team } from '@@/types/database.js'
-import type { DropdownMenuItem } from '#ui/types'
 
-const COOKIE_OPTIONS = {
-  maxAge: 60 * 60 * 24 * 30, // 30 days
-  path: '/',
-} as const
-
-
-const teams = useState<Team[]>('teams')
-const selectedTeamCookie = useCookie<string>('selectedTeam', COOKIE_OPTIONS)
-
-const getAvatarUrl = (team?: Team): string => {
-  if (!team?.name) return ''
-  return team.logo
-    ? `/images/${team.logo}`
-    : `https://api.dicebear.com/9.x/glass/svg?seed=${team.name}`
-}
+const { teams, activeTeam, getAvatarUrl, setSelectedTeam } = useTeams()
 
 const getAvatarProps = (team?: Team) => ({
   src: getAvatarUrl(team),
   size: 'xs' as const,
 })
 
-const activeTeam = computed(() => {
-  const selectedId = selectedTeamCookie.value
-  return selectedId
-    ? teams.value?.find((team) => team.id === selectedId) || teams.value?.[0]
-    : teams.value?.[0]
-})
-
-const items = computed<DropdownMenuItem[]>(() => {
+const items = computed(() => {
   if (!teams.value) return []
 
-  return teams.value.map((team) => ({
+  const allTeams = teams.value.map((team) => ({
     label: team.name,
     avatar: {
       src: getAvatarUrl(team),
       size: '2xs' as const,
     },
-    onSelect() {
-      selectedTeamCookie.value = team.id
-      window.location.reload()
-    },
+    onSelect: () => setSelectedTeam(team.id),
   }))
+
+  return [
+    [...allTeams],
+    [
+      {
+        label: 'Create a new team',
+        icon: 'i-lucide-plus-circle',
+        onSelect: () => navigateTo('/dashboard/new-team'),
+      },
+    ],
+  ]
 })
 </script>
