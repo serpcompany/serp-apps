@@ -67,3 +67,12 @@ export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
     throw new Error('Failed to update team')
   }
 }
+
+export const deleteTeam = async (teamId: string) => {
+  try {
+    await useDB().delete(tables.teams).where(eq(tables.teams.id, teamId))
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to delete team')
+  }
+}

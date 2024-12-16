@@ -24,11 +24,8 @@ export const useTeams = () => {
     logo: '',
   })
 
-  const setSelectedTeam = (teamId: string, shouldReload = true) => {
+  const setSelectedTeam = (teamId: string) => {
     selectedTeamCookie.value = teamId
-    if (shouldReload) {
-      window.location.reload()
-    }
   }
 
   const getAvatarUrl = (team?: Team): string => {
@@ -80,12 +77,12 @@ export const useTeams = () => {
       })
 
       teams.value?.push(newTeam)
+      setSelectedTeam(newTeam.id)
 
       toast.success('Success', {
         description: 'Team created successfully',
       })
 
-      setSelectedTeam(newTeam.id, false)
       return navigateTo('/dashboard')
     } catch (error: any) {
       toast.error(error?.message || 'Failed to create team')
@@ -135,6 +132,39 @@ export const useTeams = () => {
 
   const isTeamOwner = computed(() => activeTeam.value?.role === 'owner')
 
+  const deleteTeam = async (teamId: string) => {
+    try {
+      loading.value = true
+
+      await $fetch<Team>(`/api/teams/${teamId}`, {
+        method: 'DELETE',
+      })
+
+      // Remove the team from the teams array
+      if (teams.value) {
+        teams.value = teams.value.filter((team) => team.id !== teamId)
+      }
+
+      // If we're deleting the active team, switch to the first available team
+      if (activeTeam.value?.id === teamId && teams.value?.length) {
+        setSelectedTeam(teams.value[0].id)
+      }
+
+      toast.success('Success', {
+        description: 'Team deleted successfully',
+      })
+
+      return navigateTo('/dashboard')
+    } catch (error: any) {
+      toast.error('Failed to delete team', {
+        description:
+          error?.data?.message || 'An error occurred while deleting the team',
+      })
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     schema,
     state,
@@ -143,11 +173,12 @@ export const useTeams = () => {
     teams,
     activeTeam,
     selectedTeamCookie,
+    isTeamOwner,
     createTeam,
     getUserTeams,
     getAvatarUrl,
     setSelectedTeam,
     updateTeam,
-    isTeamOwner,
+    deleteTeam,
   }
 }
