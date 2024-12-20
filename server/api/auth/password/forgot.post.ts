@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
   // 4. Send email with reset link
   const resetUrl = `${env.BASE_URL}/auth/reset-password?token=${resetToken.code}`
 
-  if (env.DEV_LOGGER) {
+  if (env.MOCK_EMAIL) {
     console.table({
       email: user.email,
       resetLink: resetUrl,

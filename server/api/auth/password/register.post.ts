@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
     verificationCode: emailVerificationCode,
   })
 
-  if (env.DEV_LOGGER) {
+  if (env.MOCK_EMAIL) {
     console.table({
       email: data.email,
       name: data.name,

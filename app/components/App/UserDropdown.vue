@@ -21,6 +21,7 @@
       variant="ghost"
       trailing-icon="i-lucide-chevron-up"
       class="w-full hover:bg-zinc-200/80 dark:hover:bg-white/10"
+      :ui="{ trailingIcon: 'size-4' }"
       block
     />
   </UDropdownMenu>

@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
     verificationCode: emailVerificationCode,
   })
 
-  if (env.DEV_LOGGER) {
+  if (env.MOCK_EMAIL) {
     console.table({
       email: data.email,
       verificationLink: `${env.BASE_URL}/api/auth/verify-account?token=${emailVerificationCode}`,

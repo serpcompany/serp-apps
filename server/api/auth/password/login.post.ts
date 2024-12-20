@@ -24,7 +24,6 @@ import { validateBody } from '@@/server/utils/bodyValidation'
 export default defineEventHandler(async (event) => {
   // 1. Validate body
   const data = await validateBody(event, loginUserSchema)
-
   // 2. Find user by email
   const user = await findUserByEmail(data.email)
   if (!user) {
@@ -33,7 +32,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'User not found',
     })
   }
-
   // 3. Check if user uses OAuth (should use OAuth login instead)
   if (!user.hashedPassword && user.emailVerified) {
     const linkedAccounts = await findLinkedAccountsByUserId(user.id)
@@ -45,7 +43,6 @@ export default defineEventHandler(async (event) => {
       )}. Please use ${providers.join(', ')} to login instead.`,
     })
   }
-
   // 4. Verify password
   if (!user.hashedPassword) {
     throw createError({
@@ -59,6 +56,7 @@ export default defineEventHandler(async (event) => {
     user.hashedPassword,
     data.password,
   )
+
 
   if (!isPasswordCorrect) {
     throw createError({
@@ -75,6 +73,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+
   // 6. Check if user is banned
   if (user.banned) {
     throw createError({
@@ -87,6 +86,8 @@ export default defineEventHandler(async (event) => {
   await updateLastActiveTimestamp(user.id)
 
   const sanitizedUser = sanitizeUser(user)
+
+  console.log(sanitizedUser)
 
   if (!sanitizedUser) {
     throw createError({

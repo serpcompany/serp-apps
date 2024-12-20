@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const env = createEnv({
   server: {
-    DEV_LOGGER: z
+    MOCK_EMAIL: z
       .string()
       .transform((val) => val === 'true')
       .pipe(z.boolean())

@@ -4,7 +4,7 @@
     :ui="{
       content: 'w-[240px]',
       item: 'cursor-pointer',
-      itemTrailingIcon: 'size-3',
+      itemTrailingIcon: 'size-4',
     }"
   >
     <UButton
@@ -15,6 +15,7 @@
       class="w-full hover:bg-zinc-200/80 dark:hover:bg-white/10"
       block
       trailing-icon="i-lucide-chevrons-up-down"
+      :ui="{ trailingIcon: 'size-4' }"
     />
   </UDropdownMenu>
   <UDrawer
