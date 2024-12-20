@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 const { user, clear } = useUserSession()
-
+const mobileMenu = useState('mobileMenu')
 async function signOut() {
   await clear()
   await navigateTo('/')
@@ -60,19 +60,28 @@ const items = ref([
           {
             label: 'Light',
             icon: 'i-lucide-sun',
-            onSelect: () => setColorMode('light'),
+            onSelect: () => {
+              setColorMode('light')
+              mobileMenu.value = false
+            },
           },
           {
             label: 'Dark',
             icon: 'i-lucide-moon',
-            onSelect: () => setColorMode('dark'),
+            onSelect: () => {
+              setColorMode('dark')
+              mobileMenu.value = false
+            },
           },
         ],
         [
           {
             label: 'System',
             icon: 'i-lucide-monitor',
-            onSelect: () => setColorMode('system'),
+            onSelect: () => {
+              setColorMode('system')
+              mobileMenu.value = false
+            },
           },
         ],
       ],
