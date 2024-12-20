@@ -1,6 +1,9 @@
 <template>
   <AppContainer title="Account Settings">
-    <p>Account Settings</p>
+    <div class="space-y-8">
+      <AppAccountSettings />
+      <AppPasswordSettings />
+    </div>
   </AppContainer>
 </template>
 

@@ -14,7 +14,7 @@
         label="Team logo (Recommended size: 1 MB, 1:1 aspect ratio)"
         name="logo"
       >
-        <AppTeamAvatarUploader
+        <AppAvatarUploader
           v-model="state.logo"
           @file-selected="handleFileSelected"
         />
@@ -73,7 +73,7 @@ const uploadLogo = async () => {
     if (!selectedFile.value) return ''
     const formData = new FormData()
     formData.append('image', selectedFile.value)
-    const filePath = await $fetch('/api/teams/upload-logo', {
+    const filePath = await $fetch('/api/upload-image', {
       method: 'POST',
       body: formData,
     })

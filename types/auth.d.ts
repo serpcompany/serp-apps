@@ -4,7 +4,12 @@ declare module '#auth-utils' {
   interface User
     extends Omit<
       DrizzleUser,
-      'hashedPassword' | 'banned' | 'bannedReason' | 'bannedUntil' | 'createdAt' | 'updatedAt'
+      | 'hashedPassword'
+      | 'banned'
+      | 'bannedReason'
+      | 'bannedUntil'
+      | 'createdAt'
+      | 'updatedAt'
     > {}
 }
 

@@ -25,14 +25,9 @@ const props = defineProps<{
 
 const accountLinks = [
   {
-    label: 'General Settings',
+    label: 'Account Settings',
     icon: 'i-lucide-settings',
     to: '/dashboard/account-settings',
-  },
-  {
-    label: 'Security',
-    icon: 'i-lucide-shield',
-    to: '/dashboard/account-security',
   },
 ]
 
