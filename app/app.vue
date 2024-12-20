@@ -1,8 +1,10 @@
 <template>
   <NuxtRouteAnnouncer />
   <NuxtLoadingIndicator />
-  <NuxtPage />
-  <Toaster position="top-center" />
+  <UApp>
+    <NuxtPage />
+  </UApp>
+  <Toaster position="top-center" class="z-50"/>
 </template>
 
 <script lang="ts" setup>

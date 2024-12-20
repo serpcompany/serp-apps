@@ -1,69 +1,66 @@
 <template>
-  <main class="flex min-h-screen items-center justify-center">
-    <UContainer class="w-full py-20">
-      <div class="text-center">
-        <h1 class="text-2xl font-bold">Create a new team</h1>
-        <p class="mt-2 text-gray-500">
-          A team is a workspace for your organization.
-        </p>
-      </div>
-      <UForm
-        :schema="schema"
-        :state="state"
-        class="mx-auto mt-12 max-w-md space-y-4"
-        @submit="onSubmit as any"
-      >
-        <UFormField
-          label="Team logo (Recommended size: 1 MB, 1:1 aspect ratio)"
-          name="logo"
-        >
-          <AppTeamAvatarUploader
-            v-model="imagePreview"
-            @file-selected="handleFileSelected"
-          />
-        </UFormField>
+  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit as any">
+    <UFormField
+      label="Team logo (Recommended size: 1 MB, 1:1 aspect ratio)"
+      name="logo"
+    >
+      <AppTeamAvatarUploader
+        v-model="imagePreview"
+        @file-selected="handleFileSelected"
+      />
+    </UFormField>
 
-        <UFormField required label="Team name" name="name">
-          <UInput v-model="state.name" class="w-full" size="lg" />
-        </UFormField>
+    <UFormField required label="Team name" name="name">
+      <UInput
+        v-model="state.name"
+        placeholder="Personal or Company Name"
+        class="w-full"
+        size="lg"
+      />
+    </UFormField>
 
-        <UFormField
-          label="Team URL"
-          name="slug"
-          required
-          :help="`${host}/dashboard/${state.slug}`"
-        >
-          <UInput v-model="state.slug" class="w-full" size="lg" />
-        </UFormField>
+    <UFormField
+      label="Team URL"
+      name="slug"
+      required
+      :help="`${host}/dashboard/${state.slug}`"
+    >
+      <UInput
+        v-model="state.slug"
+        placeholder="my-awesome-team"
+        class="w-full"
+        size="lg"
+      />
+    </UFormField>
 
-        <UButton
-          color="neutral"
-          type="submit"
-          size="lg"
-          block
-          :loading="loading"
-          :disabled="loading"
-        >
-          Create team
-        </UButton>
-      </UForm>
-    </UContainer>
-  </main>
+    <UButton
+      color="neutral"
+      type="submit"
+      size="lg"
+      block
+      :loading="loading"
+      :disabled="loading"
+    >
+      Create team
+    </UButton>
+  </UForm>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['auth'],
-})
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import type { Team } from '@@/types/database'
 import { toast } from 'vue-sonner'
+
 const teams = useState<Team[]>('teams')
 const loading = ref(false)
 const imagePreview = ref<string | undefined>(undefined)
 const selectedFile = ref<File | null>(null)
 const { setLastUsedTeam } = useTeamPreferences()
+
+const emit = defineEmits<{
+  success: [team: Team]
+}>()
 
 const handleFileSelected = (file: File | null) => {
   selectedFile.value = file
@@ -101,7 +98,7 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
     teams.value.push(newTeam)
     setLastUsedTeam(newTeam.slug)
     toast.success('Team created successfully')
-    return navigateTo(`/dashboard/${newTeam.slug}`)
+    emit('success', newTeam)
   } catch (error) {
     toast.error((error as any).statusMessage || 'Failed to create team')
   } finally {

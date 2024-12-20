@@ -30,7 +30,7 @@
 
       <UFormField label="Team ID">
         <UInput
-          :model-value="currentTeam?.id"
+          :value="currentTeam?.id || ''"
           variant="subtle"
           class="w-full"
           disabled
@@ -63,6 +63,9 @@ const state = reactive({
 
 const handleFileSelected = (file: File | null) => {
   selectedFile.value = file
+  if (!file) {
+    state.logo = ''
+  }
 }
 
 const uploadLogo = async () => {
@@ -84,10 +87,15 @@ const onSubmit = async (event: FormSubmitEvent<typeof teamSchema>) => {
   if (!currentTeam.value?.id) return
 
   try {
-    const filePath = selectedFile.value
-      ? await uploadLogo()
-      : currentTeam.value.logo ||
-        `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
+    let filePath = ''
+
+    if (selectedFile.value) {
+      filePath = await uploadLogo()
+    } else if (state.logo) {
+      filePath = currentTeam.value.logo
+    } else {
+      filePath = `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
+    }
 
     const teamData = {
       ...event.data,

@@ -5,6 +5,7 @@
       icon="i-lucide-upload"
       size="3xl"
       :ui="{ icon: 'text-lg' }"
+      class="ring-1 ring-neutral-200 dark:ring-neutral-800"
     />
     <UButton
       type="button"

@@ -83,7 +83,8 @@ async function handleSubmit() {
   try {
     if (!currentTeam.value) return
     await deleteTeam(currentTeam.value.id)
-    navigateTo('/dashboard')
+    toast.success('Team deleted successfully')
+    window.location.href = '/dashboard'
   } catch (error: any) {
     toast.error('Failed to delete team', {
       description:
