@@ -15,6 +15,9 @@ export default defineNuxtConfig({
     session: {
       maxAge: 60 * 60 * 24 * 7, // Session expires after 7 days - change it accordingly
     },
+    public: {
+      host: process.env.BASE_URL,
+    },
   },
   future: { compatibilityVersion: 4 },
   compatibilityDate: '2024-07-30',

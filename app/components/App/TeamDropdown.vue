@@ -13,12 +13,17 @@
 </template>
 
 <script lang="ts" setup>
-import type { Team } from '@@/types/database.js'
+import type { Team } from '@@/types/database'
 
-const { teams, activeTeam, getAvatarUrl, setSelectedTeam } = useTeams()
+const teams = useState<Team[]>('teams')
+const teamSlug = useRoute().params.team as string
+
+const activeTeam = computed(() =>
+  teams.value?.find((team) => team.slug === teamSlug),
+)
 
 const getAvatarProps = (team?: Team) => ({
-  src: getAvatarUrl(team),
+  src: team?.logo as string,
   size: 'xs' as const,
 })
 
@@ -28,10 +33,10 @@ const items = computed(() => {
   const allTeams = teams.value.map((team) => ({
     label: team.name,
     avatar: {
-      src: getAvatarUrl(team),
+      src: team.logo as string,
       size: '2xs' as const,
     },
-    onSelect: () => setSelectedTeam(team.id),
+    onSelect: () => navigateTo(`/dashboard/${team.slug}`),
   }))
 
   return [

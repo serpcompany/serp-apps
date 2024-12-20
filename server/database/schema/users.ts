@@ -11,6 +11,7 @@ export const users = sqliteTable('users', {
   hashedPassword: text('hashedPassword'),
   banned: integer('banned', { mode: 'boolean' }).notNull().default(false),
   bannedReason: text('bannedReason'),
+  emailVerified: integer('emailVerified', { mode: 'boolean' }).notNull().default(false),
   phoneNumber: text('phoneNumber').unique(),
   bannedUntil: integer('bannedUntil', { mode: 'timestamp' }),
   onboarded: integer('onboarded', { mode: 'boolean' }).notNull().default(false),

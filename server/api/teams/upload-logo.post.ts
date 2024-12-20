@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   })
 
   const file = await hubBlob().put(image.name, image, {
-    addRandomSuffix: false,
+    addRandomSuffix: true,
   })
   return file.pathname
 })

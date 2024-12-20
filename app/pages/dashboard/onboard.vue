@@ -2,9 +2,9 @@
   <main class="flex min-h-screen items-center justify-center">
     <UContainer class="w-full py-20">
       <div class="text-center">
-        <h1 class="text-2xl font-bold">Create a new team</h1>
+        <h1 class="text-2xl font-bold">Welcome {{ user?.name }}</h1>
         <p class="mt-2 text-gray-500">
-          A team is a workspace for your organization.
+          Let's get you started by creating your first team.
         </p>
       </div>
       <UForm
@@ -24,7 +24,12 @@
         </UFormField>
 
         <UFormField required label="Team name" name="name">
-          <UInput v-model="state.name" class="w-full" size="lg" />
+          <UInput
+            placeholder="Personal or Company Name"
+            v-model="state.name"
+            class="w-full"
+            size="lg"
+          />
         </UFormField>
 
         <UFormField
@@ -33,7 +38,12 @@
           required
           :help="`${host}/dashboard/${state.slug}`"
         >
-          <UInput v-model="state.slug" class="w-full" size="lg" />
+          <UInput
+            placeholder="my-awesome-team"
+            v-model="state.slug"
+            class="w-full"
+            size="lg"
+          />
         </UFormField>
 
         <UButton
@@ -47,14 +57,22 @@
           Create team
         </UButton>
       </UForm>
+      <div class="mt-4 flex justify-center">
+        <UButton
+          variant="ghost"
+          @click="signOut"
+          color="neutral"
+          size="lg"
+          icon="i-lucide-arrow-left"
+          label="Sign out"
+        />
+      </div>
     </UContainer>
   </main>
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['auth'],
-})
+const { user, clear } = useUserSession()
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import type { Team } from '@@/types/database'
@@ -123,4 +141,9 @@ const uploadLogo = async () => {
 }
 
 const host = useRuntimeConfig().public.host
+
+async function signOut() {
+  await clear()
+  await navigateTo('/')
+}
 </script>

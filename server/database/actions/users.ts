@@ -30,7 +30,6 @@ export const createUserWithPassword = async (payload: InsertUser) => {
       .get()
     return record
   } catch (error) {
-    console.error(error)
     throw new Error('Failed to upsert user')
   }
 }
@@ -43,8 +42,10 @@ export const findLinkedAccountsByUserId = async (userId: string) => {
       .where(eq(tables.oauthAccounts.userId, userId))
     return linkedAccounts
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to find linked accounts by user ID')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to find linked accounts by user ID',
+    })
   }
 }
 
@@ -60,8 +61,10 @@ export const updateLastActiveTimestamp = async (
       .get()
     return record
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to update last active')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to update last active',
+    })
   }
 }
 
@@ -73,8 +76,10 @@ export const findUserById = async (id: string) => {
       .where(eq(tables.users.id, id))
     return user || null
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to find user by ID')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to find user by ID',
+    })
   }
 }
 
@@ -88,8 +93,10 @@ export const verifyUser = async (userId: string) => {
       .get()
     return record
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to verify user')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to verify user',
+    })
   }
 }
 
@@ -110,8 +117,10 @@ export const createUserWithOAuth = async (payload: InsertUser) => {
       .get()
     return record
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to create user with OAuth')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to create user with OAuth',
+    })
   }
 }
 
@@ -125,8 +134,10 @@ export const updateUser = async (userId: string, payload: Partial<User>) => {
       .get()
     return record
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to update user')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to update user',
+    })
   }
 }
 
@@ -148,8 +159,10 @@ export const linkOAuthAccount = async (
       .get()
     return record
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to link OAuth account')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to link OAuth account',
+    })
   }
 }
 
@@ -161,7 +174,29 @@ export const findUserByPhoneNumber = async (phoneNumber: string) => {
       .where(eq(tables.users.phoneNumber, phoneNumber))
     return user || null
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to find user by phone number')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to find user by phone number',
+    })
+  }
+}
+
+export const getUserPreferences = async (userId: string) => {
+  try {
+    const preferences = await useDB()
+      .select({
+        theme: tables.users.theme,
+        emailNotifications: tables.users.emailNotifications,
+        pushNotifications: tables.users.pushNotifications,
+        lastSelectedTeamId: tables.users.lastSelectedTeamId,
+      })
+      .from(tables.users)
+      .where(eq(tables.users.id, userId))
+    return preferences
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to get user preferences',
+    })
   }
 }

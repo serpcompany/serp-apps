@@ -4,50 +4,101 @@
       <h3 class="text-sm font-medium">General Settings</h3>
     </template>
 
-    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-      <TeamsAvatarUpload
-        v-model="state.logo"
-        :name="state.name || 'Team Name'"
-        @update:file="selectedFile = $event"
-      />
-
-      <UFormField label="Team name" name="name">
-        <UInput v-model="state.name" class="w-full" size="lg" />
+    <UForm
+      :schema="teamSchema"
+      :state="state"
+      class="space-y-4"
+      @submit="onSubmit as any"
+    >
+      <UFormField
+        label="Team logo (Recommended size: 1 MB, 1:1 aspect ratio)"
+        name="logo"
+      >
+        <AppTeamAvatarUploader
+          v-model="state.logo"
+          @file-selected="handleFileSelected"
+        />
       </UFormField>
 
-      <div class="flex justify-end space-x-2">
-        <UButton
-          color="neutral"
-          type="submit"
-          size="lg"
-          :loading="loading"
-          :disabled="loading"
-        >
-          Save Changes
-        </UButton>
-      </div>
+      <UFormField required label="Team name" name="name">
+        <UInput v-model="state.name" class="w-full" />
+      </UFormField>
+
+      <UFormField label="Team URL" :help="`${host}/dashboard/${state.slug}`">
+        <UInput v-model="state.slug" variant="subtle" class="w-full" disabled />
+      </UFormField>
+
+      <UFormField label="Team ID">
+        <UInput
+          :model-value="currentTeam?.id"
+          variant="subtle"
+          class="w-full"
+          disabled
+        />
+      </UFormField>
+
+      <UButton
+        type="submit"
+        color="neutral"
+        :loading="loading"
+        :disabled="loading"
+      >
+        Save Changes
+      </UButton>
     </UForm>
   </UCard>
 </template>
 
 <script setup lang="ts">
 import type { FormSubmitEvent } from '#ui/types'
-import type { TeamSchema } from '~/composables/useTeams'
 
-const { schema, state, loading, selectedFile, activeTeam, updateTeam } =
-  useTeams()
+const { teamSchema, updateTeam, currentTeam, loading } = useTeam()
+const selectedFile = ref<File | null>(null)
 
-// Initialize form state with active team data
-onMounted(() => {
-  if (activeTeam.value) {
-    state.name = activeTeam.value.name
-    state.logo = `/images/${activeTeam.value.logo}` || ''
-  }
+const state = reactive({
+  name: currentTeam.value?.name || '',
+  slug: currentTeam.value?.slug || '',
+  logo: currentTeam.value?.logo || '',
 })
 
-const onSubmit = async (event: FormSubmitEvent<TeamSchema>) => {
-  if (!activeTeam.value?.id) return
-
-  await updateTeam(activeTeam.value.id, event.data)
+const handleFileSelected = (file: File | null) => {
+  selectedFile.value = file
 }
+
+const uploadLogo = async () => {
+  try {
+    if (!selectedFile.value) return ''
+    const formData = new FormData()
+    formData.append('image', selectedFile.value)
+    const filePath = await $fetch('/api/teams/upload-logo', {
+      method: 'POST',
+      body: formData,
+    })
+    return `/images/${filePath}`
+  } catch (error) {
+    throw new Error('Failed to upload logo')
+  }
+}
+
+const onSubmit = async (event: FormSubmitEvent<typeof teamSchema>) => {
+  if (!currentTeam.value?.id) return
+
+  try {
+    const filePath = selectedFile.value
+      ? await uploadLogo()
+      : currentTeam.value.logo ||
+        `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
+
+    const teamData = {
+      ...event.data,
+      logo: filePath,
+    }
+
+    await updateTeam(currentTeam.value.id, teamData)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const host = useRuntimeConfig().public.host
 </script>

@@ -17,7 +17,7 @@
         </p>
       </div>
       <UModal
-        :title="`Delete ${activeTeam?.name}`"
+        :title="`Delete ${currentTeam?.name}`"
         description="This action is irreversible and will remove all data associated with it"
         close-icon="i-lucide-x"
       >
@@ -33,7 +33,7 @@
             <UFormField
               label="Team Name"
               name="teamName"
-              :help="`Please type '${activeTeam?.name}' to confirm deletion`"
+              :help="`Please type '${currentTeam?.name}' to confirm deletion`"
             >
               <UInput
                 v-model="formState.teamName"
@@ -47,7 +47,7 @@
               type="submit"
               block
               :loading="loading"
-              :disabled="formState.teamName !== activeTeam?.name"
+              :disabled="formState.teamName !== currentTeam?.name"
             >
               Delete Permanently
             </UButton>
@@ -62,13 +62,13 @@
 import { z } from 'zod'
 import { toast } from 'vue-sonner'
 
-const { activeTeam, deleteTeam, loading, isTeamOwner } = useTeams()
+const { currentTeam, deleteTeam, loading } = useTeam()
 
 const formSchema = z.object({
   teamName: z
     .string()
     .min(1, 'Team name is required')
-    .refine((val) => val === activeTeam.value?.name, {
+    .refine((val) => val === currentTeam.value?.name, {
       message: 'Team name does not match',
     }),
 })
@@ -81,8 +81,9 @@ const formState = reactive<Partial<Schema>>({
 
 async function handleSubmit() {
   try {
-    if (!activeTeam.value) return
-    await deleteTeam(activeTeam.value.id)
+    if (!currentTeam.value) return
+    await deleteTeam(currentTeam.value.id)
+    navigateTo('/dashboard')
   } catch (error: any) {
     toast.error('Failed to delete team', {
       description:

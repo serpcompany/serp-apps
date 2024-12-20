@@ -88,37 +88,38 @@
 </template>
 
 <script lang="ts" setup>
+const teamSlug = useRoute().params.team as string
 const mobileMenu = useState('mobileMenu', () => false)
 const links = [
   {
     label: 'Home',
     icon: 'i-lucide-home',
-    to: '/dashboard',
+    to: `/dashboard/${teamSlug}`,
   },
   {
     label: 'Notes',
     icon: 'i-lucide-file-text',
-    to: '/dashboard/notes',
+    to: `/dashboard/${teamSlug}/notes`,
   },
   {
     label: 'Tasks',
     icon: 'i-lucide-check-circle',
-    to: '/dashboard/tasks',
+    to: `/dashboard/${teamSlug}/tasks`,
   },
   {
     label: 'Image gallery',
     icon: 'i-lucide-images',
-    to: '/dashboard/image-gallery',
+    to: `/dashboard/${teamSlug}/image-gallery`,
   },
   {
     label: 'AI Chat',
     icon: 'i-lucide-message-circle',
-    to: '/dashboard/ai-chat',
+    to: `/dashboard/${teamSlug}/ai-chat`,
   },
   {
     label: 'AI Image Gen',
     icon: 'i-lucide-sparkles',
-    to: '/dashboard/ai-image-gen',
+    to: `/dashboard/${teamSlug}/ai-image-gen`,
   },
 ]
 
@@ -126,17 +127,17 @@ const settings = [
   {
     label: 'Workspace Settings',
     icon: 'i-lucide-settings',
-    to: '/dashboard/settings',
+    to: `/dashboard/${teamSlug}/settings`,
   },
   {
     label: 'Team Members',
     icon: 'i-lucide-users',
-    to: '/dashboard/settings/members',
+    to: `/dashboard/${teamSlug}/settings/members`,
   },
   {
     label: 'Billing',
     icon: 'i-lucide-credit-card',
-    to: '/dashboard/settings/billing',
+    to: `/dashboard/${teamSlug}/settings/billing`,
   },
 ]
 </script>

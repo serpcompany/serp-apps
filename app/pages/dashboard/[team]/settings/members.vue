@@ -1,6 +1,6 @@
 <template>
-  <AppContainer title="Billing">
-    <p>Edit your team billing here</p>
+  <AppContainer title="Members">
+    <p>Members</p>
   </AppContainer>
 </template>
 

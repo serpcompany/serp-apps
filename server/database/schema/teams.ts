@@ -11,6 +11,7 @@ export const teams = sqliteTable('teams', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   logo: text('logo'),
+  slug: text('slug').notNull().unique(),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),

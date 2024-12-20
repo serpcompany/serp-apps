@@ -12,6 +12,7 @@ export const findUserTeams = async (userId: string) => {
         createdAt: tables.teams.createdAt,
         updatedAt: tables.teams.updatedAt,
         role: tables.teamMembers.role,
+        slug: tables.teams.slug,
       })
       .from(tables.teams)
       .leftJoin(
@@ -27,7 +28,10 @@ export const findUserTeams = async (userId: string) => {
     return teams
   } catch (error) {
     console.error(error)
-    throw new Error('Failed to find user teams')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to find user teams',
+    })
   }
 }
 
@@ -39,7 +43,6 @@ export const createTeam = async (payload: InsertTeam) => {
       .returning()
       .get()
 
-    // Also create a team member record for the owner
     await useDB().insert(tables.teamMembers).values({
       teamId: team.id,
       userId: payload.ownerId,
@@ -48,7 +51,15 @@ export const createTeam = async (payload: InsertTeam) => {
 
     return team
   } catch (error) {
-    console.error(error)
+    if (error instanceof Error) {
+      if (error.message.includes('UNIQUE constraint failed: teams.slug')) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: 'Team slug not available, please pick another one',
+        })
+      }
+      throw new Error(error.message)
+    }
     throw new Error('Failed to create team')
   }
 }
@@ -63,8 +74,10 @@ export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
       .get()
     return record
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to update team')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to update team',
+    })
   }
 }
 
@@ -72,7 +85,9 @@ export const deleteTeam = async (teamId: string) => {
   try {
     await useDB().delete(tables.teams).where(eq(tables.teams.id, teamId))
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to delete team')
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to delete team',
+    })
   }
 }

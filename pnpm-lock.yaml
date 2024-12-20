@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@iconify-json/lucide':
-        specifier: ^1.2.18
-        version: 1.2.18
+        specifier: ^1.2.19
+        version: 1.2.19
       '@lemonsqueezy/lemonsqueezy.js':
         specifier: 4.0.0
         version: 4.0.0
@@ -21,8 +21,8 @@ importers:
         specifier: 3.0.0-alpha.9
         version: 3.0.0-alpha.9(@babel/core@7.26.0)(@babel/parser@7.26.2)(axios@1.7.8)(change-case@5.4.4)(embla-carousel@8.5.1)(ioredis@5.4.1)(magicast@0.3.5)(postcss@8.4.49)(rollup@4.27.4)(svelte@5.2.7)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))
       '@nuxthub/core':
-        specifier: ^0.8.8
-        version: 0.8.8(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.27.4)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))
+        specifier: ^0.8.10
+        version: 0.8.10(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.27.4)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))
       '@simplewebauthn/browser':
         specifier: '11'
         version: 11.0.0
@@ -43,16 +43,16 @@ importers:
         version: 0.0.9(typescript@5.7.2)
       drizzle-orm:
         specifier: 0.38.2
-        version: 0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1)
+        version: 0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1)
       drizzle-zod:
         specifier: ^0.6.0
-        version: 0.6.0(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(zod@3.24.1)
+        version: 0.6.0(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(zod@3.24.1)
       nanoid:
         specifier: 5.0.9
         version: 5.0.9
       nuxt:
         specifier: ^3.14.1592
-        version: 3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2))
+        version: 3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2))
       nuxt-auth-utils:
         specifier: 0.5.7
         version: 0.5.7(@simplewebauthn/browser@11.0.0)(@simplewebauthn/server@11.0.0)(magicast@0.3.5)(rollup@4.27.4)
@@ -66,8 +66,8 @@ importers:
         specifier: 2.11.1
         version: 2.11.1
       stripe:
-        specifier: 17.4.0
-        version: 17.4.0
+        specifier: 17.5.0
+        version: 17.5.0
       use-email:
         specifier: ^0.0.8
         version: 0.0.8
@@ -89,7 +89,7 @@ importers:
         version: 12.0.0(typescript@5.7.2)
       '@vueuse/nuxt':
         specifier: 12.0.0
-        version: 12.0.0(magicast@0.3.5)(nuxt@3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2)))(rollup@4.27.4)(typescript@5.7.2)
+        version: 12.0.0(magicast@0.3.5)(nuxt@3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2)))(rollup@4.27.4)(typescript@5.7.2)
       drizzle-kit:
         specifier: 0.30.1
         version: 0.30.1
@@ -112,8 +112,8 @@ importers:
         specifier: ^2.1.10
         version: 2.1.10(typescript@5.7.2)
       wrangler:
-        specifier: ^3.95.0
-        version: 3.95.0(@cloudflare/workers-types@4.20241205.0)
+        specifier: ^3.96.0
+        version: 3.96.0(@cloudflare/workers-types@4.20241218.0)
 
 packages:
 
@@ -336,12 +336,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-shared@0.11.0':
-    resolution: {integrity: sha512-A+lQ8xp7992qSeMmuQ0ssL6CPmm+ZmAv6Ddikan0n1jjpMAic+97l7xtVIsswSn9iLMFPYQ9uNN/8Fl0AgARIQ==}
-    engines: {node: '>=16.7.0'}
-
-  '@cloudflare/workers-types@4.20241205.0':
-    resolution: {integrity: sha512-pj1VKRHT/ScQbHOIMFODZaNAlJHQHdBSZXNIdr9ebJzwBff9Qz8VdqhbhggV7f+aUEh8WSbrsPIo4a+WtgjUvw==}
+  '@cloudflare/workers-types@4.20241218.0':
+    resolution: {integrity: sha512-Y0brjmJHcAZBXOPI7lU5hbiXglQWniA1kQjot2ata+HFimyjPPcz+4QWBRrmWcMPo0OadR2Vmac7WStDLpvz0w==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1148,8 +1144,8 @@ packages:
     resolution: {integrity: sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/lucide@1.2.18':
-    resolution: {integrity: sha512-SFBoHBSULntem84iWxGM9NzlP6QY/dwjxC5t4c1lC7+xq31Fous8JkppoJih0/ICJ3CsbppRZeb11y3iLcwwug==}
+  '@iconify-json/lucide@1.2.19':
+    resolution: {integrity: sha512-bdkDEW2uDyw7zNDMsBL1uCA83jwhVtZwVL4zKLPHga2OSz/fixNbMGq8XOviIcTIBC3poUShCTcemoMdXK2kug==}
 
   '@iconify/collections@1.0.487':
     resolution: {integrity: sha512-O9QY0+++FiBRodC/Bqw9w9EeWUSKjOaVF59p72wLhW7ohEWc4KZnAOEocNGOdYosd6ICyYRQOPFc16UgJS2QKQ==}
@@ -1346,8 +1342,8 @@ packages:
     peerDependencies:
       vue: ^3.3.4
 
-  '@nuxthub/core@0.8.8':
-    resolution: {integrity: sha512-r4iiEMROyBN1er1OOQx4Y41NGkkGdZkDKswZJI1Ao1qMYsyQ0I8tkre0Uc4HkfuDHjcRaW67sk7tZ/C/BKRBVA==}
+  '@nuxthub/core@0.8.10':
+    resolution: {integrity: sha512-KqIFlWb1Fx/TF02k32LsvKxiFCcNluTYJdk06XvmCezr8Xz4NLfu/BlqqVIpWz1geR8acmLBrFnk9nJb/50MeA==}
 
   '@nuxtjs/color-mode@3.5.2':
     resolution: {integrity: sha512-cC6RfgZh3guHBMLLjrBB2Uti5eUoGM9KyauOaYS9ETmxNWBMTvpgjvSiSJp1OFljIXPIqVTJ3xtJpSNZiO3ZaA==}
@@ -5218,8 +5214,8 @@ packages:
   strip-literal@2.1.1:
     resolution: {integrity: sha512-631UJ6O00eNGfMiWG78ck80dfBab8X6IVFB51jZK5Icd7XAs60Z5y7QdSd/wGIklnWvRbUNloVzhOKKmutxQ6Q==}
 
-  stripe@17.4.0:
-    resolution: {integrity: sha512-sQQGZguPxe7/QYXJKtDpfzT2OAH9F8nyE2SOsVdTU793iiU33/dpaKgWaJEGJm8396Yy/6NvTLblgdHlueGLhA==}
+  stripe@17.5.0:
+    resolution: {integrity: sha512-kcyeAkDFjGsVl17FqnG7q/+xIjt0ZjOo9Dm+q8deAvs2Xe4iAHrhxyoP4etUVFc+/LZJANjIPVR+ZOnt9hr/Ug==}
     engines: {node: '>=12.*'}
 
   stylehacks@7.0.4:
@@ -5798,8 +5794,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@3.95.0:
-    resolution: {integrity: sha512-3w5852i3FNyDz421K2Qk4v5L8jjwegO5O8E1+VAQmjnm82HFNxpIRUBq0bmM7CTLvOPI/Jjcmj/eAWjQBL7QYg==}
+  wrangler@3.96.0:
+    resolution: {integrity: sha512-KjbHTUnwTa5eKl3hzv2h6nHBfAsbUkdurL7f6Y288/Bdn6tcEis13jLVR/nw/eWa3tNCBG1xOMZJboUyzWcC1g==}
     engines: {node: '>=16.17.0'}
     hasBin: true
     peerDependencies:
@@ -6154,12 +6150,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20241205.0':
     optional: true
 
-  '@cloudflare/workers-shared@0.11.0':
-    dependencies:
-      mime: 3.0.0
-      zod: 3.24.1
-
-  '@cloudflare/workers-types@4.20241205.0': {}
+  '@cloudflare/workers-types@4.20241218.0': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -6641,7 +6632,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.1': {}
 
-  '@iconify-json/lucide@1.2.18':
+  '@iconify-json/lucide@1.2.19':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -7215,9 +7206,9 @@ snapshots:
       - vti
       - vue-tsc
 
-  '@nuxthub/core@0.8.8(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.27.4)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))':
+  '@nuxthub/core@0.8.10(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.27.4)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))':
     dependencies:
-      '@cloudflare/workers-types': 4.20241205.0
+      '@cloudflare/workers-types': 4.20241218.0
       '@nuxt/devtools-kit': 1.6.4(magicast@0.3.5)(rollup@4.27.4)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))
       '@nuxt/kit': 3.14.1592(magicast@0.3.5)(rollup@4.27.4)
       '@uploadthing/mime-types': 0.3.2
@@ -8270,13 +8261,13 @@ snapshots:
 
   '@vueuse/metadata@12.0.0': {}
 
-  '@vueuse/nuxt@12.0.0(magicast@0.3.5)(nuxt@3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2)))(rollup@4.27.4)(typescript@5.7.2)':
+  '@vueuse/nuxt@12.0.0(magicast@0.3.5)(nuxt@3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2)))(rollup@4.27.4)(typescript@5.7.2)':
     dependencies:
       '@nuxt/kit': 3.14.1592(magicast@0.3.5)(rollup@4.27.4)
       '@vueuse/core': 12.0.0(typescript@5.7.2)
       '@vueuse/metadata': 12.0.0
       local-pkg: 0.5.1
-      nuxt: 3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2))
+      nuxt: 3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2))
       vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
       - magicast
@@ -8842,9 +8833,9 @@ snapshots:
 
   date-fns@4.1.0: {}
 
-  db0@0.2.1(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1)):
+  db0@0.2.1(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1)):
     optionalDependencies:
-      drizzle-orm: 0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1)
+      drizzle-orm: 0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1)
 
   de-indent@1.0.2: {}
 
@@ -8951,14 +8942,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1):
+  drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1):
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20241205.0
+      '@cloudflare/workers-types': 4.20241218.0
       react: 18.3.1
 
-  drizzle-zod@0.6.0(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(zod@3.24.1):
+  drizzle-zod@0.6.0(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(zod@3.24.1):
     dependencies:
-      drizzle-orm: 0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1)
+      drizzle-orm: 0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1)
       zod: 3.24.1
 
   duplexer@0.1.2: {}
@@ -10341,7 +10332,7 @@ snapshots:
       - magicast
       - supports-color
 
-  nitropack@2.10.4(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(typescript@5.7.2):
+  nitropack@2.10.4(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(typescript@5.7.2):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@netlify/functions': 2.8.2
@@ -10365,7 +10356,7 @@ snapshots:
       cookie-es: 1.2.2
       croner: 9.0.0
       crossws: 0.3.1
-      db0: 0.2.1(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))
+      db0: 0.2.1(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))
       defu: 6.1.4
       destr: 2.0.3
       dot-prop: 9.0.0
@@ -10510,7 +10501,7 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt@3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2)):
+  nuxt@3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.9.3)(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(eslint@9.15.0(jiti@2.4.0))(ioredis@5.4.1)(lightningcss@1.28.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.27.4)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2)):
     dependencies:
       '@nuxt/devalue': 2.0.2
       '@nuxt/devtools': 1.6.1(rollup@4.27.4)(vite@5.4.11(@types/node@22.9.3)(lightningcss@1.28.2)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))
@@ -10547,7 +10538,7 @@ snapshots:
       magic-string: 0.30.13
       mlly: 1.7.3
       nanotar: 0.1.1
-      nitropack: 2.10.4(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241205.0)(react@18.3.1))(typescript@5.7.2)
+      nitropack: 2.10.4(drizzle-orm@0.38.2(@cloudflare/workers-types@4.20241218.0)(react@18.3.1))(typescript@5.7.2)
       nuxi: 3.15.0
       nypm: 0.3.12
       ofetch: 1.4.1
@@ -11502,7 +11493,7 @@ snapshots:
     dependencies:
       js-tokens: 9.0.1
 
-  stripe@17.4.0:
+  stripe@17.5.0:
     dependencies:
       '@types/node': 22.9.3
       qs: 6.13.1
@@ -12114,10 +12105,9 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20241205.0
       '@cloudflare/workerd-windows-64': 1.20241205.0
 
-  wrangler@3.95.0(@cloudflare/workers-types@4.20241205.0):
+  wrangler@3.96.0(@cloudflare/workers-types@4.20241218.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
-      '@cloudflare/workers-shared': 0.11.0
       '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.17.19)
       '@esbuild-plugins/node-modules-polyfill': 0.2.2(esbuild@0.17.19)
       blake3-wasm: 2.1.5
@@ -12135,7 +12125,7 @@ snapshots:
       workerd: 1.20241205.0
       xxhash-wasm: 1.1.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20241205.0
+      '@cloudflare/workers-types': 4.20241218.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
