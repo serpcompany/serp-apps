@@ -107,6 +107,11 @@ const links = [
     to: `/dashboard/${teamSlug}/tasks`,
   },
   {
+    label: 'Link Shortner',
+    icon: 'i-lucide-link',
+    to: `/dashboard/${teamSlug}/link-shortner`,
+  },
+  {
     label: 'Image gallery',
     icon: 'i-lucide-images',
     to: `/dashboard/${teamSlug}/image-gallery`,

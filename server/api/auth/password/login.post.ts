@@ -87,7 +87,6 @@ export default defineEventHandler(async (event) => {
 
   const sanitizedUser = sanitizeUser(user)
 
-  console.log(sanitizedUser)
 
   if (!sanitizedUser) {
     throw createError({

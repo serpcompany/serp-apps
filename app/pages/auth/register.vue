@@ -43,16 +43,13 @@
           </UButton>
         </UForm>
       </template>
-      <div
-        v-else
-        class="flex flex-col items-center justify-center rounded-md border border-gray-200 bg-neutral-100 p-4 dark:border-white/10"
-      >
+      <UCard v-else>
         <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
         <p class="mt-4 text-lg font-bold">Check your email</p>
         <p class="mt-1 text-sm text-gray-500">
           We've sent you an email to verify your account.
         </p>
-      </div>
+      </UCard>
     </div>
   </main>
 </template>
