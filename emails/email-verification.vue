@@ -85,7 +85,7 @@ const code = {
       <Container :style="container">
         <Heading :style="h1"> Verify your email </Heading>
         <Link
-          :href="`${env.BASE_URL}/auth/verify-account?token=${verificationCode}`"
+          :href="`${env.BASE_URL}/api/auth/verify-account?token=${verificationCode}`"
           target="_blank"
           :style="{ ...link, display: 'block', marginBottom: '16px' }"
         >
