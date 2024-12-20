@@ -1,9 +1,5 @@
 <template>
-  <AppContainer title="Just an emprty page, maybe we dont even need this">
-    
-  </AppContainer>
+  <main class="flex h-screen items-center justify-center">
+    <UIcon name="i-lucide-loader-circle" class="animate-spin text-3xl" />
+  </main>
 </template>
-
-<script setup lang="ts">
-
-</script>
