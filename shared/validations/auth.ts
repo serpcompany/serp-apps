@@ -19,6 +19,11 @@ export const emailSchema = z.object({
   email: z.string().email(),
 })
 
+export const linkPasskeySchema = z.object({
+  userName: z.string().email(),
+  displayName: z.string().trim().optional(),
+})
+
 export const phoneSchema = z.object({
   phoneNumber: z
     .string()

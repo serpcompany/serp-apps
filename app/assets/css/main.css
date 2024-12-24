@@ -1,10 +1,6 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-@theme {
-  --font-family-sans: 'Inter', sans-serif;
-}
-
 body {
   @apply bg-white dark:bg-zinc-950;
 }

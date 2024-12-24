@@ -17,7 +17,7 @@ import {
   findCredentialByUserId,
   findCredentialById,
   getAndDeleteChallenge,
-} from '@@/server/database/actions/auth'
+} from '@@/server/database/actions/passkeys'
 import {
   findUserByEmail,
   findUserById,
@@ -59,7 +59,7 @@ export default defineWebAuthnAuthenticateEventHandler({
       throw createError({
         statusCode: 404,
         statusMessage:
-          'Looks like you have no passkeys registered. Please link a passkey in your account settings.',
+          'No passkeys registered. You can register one in your account settings.',
       })
     }
     return credential

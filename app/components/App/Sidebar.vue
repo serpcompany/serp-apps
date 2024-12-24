@@ -32,7 +32,7 @@
             @click="mobileMenu = false"
           />
         </div>
-        <div class="flex-1 overflow-y-auto">
+        <div class="flex-1 overflow-y-auto mt-2">
           <ul class="space-y-1">
             <li v-for="link in links" :key="link.to">
               <AppSidebarLink v-bind="link" />
