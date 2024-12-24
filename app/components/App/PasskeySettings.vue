@@ -63,7 +63,7 @@
           :schema="schema"
           :state="state"
           class="space-y-4"
-          @submit="createPasskey"
+          @submit="handleCreatePasskey"
         >
           <UFormField label="Name" name="name" size="lg">
             <UInput
@@ -88,23 +88,13 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { z } from 'zod'
-import { toast } from 'vue-sonner'
-const creating = ref(false)
+import type { FormSubmitEvent } from '#ui/types'
+
 const modal = ref(false)
-const deleting = ref<string | null>(null)
-const { register } = useWebAuthn({
-  registerEndpoint: '/api/auth/webauthn/link-passkey',
-})
-const {
-  data: passkeys,
-  status,
-  refresh,
-} = await useFetch('/api/auth/webauthn/linked-passkeys', {
-  server: false,
-  lazy: true,
-})
+const { passkeys, status, creating, deleting, createPasskey, deletePasskey } =
+  usePasskeys()
 
 const { user } = useUserSession()
 const schema = z.object({
@@ -113,39 +103,14 @@ const schema = z.object({
 const state = reactive({
   name: undefined,
 })
+type Schema = z.output<typeof schema>
 
-async function createPasskey(event) {
-  try {
-    creating.value = true
-    await register({
-      userName: user.value.email,
-      displayName: event.data.name,
-    })
-
-    await refresh()
+async function handleCreatePasskey(event: FormSubmitEvent<Schema>) {
+  if (!user.value) return
+  const success = await createPasskey(user.value.email, event.data.name)
+  if (success) {
     modal.value = false
     state.name = undefined
-    toast.success('Passkey added successfully')
-  } catch (error) {
-    toast.error(error.data?.message || error.message)
-  } finally {
-    creating.value = false
-  }
-}
-
-async function deletePasskey(id) {
-  try {
-    deleting.value = id
-    await $fetch('/api/auth/webauthn/delete-passkey', {
-      method: 'DELETE',
-      body: { id },
-    })
-    await refresh()
-    toast.success('Passkey deleted successfully')
-  } catch (error) {
-    toast.error(error.data?.statusMessage || 'Failed to delete passkey')
-  } finally {
-    deleting.value = null
   }
 }
 </script>

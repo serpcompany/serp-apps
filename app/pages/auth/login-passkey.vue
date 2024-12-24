@@ -39,29 +39,24 @@ import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema } from '@@/shared/validations/auth'
 import { toast } from 'vue-sonner'
-const { fetch: refreshSession } = useUserSession()
-const { authenticate } = useWebAuthn({
-  authenticateEndpoint: '/api/auth/webauthn/authenticate',
-})
 
-type LoginSchema = z.output<typeof emailSchema>
+const { fetch: refreshSession } = useUserSession()
+const { authenticateWithPasskey } = usePasskeys()
 const loading = ref(false)
 
+type LoginSchema = z.output<typeof emailSchema>
 const state = reactive<Partial<LoginSchema>>({
   email: undefined,
 })
 
 const onSubmit = async (event: FormSubmitEvent<LoginSchema>): Promise<void> => {
-  try {
-    loading.value = true
-    await authenticate(event.data.email)
+  loading.value = true
+  const success = await authenticateWithPasskey(event.data.email)
+  if (success) {
     await refreshSession()
     toast.success('Logged in successfully')
     await navigateTo(`/dashboard`)
-  } catch (error: any) {
-    toast.error(error.data.message || 'Failed to authenticate with passkey')
-  } finally {
-    loading.value = false
   }
+  loading.value = false
 }
 </script>
