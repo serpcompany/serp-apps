@@ -70,7 +70,7 @@
               v-model="state.name"
               placeholder="Example: My MacBook"
               class="w-full"
-              size="lg"
+              size="xl"
             />
           </UFormField>
           <UButton
@@ -79,7 +79,7 @@
             :disabled="creating"
             label="Create Passkey"
             block
-            size="lg"
+            size="xl"
             color="neutral"
           />
         </UForm>

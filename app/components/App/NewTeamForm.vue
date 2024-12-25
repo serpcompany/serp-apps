@@ -29,14 +29,14 @@
         v-model="state.slug"
         placeholder="my-awesome-team"
         class="w-full"
-        size="lg"
+        size="xl"
       />
     </UFormField>
 
     <UButton
       color="neutral"
       type="submit"
-      size="lg"
+      size="xl"
       block
       :loading="loading"
       :disabled="loading"

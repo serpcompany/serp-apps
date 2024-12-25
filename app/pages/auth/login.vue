@@ -23,7 +23,7 @@
             v-model="state.password"
             type="password"
             class="w-full"
-            size="lg" 
+            size="lg"
           />
           <template #hint>
             <UButton
@@ -50,6 +50,36 @@
       </UForm>
       <USeparator label="or continue with" />
       <div class="space-y-2">
+        <UButton
+          to="/auth/magic-link"
+          block
+          color="neutral"
+          size="lg"
+          icon="i-lucide-link"
+          variant="soft"
+        >
+          Email Link
+        </UButton>
+        <UButton
+          to="/auth/login-passkey"
+          block
+          color="neutral"
+          size="lg"
+          icon="i-lucide-fingerprint"
+          variant="soft"
+        >
+          Passkey
+        </UButton>
+        <UButton
+          to="/auth/login-phone"
+          block
+          color="neutral"
+          size="lg"
+          icon="i-lucide-phone"
+          variant="soft"
+        >
+          Phone
+        </UButton>
         <AuthSocialLoginButton
           label="Google"
           icon="i-mdi-google"

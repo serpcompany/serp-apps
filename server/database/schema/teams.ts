@@ -49,6 +49,7 @@ export const teamInvites = sqliteTable('team_invites', {
   email: text('email').notNull(),
   role: text('role').notNull().default('member'),
   token: text('token').notNull(),
+  status: text('status').notNull().default('pending'),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
