@@ -102,11 +102,11 @@
 
 <script setup lang="ts">
 import { z } from 'zod'
-
 import type { FormSubmitEvent } from '#ui/types'
 import { loginUserSchema } from '@@/shared/validations/auth'
-import { toast } from 'vue-sonner'
 type Schema = z.output<typeof loginUserSchema>
+
+const toast = useToast()
 
 const { fetch: refreshSession } = useUserSession()
 const loading = ref(false)
@@ -124,11 +124,16 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       body: event.data,
     })
     await refreshSession()
-    toast('Logged in')
+    toast.add({
+      title: 'Logged in',
+      color: 'success',
+    })
     navigateTo('/dashboard')
   } catch (error) {
-    toast.error('Something went wrong', {
+    toast.add({
+      title: 'Something went wrong',
       description: (error as any).data.message,
+      color: 'error',
     })
   } finally {
     loading.value = false

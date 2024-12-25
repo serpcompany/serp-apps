@@ -60,8 +60,8 @@
 
 <script lang="ts" setup>
 import { z } from 'zod'
-import { toast } from 'vue-sonner'
 
+const toast = useToast()
 const { currentTeam, deleteTeam, loading } = useTeam()
 
 const formSchema = z.object({
@@ -83,12 +83,17 @@ async function handleSubmit() {
   try {
     if (!currentTeam.value) return
     await deleteTeam(currentTeam.value.id)
-    toast.success('Team deleted successfully')
+    toast.add({
+      title: 'Team deleted successfully',
+      color: 'success',
+    })
     window.location.href = '/dashboard'
   } catch (error: any) {
-    toast.error('Failed to delete team', {
+    toast.add({
+      title: 'Failed to delete team',
       description:
         error?.data?.message || 'An error occurred while deleting the team',
+      color: 'error',
     })
   }
 }

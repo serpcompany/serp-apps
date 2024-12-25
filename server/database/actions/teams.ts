@@ -1,5 +1,9 @@
-import { eq, or } from 'drizzle-orm'
-import type { Team, InsertTeam } from '../../../types/database'
+import { eq, or, and, sql } from 'drizzle-orm'
+import type {
+  Team,
+  InsertTeam,
+  InsertTeamInvite,
+} from '../../../types/database'
 
 export const findUserTeams = async (userId: string) => {
   try {
@@ -90,4 +94,57 @@ export const deleteTeam = async (teamId: string) => {
       statusMessage: 'Failed to delete team',
     })
   }
+}
+
+export const inviteTeamMember = async (payload: InsertTeamInvite) => {
+  try {
+    const invite = await useDB()
+      .insert(tables.teamInvites)
+      .values(payload)
+      .returning()
+      .get()
+    return invite
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to invite team member',
+    })
+  }
+}
+
+export const findTeamMembers = async (teamId: string) => {
+  // Get active members
+  const members = await useDB()
+    .select({
+      type: sql`'member'`.as('type'),
+      id: tables.teamMembers.id,
+      userId: tables.teamMembers.userId,
+      email: tables.users.email,
+      role: tables.teamMembers.role,
+      createdAt: tables.teamMembers.createdAt,
+    })
+    .from(tables.teamMembers)
+    .leftJoin(tables.users, eq(tables.teamMembers.userId, tables.users.id))
+    .where(eq(tables.teamMembers.teamId, teamId))
+
+  // Get pending invites
+  const invites = await useDB()
+    .select({
+      type: sql`'invite'`.as('type'),
+      id: tables.teamInvites.id,
+      email: tables.teamInvites.email,
+      role: tables.teamInvites.role,
+      createdAt: tables.teamInvites.createdAt,
+      expiresAt: tables.teamInvites.expiresAt,
+      status: tables.teamInvites.status,
+    })
+    .from(tables.teamInvites)
+    .where(
+      and(
+        eq(tables.teamInvites.teamId, teamId),
+        eq(tables.teamInvites.status, 'pending'),
+      ),
+    )
+
+  return [...members, ...invites]
 }

@@ -29,7 +29,10 @@ export type InsertTeam = typeof tables.teams.$inferInsert
 export type Passkey = typeof tables.webAuthnCredentials.$inferSelect
 export type InsertPasskey = typeof tables.webAuthnCredentials.$inferInsert
 export type WebAuthnChallenge = typeof tables.webAuthnChallenges.$inferSelect
-export type InsertWebAuthnChallenge = typeof tables.webAuthnChallenges.$inferInsert
+export type InsertWebAuthnChallenge =
+  typeof tables.webAuthnChallenges.$inferInsert
+export type TeamInvite = typeof tables.teamInvites.$inferSelect
+export type InsertTeamInvite = typeof tables.teamInvites.$inferInsert
 
 // Zod schemas
 export const insertUserSchema = createInsertSchema(tables.users)
@@ -81,8 +84,19 @@ export const selectImageSchema = createSelectSchema(tables.images)
 export const insertTeamSchema = createInsertSchema(tables.teams)
 export const selectTeamSchema = createSelectSchema(tables.teams)
 
-export const insertPasskeySchema = createInsertSchema(tables.webAuthnCredentials)
-export const selectPasskeySchema = createSelectSchema(tables.webAuthnCredentials)
+export const insertTeamInviteSchema = createInsertSchema(tables.teamInvites)
+export const selectTeamInviteSchema = createSelectSchema(tables.teamInvites)
 
-export const insertWebAuthnChallengeSchema = createInsertSchema(tables.webAuthnChallenges)
-export const selectWebAuthnChallengeSchema = createSelectSchema(tables.webAuthnChallenges)
+export const insertPasskeySchema = createInsertSchema(
+  tables.webAuthnCredentials,
+)
+export const selectPasskeySchema = createSelectSchema(
+  tables.webAuthnCredentials,
+)
+
+export const insertWebAuthnChallengeSchema = createInsertSchema(
+  tables.webAuthnChallenges,
+)
+export const selectWebAuthnChallengeSchema = createSelectSchema(
+  tables.webAuthnChallenges,
+)

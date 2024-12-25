@@ -1,6 +1,4 @@
-import { updateTeam, findUserTeams } from '../../database/actions/teams'
-import { createTeamSchema } from '@@/shared/validations/team'
-import { validateBody } from '../../utils/bodyValidation'
+import { deleteTeam, findUserTeams } from '@@/server/database/actions/teams'
 
 export default defineEventHandler(async (event) => {
   // 1. Get authenticated user and team ID
@@ -14,10 +12,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 2. Validate request body
-  const body = await validateBody(event, createTeamSchema)
-
-  // 3. Get user's teams to check ownership
+  // 2. Get user's teams to check ownership
   const userTeams = await findUserTeams(user.id)
   const team = userTeams.find((t) => t.id === teamId)
 
@@ -28,19 +23,18 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 4. Check if user is the owner
+  // 3. Check if user is the owner
   if (team.role !== 'owner') {
     throw createError({
       statusCode: 403,
-      statusMessage: 'Only team owners can update team details',
+      statusMessage: 'Only team owners can delete teams',
     })
   }
 
-  // 5. Update team
-  const updatedTeam = await updateTeam(teamId, {
-    name: body.name,
-    logo: body.logo,
-  })
+  // 4. Delete the team
+  await deleteTeam(teamId)
 
-  return updatedTeam
+  return {
+    message: 'Team deleted successfully',
+  }
 })

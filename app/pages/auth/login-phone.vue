@@ -80,10 +80,11 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
-import { toast } from 'vue-sonner'
 
-const { fetch: refreshSession } = useUserSession()
 import { phoneSchema } from '@@/shared/validations/auth'
+
+const toast = useToast()
+const { fetch: refreshSession } = useUserSession()
 
 const otpSchema = z.object({
   phoneNumber: z.string(),
@@ -122,7 +123,11 @@ async function onPhoneSubmit(event: FormSubmitEvent<PhoneSchema>) {
     mode.value = 'otp'
     otpState.phoneNumber = event.data.phoneNumber
   } catch (error) {
-    toast.error((error as any).data.message)
+    toast.add({
+      title: 'Failed to send verification code',
+      description: (error as any).data.message,
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }
@@ -138,7 +143,11 @@ async function onOtpSubmit(event: FormSubmitEvent<OtpSchema>) {
     await refreshSession()
     navigateTo('/dashboard')
   } catch (error) {
-    toast.error((error as any).data.message)
+    toast.add({
+      title: 'Failed to verify code',
+      description: (error as any).data.message,
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }

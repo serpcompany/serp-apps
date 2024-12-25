@@ -1,5 +1,10 @@
 <template>
-  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit as any">
+  <UForm
+    :schema="schema"
+    :state="state"
+    class="space-y-4"
+    @submit="onSubmit as any"
+  >
     <UFormField
       label="Team logo (Recommended size: 1 MB, 1:1 aspect ratio)"
       name="logo"
@@ -29,14 +34,14 @@
         v-model="state.slug"
         placeholder="my-awesome-team"
         class="w-full"
-        size="xl"
+        size="lg"
       />
     </UFormField>
 
     <UButton
       color="neutral"
       type="submit"
-      size="xl"
+      size="lg"
       block
       :loading="loading"
       :disabled="loading"
@@ -50,8 +55,8 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import type { Team } from '@@/types/database'
-import { toast } from 'vue-sonner'
 
+const toast = useToast()
 const teams = useState<Team[]>('teams')
 const loading = ref(false)
 const imagePreview = ref<string | undefined>(undefined)
@@ -97,10 +102,17 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
     })
     teams.value.push(newTeam)
     setLastUsedTeam(newTeam.slug)
-    toast.success('Team created successfully')
+    toast.add({
+      title: 'Team created successfully',
+      color: 'success',
+    })
     emit('success', newTeam)
   } catch (error) {
-    toast.error((error as any).statusMessage || 'Failed to create team')
+    toast.add({
+      title: `Failed to create team`,
+      description: (error as any).statusMessage || 'Please try again',
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }

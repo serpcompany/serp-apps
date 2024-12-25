@@ -58,9 +58,9 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { registerUserSchema } from '@@/shared/validations/auth'
-import { toast } from 'vue-sonner'
-
 type Schema = z.output<typeof registerUserSchema>
+
+const toast = useToast()
 const registered = ref(false)
 const loading = ref(false)
 
@@ -79,7 +79,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
     registered.value = true
   } catch (error) {
-    toast.error((error as any).data.message)
+    toast.add({
+      title: 'Failed to register',
+      description: (error as any).data.message,
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }

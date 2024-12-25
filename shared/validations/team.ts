@@ -6,3 +6,8 @@ export const createTeamSchema = insertTeamSchema.pick({
   logo: true,
   slug: true,
 })
+
+export const inviteTeamMemberSchema = z.object({
+  email: z.string().email(),
+  role: z.enum(['owner', 'admin', 'member']).default('member'),
+})

@@ -1,6 +1,6 @@
-import { createTeam } from '../../database/actions/teams'
+import { createTeam } from '@@/server/database/actions/teams'
 import { createTeamSchema } from '@@/shared/validations/team'
-import { validateBody } from '../../utils/bodyValidation'
+import { validateBody } from '@@/server/utils/bodyValidation'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)

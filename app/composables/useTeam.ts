@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import type { Team } from '@@/types/database'
-import { toast } from 'vue-sonner'
 
 export const useTeam = () => {
+  const toast = useToast()
   const teamSchema = z.object({
     name: z.string().min(1, 'Team name is required'),
     logo: z.string().optional(),
@@ -28,10 +28,17 @@ export const useTeam = () => {
         method: 'POST',
         body: teamData,
       })
-      toast.success('Team created successfully')
+      toast.add({
+        title: 'Team created successfully',
+        color: 'success',
+      })
       return newTeam
     } catch (error) {
-      toast.error((error as any).statusMessage || 'Failed to create team')
+      toast.add({
+        title: 'Failed to create team',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
       throw error
     } finally {
       loading.value = false
@@ -51,10 +58,17 @@ export const useTeam = () => {
       teams.value = teams.value.map((team) =>
         team.id === teamId ? updatedTeam : team,
       )
-      toast.success('Team updated successfully')
+      toast.add({
+        title: 'Team updated successfully',
+        color: 'success',
+      })
       return updatedTeam
     } catch (error) {
-      toast.error((error as any).statusMessage || 'Failed to update team')
+      toast.add({
+        title: 'Failed to update team',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
       throw error
     } finally {
       loading.value = false
@@ -66,10 +80,38 @@ export const useTeam = () => {
     try {
       await $fetch(`/api/teams/${teamId}`, { method: 'DELETE' })
       teams.value = teams.value.filter((team) => team.id !== teamId)
-      toast.success('Team deleted successfully')
+      toast.add({
+        title: 'Team deleted successfully',
+        color: 'success',
+      })
     } catch (error) {
-      toast.error('Failed to delete team')
+      toast.add({
+        title: 'Failed to delete team',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
       throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const inviteMember = async (email: string) => {
+    loading.value = true
+    try {
+      await $fetch(`/api/teams/${currentTeam?.value?.id}/members`, {
+        method: 'POST',
+        body: { email },
+      })
+    } catch (error) {
+      toast.add({
+        title: 'Failed to invite member',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
+      throw error
+    } finally {
+      loading.value = false
     }
   }
 
@@ -78,6 +120,7 @@ export const useTeam = () => {
     createTeam,
     updateTeam,
     deleteTeam,
+    inviteMember,
     teamSchema,
     currentTeam,
     teams,

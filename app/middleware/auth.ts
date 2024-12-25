@@ -1,8 +1,11 @@
-import { toast } from 'vue-sonner'
 export default defineNuxtRouteMiddleware((to, from) => {
+  const toast = useToast()
   const { loggedIn } = useUserSession()
   if (!loggedIn.value) {
-    toast.error('You must be logged in to access this page')
+    toast.add({
+      title: 'You must be logged in to access this page',
+      color: 'error',
+    })
     return navigateTo('/auth/login')
   }
 })

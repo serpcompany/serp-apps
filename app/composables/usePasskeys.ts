@@ -1,19 +1,19 @@
 import { z } from 'zod'
-import { toast } from 'vue-sonner'
+const toast = useToast()
 
 export const usePasskeys = () => {
   const creating = ref(false)
   const deleting = ref<string | null>(null)
-  
+
   const { register, authenticate } = useWebAuthn({
     registerEndpoint: '/api/auth/webauthn/link-passkey',
-    authenticateEndpoint: '/api/auth/webauthn/authenticate'
+    authenticateEndpoint: '/api/auth/webauthn/authenticate',
   })
 
   const {
     data: passkeys,
     status,
-    refresh
+    refresh,
   } = useFetch('/api/auth/webauthn/linked-passkeys', {
     server: false,
     lazy: true,
@@ -24,10 +24,17 @@ export const usePasskeys = () => {
       creating.value = true
       await register({ userName, displayName })
       await refresh()
-      toast.success('Passkey added successfully')
+      toast.add({
+        title: 'Passkey added successfully',
+        color: 'success',
+      })
       return true
     } catch (error: any) {
-      toast.error(error.data?.message || error.message)
+      toast.add({
+        title: 'Failed to add passkey',
+        description: error.data?.message || error.message,
+        color: 'error',
+      })
       return false
     } finally {
       creating.value = false
@@ -42,10 +49,17 @@ export const usePasskeys = () => {
         body: { id },
       })
       await refresh()
-      toast.success('Passkey deleted successfully')
+      toast.add({
+        title: 'Passkey deleted successfully',
+        color: 'success',
+      })
       return true
     } catch (error: any) {
-      toast.error(error.data?.statusMessage || 'Failed to delete passkey')
+      toast.add({
+        title: 'Failed to delete passkey',
+        description: error.data?.statusMessage || 'Failed to delete passkey',
+        color: 'error',
+      })
       return false
     } finally {
       deleting.value = null
@@ -57,7 +71,11 @@ export const usePasskeys = () => {
       await authenticate(email)
       return true
     } catch (error: any) {
-      toast.error(error.data?.message || 'Failed to authenticate with passkey')
+      toast.add({
+        title: 'Failed to authenticate with passkey',
+        description: error.data?.message,
+        color: 'error',
+      })
       return false
     }
   }
@@ -69,6 +87,6 @@ export const usePasskeys = () => {
     deleting,
     createPasskey,
     deletePasskey,
-    authenticateWithPasskey
+    authenticateWithPasskey,
   }
 }

@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import type { User } from '@@/types/database'
-import { toast } from 'vue-sonner'
 
 export const useUserAccount = () => {
+  const toast = useToast()
   const loading = ref(false)
   const schema = z.object({
     avatarUrl: z.string().optional(),
@@ -20,10 +20,16 @@ export const useUserAccount = () => {
         method: 'PATCH',
         body: userData,
       })
-      toast.success('Your account has been updated successfully')
+      toast.add({
+        title: 'Your account has been updated successfully',
+        color: 'success',
+      })
     } catch (error) {
       console.error(error)
-      toast.error('Failed to update your account')
+      toast.add({
+        title: 'Failed to update your account',
+        color: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -36,10 +42,16 @@ export const useUserAccount = () => {
         method: 'POST',
         body: { password },
       })
-      toast.success('Your password has been updated successfully')
+      toast.add({
+        title: 'Your password has been updated successfully',
+        color: 'success',
+      })
     } catch (error) {
       console.error(error)
-      toast.error('Failed to update your password')
+      toast.add({
+        title: 'Failed to update your password',
+        color: 'error',
+      })
     } finally {
       loading.value = false
     }

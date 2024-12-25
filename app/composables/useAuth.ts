@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { toast } from 'vue-sonner'
+const toast = useToast()
 import {
   emailSchema,
   loginUserSchema,
@@ -31,11 +31,16 @@ export const useAuth = () => {
         body: credentials,
       })
       await refreshSession()
-      toast.success('Logged in successfully')
+      toast.add({
+        title: 'Logged in successfully',
+        color: 'success',
+      })
       return navigateTo('/dashboard')
     } catch (error: any) {
-      toast.error('Login failed', {
+      toast.add({
+        title: 'Login failed',
         description: error.data?.message,
+        color: 'error',
       })
     } finally {
       loading.value = false
@@ -60,7 +65,11 @@ export const useAuth = () => {
       })
       return true
     } catch (error: any) {
-      toast.error(error.data?.message)
+      toast.add({
+        title: 'Registration failed',
+        description: error.data?.message,
+        color: 'error',
+      })
       return false
     } finally {
       loading.value = false
@@ -84,7 +93,11 @@ export const useAuth = () => {
       magicLinkState.email = email
       return true
     } catch (error: any) {
-      toast.error(error.data?.message)
+      toast.add({
+        title: 'Login failed',
+        description: error.data?.message,
+        color: 'error',
+      })
       return false
     } finally {
       loading.value = false
@@ -103,7 +116,11 @@ export const useAuth = () => {
       await refreshSession()
       return navigateTo('/dashboard')
     } catch (error: any) {
-      toast.error(error.data?.message)
+      toast.add({
+        title: 'Login failed',
+        description: error.data?.message,
+        color: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -126,7 +143,11 @@ export const useAuth = () => {
       phoneState.phoneNumber = phoneData.phoneNumber
       return true
     } catch (error: any) {
-      toast.error(error.data?.message)
+      toast.add({
+        title: 'Login failed',
+        description: error.data?.message,
+        color: 'error',
+      })
       return false
     } finally {
       loading.value = false
@@ -146,7 +167,11 @@ export const useAuth = () => {
       await refreshSession()
       return navigateTo('/dashboard')
     } catch (error: any) {
-      toast.error(error.data?.message)
+      toast.add({
+        title: 'Login failed',
+        description: error.data?.message,
+        color: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -160,12 +185,19 @@ export const useAuth = () => {
         method: 'POST',
         body: { email },
       })
-      toast.success(
-        'If the email is correct, you will receive a password reset link.',
-      )
+      toast.add({
+        title: 'Password reset instructions sent',
+        description:
+          'If the email is correct, you will receive a password reset link.',
+        color: 'success',
+      })
       return true
     } catch (error: any) {
-      toast.error(error.data?.message || 'Failed to send reset instructions')
+      toast.add({
+        title: 'Failed to send reset instructions',
+        description: error.data?.message,
+        color: 'error',
+      })
       return false
     } finally {
       loading.value = false
@@ -179,10 +211,17 @@ export const useAuth = () => {
         method: 'POST',
         body: { token, password },
       })
-      toast.success('Password reset successfully')
+      toast.add({
+        title: 'Password reset successfully',
+        color: 'success',
+      })
       return navigateTo('/auth/login')
     } catch (error: any) {
-      toast.error(error.data?.message || 'Failed to reset password')
+      toast.add({
+        title: 'Failed to reset password',
+        description: error.data?.message,
+        color: 'error',
+      })
     } finally {
       loading.value = false
     }

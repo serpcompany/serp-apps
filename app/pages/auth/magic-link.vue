@@ -75,12 +75,13 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema, otpLoginSchema } from '@@/shared/validations/auth'
-import { toast } from 'vue-sonner'
 
-const { fetch: refreshSession } = useUserSession()
 type LoginSchema = z.output<typeof emailSchema>
-
 type OtpSchema = z.output<typeof otpLoginSchema>
+
+const toast = useToast()
+const { fetch: refreshSession } = useUserSession()
+
 const mode = ref<'login' | 'otp'>('login')
 const loading = ref(false)
 
@@ -110,7 +111,11 @@ async function onLoginSubmit(event: FormSubmitEvent<LoginSchema>) {
     mode.value = 'otp'
     otpState.email = event.data.email
   } catch (error) {
-    toast.error((error as any).data.message)
+    toast.add({
+      title: 'Failed to send verification code',
+      description: (error as any).data.message,
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }
@@ -126,7 +131,11 @@ async function onOtpSubmit(event: FormSubmitEvent<OtpSchema>) {
     await refreshSession()
     navigateTo('/dashboard')
   } catch (error) {
-    toast.error((error as any).data.message)
+    toast.add({
+      title: 'Failed to verify code',
+      description: (error as any).data.message,
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }

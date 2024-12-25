@@ -1,5 +1,5 @@
-import { updateUser } from '~~/server/database/actions/users'
-import { validateBody } from '../../utils/bodyValidation'
+import { updateUser } from '@@/server/database/actions/users'
+import { validateBody } from '@@/server/utils/bodyValidation'
 import { updateUserSchema } from '@@/shared/validations/user'
 
 export default defineEventHandler(async (event) => {

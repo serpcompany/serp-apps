@@ -37,7 +37,7 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema } from '@@/shared/validations/auth'
-import { toast } from 'vue-sonner'
+const toast = useToast()
 
 type PasswordResetSchema = z.output<typeof emailSchema>
 const loading = ref(false)
@@ -55,13 +55,16 @@ const onSubmit = async (
       method: 'POST',
       body: event.data,
     })
-    toast.success(
-      'If the email is correct, you will receive a password reset link.',
-    )
+    toast.add({
+      title: 'If the email is correct, you will receive a password reset link.',
+      color: 'success',
+    })
   } catch (error: any) {
-    toast.error(
-      error.data.message || 'Failed to send password reset instructions',
-    )
+    toast.add({
+      title: 'Failed to send password reset instructions',
+      description: error.data.message,
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }

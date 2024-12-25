@@ -41,7 +41,8 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
-import { toast } from 'vue-sonner'
+
+const toast = useToast()
 const route = useRoute()
 const loading = ref(false)
 
@@ -65,10 +66,17 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         password: event.data.password,
       },
     })
-    toast.success('Password reset successfully')
+    toast.add({
+      title: 'Password reset successfully',
+      color: 'success',
+    })
     navigateTo('/auth/login')
   } catch (error: any) {
-    toast.error(error.data?.message || 'Failed to reset password')
+    toast.add({
+      title: 'Failed to reset password',
+      description: error.data?.message || 'Failed to reset password',
+      color: 'error',
+    })
   } finally {
     loading.value = false
   }

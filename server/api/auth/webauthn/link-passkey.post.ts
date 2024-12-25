@@ -3,7 +3,6 @@ import {
   getAndDeleteChallenge,
   createCredential,
 } from '@@/server/database/actions/passkeys'
-import { z } from 'zod'
 import type { InsertPasskey } from '@@/types/database'
 import { linkPasskeySchema } from '@@/shared/validations/auth'
 

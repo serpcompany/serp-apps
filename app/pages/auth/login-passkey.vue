@@ -38,8 +38,8 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema } from '@@/shared/validations/auth'
-import { toast } from 'vue-sonner'
 
+const toast = useToast()
 const { fetch: refreshSession } = useUserSession()
 const { authenticateWithPasskey } = usePasskeys()
 const loading = ref(false)
@@ -54,7 +54,10 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>): Promise<void> => {
   const success = await authenticateWithPasskey(event.data.email)
   if (success) {
     await refreshSession()
-    toast.success('Logged in successfully')
+    toast.add({
+      title: 'Logged in successfully',
+      color: 'success',
+    })
     await navigateTo(`/dashboard`)
   }
   loading.value = false
