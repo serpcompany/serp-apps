@@ -7,7 +7,7 @@ export const users = sqliteTable('users', {
     .$default(() => nanoid()),
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
-  avatarUrl: text('avatarUrl'),
+  avatarUrl: text('avatarUrl').default(''),
   hashedPassword: text('hashedPassword'),
   banned: integer('banned', { mode: 'boolean' }).notNull().default(false),
   bannedReason: text('bannedReason'),

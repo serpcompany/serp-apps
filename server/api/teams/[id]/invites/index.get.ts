@@ -1,5 +1,5 @@
 import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
-import { getActiveTeamMembers } from '@@/server/database/actions/teams'
+import { getTeamInvites } from '@@/server/database/actions/teams'
 
 export default defineEventHandler(async (event) => {
   const teamId = getRouterParam(event, 'id')
@@ -11,6 +11,6 @@ export default defineEventHandler(async (event) => {
   }
 
   await validateTeamOwnership(event, teamId)
-  const teamMembers = await getActiveTeamMembers(teamId)
-  return teamMembers
+  const teamInvites = await getTeamInvites(teamId)
+  return teamInvites
 })

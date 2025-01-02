@@ -3,7 +3,7 @@
     <UContainer class="w-full py-20">
       <div class="text-center">
         <h1 class="text-2xl font-bold">Welcome {{ user?.name }}</h1>
-        <p class="mt-2 text-gray-500">
+        <p class="mt-2 text-zinc-500">
           Let's get you started by creating your first team.
         </p>
       </div>

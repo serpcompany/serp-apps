@@ -5,7 +5,7 @@
       <template v-if="mode === 'login'">
         <div class="text-center">
           <p class="text-lg font-bold">Sign in to your account</p>
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-zinc-500">
             Welcome back! Please sign in to continue.
           </p>
         </div>
@@ -34,7 +34,7 @@
       <div v-else>
         <div class="text-center">
           <p class="text-lg font-bold">We've sent you a 6-digit code</p>
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-zinc-500">
             Please check your email for the code and enter it below.
           </p>
         </div>

@@ -4,7 +4,7 @@
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <div class="text-center">
         <p class="text-lg font-bold">Reset your password</p>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
           Enter your email below to reset your password.
         </p>
       </div>

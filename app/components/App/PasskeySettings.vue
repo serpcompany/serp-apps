@@ -24,12 +24,12 @@
       <div v-else-if="status === 'success'">
         <div
           v-if="passkeys && passkeys.length === 0"
-          class="flex flex-col items-center justify-center gap-4 rounded bg-gray-100 p-4 text-sm dark:bg-gray-800"
+          class="flex flex-col items-center justify-center gap-4 rounded bg-zinc-100 p-4 text-sm dark:bg-zinc-800"
         >
           <UIcon name="i-lucide-fingerprint" class="h-6 w-6" />
           <p>No fingerprints or face IDs linked to your account.</p>
         </div>
-        <ul class="divide-y divide-gray-100 dark:divide-gray-800">
+        <ul class="divide-y divide-zinc-100 dark:divide-zinc-800">
           <li
             v-for="passkey in passkeys"
             :key="passkey.id"

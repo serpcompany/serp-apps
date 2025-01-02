@@ -112,39 +112,29 @@ export const inviteTeamMember = async (payload: InsertTeamInvite) => {
   }
 }
 
-export const findTeamMembers = async (teamId: string) => {
-  // Get active members
+export const getActiveTeamMembers = async (teamId: string) => {
   const members = await useDB()
     .select({
-      type: sql`'member'`.as('type'),
       id: tables.teamMembers.id,
+      teamId: tables.teamMembers.teamId,
       userId: tables.teamMembers.userId,
-      email: tables.users.email,
       role: tables.teamMembers.role,
+      email: tables.users.email,
+      name: tables.users.name,
+      avatarUrl: tables.users.avatarUrl,
+      lastLoginAt: tables.users.lastActive,
       createdAt: tables.teamMembers.createdAt,
     })
     .from(tables.teamMembers)
     .leftJoin(tables.users, eq(tables.teamMembers.userId, tables.users.id))
     .where(eq(tables.teamMembers.teamId, teamId))
+  return members
+}
 
-  // Get pending invites
+export const getTeamInvites = async (teamId: string) => {
   const invites = await useDB()
-    .select({
-      type: sql`'invite'`.as('type'),
-      id: tables.teamInvites.id,
-      email: tables.teamInvites.email,
-      role: tables.teamInvites.role,
-      createdAt: tables.teamInvites.createdAt,
-      expiresAt: tables.teamInvites.expiresAt,
-      status: tables.teamInvites.status,
-    })
+    .select()
     .from(tables.teamInvites)
-    .where(
-      and(
-        eq(tables.teamInvites.teamId, teamId),
-        eq(tables.teamInvites.status, 'pending'),
-      ),
-    )
-
-  return [...members, ...invites]
+    .where(eq(tables.teamInvites.teamId, teamId))
+  return invites
 }
