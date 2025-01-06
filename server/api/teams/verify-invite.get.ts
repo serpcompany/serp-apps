@@ -3,6 +3,7 @@ import {
   updateInviteStatus,
   addUserToTeam,
   getActiveTeamMembers,
+  isUserAlreadyInTeam,
 } from '@@/server/database/actions/teams'
 import { z } from 'zod'
 // Define invite status types for better type safety
@@ -10,7 +11,7 @@ type InviteStatus = (typeof INVALID_STATUSES)[number]
 const INVALID_STATUSES = ['accepted', 'rejected', 'cancelled'] as const
 
 const querySchema = z.object({
-  token: z.string().min(32, 'Token is required'),
+  token: z.string().length(32, 'Invalid token'),
 })
 
 export default defineEventHandler(async (event) => {
@@ -22,7 +23,7 @@ export default defineEventHandler(async (event) => {
   if (!invite) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'Invite not found',
+      statusMessage: 'Invite not found or invalid',
     })
   }
 
@@ -45,10 +46,7 @@ export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
   // 5. Check if user is already a team member
-  const teamMembers = await getActiveTeamMembers(invite.teamId)
-  const isAlreadyMember = teamMembers.some(
-    (member) => member.userId === user.id,
-  )
+  const isAlreadyMember = await isUserAlreadyInTeam(invite.teamId, user.id)
   if (isAlreadyMember) {
     throw createError({
       statusCode: 400,
@@ -62,6 +60,7 @@ export default defineEventHandler(async (event) => {
       maxAge: 60 * 60 * 24, // 1 day
       path: '/',
       secure: true,
+      httpOnly: true,
       sameSite: 'lax',
     })
     return sendRedirect(event, '/auth/login', 302)

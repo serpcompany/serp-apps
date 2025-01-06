@@ -1,4 +1,4 @@
-import { eq, or, and, sql } from 'drizzle-orm'
+import { eq, or, and } from 'drizzle-orm'
 import type {
   Team,
   InsertTeam,
@@ -168,4 +168,19 @@ export const addUserToTeam = async (teamId: string, userId: string) => {
   await useDB()
     .insert(tables.teamMembers)
     .values({ teamId, userId, role: 'member' })
+}
+
+export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
+  const member = await useDB()
+    .select({ id: tables.teamMembers.id })
+    .from(tables.teamMembers)
+    .where(
+      and(
+        eq(tables.teamMembers.teamId, teamId),
+        eq(tables.teamMembers.userId, userId),
+      ),
+    )
+    .get()
+
+  return !!member
 }
