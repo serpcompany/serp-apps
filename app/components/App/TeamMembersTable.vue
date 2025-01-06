@@ -6,13 +6,13 @@
           <th
             v-for="column in columns"
             :key="column"
-            class="px-4 py-3 text-left font-semibold text-sm"
+            class="px-4 py-3 text-left text-sm font-semibold"
           >
             {{ column }}
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <tbody class="divide-y divide-zinc-200 dark:divide-white/10">
         <tr
           v-for="member in members"
           :key="member.id"

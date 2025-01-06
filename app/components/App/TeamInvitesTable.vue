@@ -12,7 +12,7 @@
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
         <tr
           v-for="invite in invites"
           :key="invite.id"

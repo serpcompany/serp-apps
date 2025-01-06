@@ -2,7 +2,6 @@ import {
   getInvite,
   updateInviteStatus,
   addUserToTeam,
-  getActiveTeamMembers,
   isUserAlreadyInTeam,
 } from '@@/server/database/actions/teams'
 import { z } from 'zod'
@@ -43,21 +42,10 @@ export default defineEventHandler(async (event) => {
   }
 
   // 4. Validate user session and permissions
-  const { user } = await requireUserSession(event)
-
-  // 5. Check if user is already a team member
-  const isAlreadyMember = await isUserAlreadyInTeam(invite.teamId, user.id)
-  if (isAlreadyMember) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'You are already a member of this team',
-    })
-  }
-
-  // 6. Validate invite belongs to correct user
-  if (invite.email !== user.email) {
+  const session = await getUserSession(event)
+  if (!session?.user) {
     setCookie(event, 'invite-token', invite.token, {
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge: 60 * 60 * 24, // discard cookie after 1 day
       path: '/',
       secure: true,
       httpOnly: true,
@@ -66,8 +54,29 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, '/auth/login', 302)
   }
 
+  // 5. Check if user is already a team member
+  const isAlreadyMember = await isUserAlreadyInTeam(
+    invite.teamId,
+    session.user.id,
+  )
+  if (isAlreadyMember) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'You are already a member of this team',
+    })
+  }
+
+  // 6. Validate invite belongs to correct user
+  if (invite.email !== session.user.email) {
+    // Invite belongs to a different user
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Invalid invite',
+    })
+  }
+
   // 7. Process invite acceptance
-  await addUserToTeam(invite.teamId, user.id)
+  await addUserToTeam(invite.teamId, session.user.id)
   await updateInviteStatus(invite.id, 'accepted')
 
   return {

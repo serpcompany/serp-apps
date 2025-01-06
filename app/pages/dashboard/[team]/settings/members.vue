@@ -122,6 +122,7 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
       description: `We have sent an invitation to ${event.data.email}`,
       color: 'success',
     })
+    newMemberModal.value = false
   } catch (error) {
     console.error(error)
     toast.add({
