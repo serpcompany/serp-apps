@@ -65,7 +65,7 @@ const tabs = ref([
     label: 'Active Members',
   },
   {
-    label: 'Pending Invites',
+    label: 'Invitations',
   },
 ])
 const activeTab = ref('0')

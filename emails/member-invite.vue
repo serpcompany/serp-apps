@@ -74,7 +74,7 @@ const footer = {
     <Preview>Join {{ organizationName }} on {{ env.APP_NAME }}</Preview>
     <Body :style="main">
       <Container :style="container">
-        <Img :src="env.LOGO_URL" width="40" height="40" alt="Logo" />
+        <Img :src="env.LOGO_URL" width="40" alt="Logo" />
 
         <Heading :style="heading">
           {{ inviterName }} invited you to join {{ organizationName }}

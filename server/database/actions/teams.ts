@@ -3,7 +3,8 @@ import type {
   Team,
   InsertTeam,
   InsertTeamInvite,
-} from '../../../types/database'
+  TeamInvite,
+} from '@@/types/database'
 
 export const findUserTeams = async (userId: string) => {
   try {
@@ -143,4 +144,28 @@ export const cancelInvite = async (inviteId: string) => {
   await useDB()
     .delete(tables.teamInvites)
     .where(eq(tables.teamInvites.id, inviteId))
+}
+
+export const getInvite = async (
+  token: string,
+): Promise<TeamInvite | undefined> => {
+  const invite = await useDB()
+    .select()
+    .from(tables.teamInvites)
+    .where(eq(tables.teamInvites.token, token))
+    .get()
+  return invite
+}
+
+export const updateInviteStatus = async (inviteId: string, status: string) => {
+  await useDB()
+    .update(tables.teamInvites)
+    .set({ status })
+    .where(eq(tables.teamInvites.id, inviteId))
+}
+
+export const addUserToTeam = async (teamId: string, userId: string) => {
+  await useDB()
+    .insert(tables.teamMembers)
+    .values({ teamId, userId, role: 'member' })
 }
