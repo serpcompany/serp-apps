@@ -2,67 +2,77 @@ import {
   getInvite,
   updateInviteStatus,
   addUserToTeam,
+  getActiveTeamMembers,
 } from '@@/server/database/actions/teams'
+import { z } from 'zod'
+// Define invite status types for better type safety
+type InviteStatus = (typeof INVALID_STATUSES)[number]
+const INVALID_STATUSES = ['accepted', 'rejected', 'cancelled'] as const
+
+const querySchema = z.object({
+  token: z.string().min(32, 'Token is required'),
+})
 
 export default defineEventHandler(async (event) => {
-  const { token } = getQuery(event)
-  if (!token) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Token is required',
-    })
-  }
-  const invite = await getInvite(token as string)
+  // 1. Validate token with type checking
+  const { token } = await getValidatedQuery(event, querySchema.parse)
+
+  // 2. Get and validate invite
+  const invite = await getInvite(token)
   if (!invite) {
     throw createError({
       statusCode: 404,
       statusMessage: 'Invite not found',
     })
   }
+
+  // 3. Check invite validity
   if (invite.expiresAt < new Date()) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Invite expired',
     })
   }
-  if (invite.status === 'accepted') {
+
+  if (INVALID_STATUSES.includes(invite.status as InviteStatus)) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Invite already accepted',
-    })
-  }
-  if (invite.status === 'rejected') {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invite already rejected',
-    })
-  }
-  if (invite.status === 'cancelled') {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invite already cancelled',
+      statusMessage: `Invite already ${invite.status}`,
     })
   }
 
+  // 4. Validate user session and permissions
   const { user } = await requireUserSession(event)
-  if (invite.email === user.email) {
+
+  // 5. Check if user is already a team member
+  const teamMembers = await getActiveTeamMembers(invite.teamId)
+  const isAlreadyMember = teamMembers.some(
+    (member) => member.userId === user.id,
+  )
+  if (isAlreadyMember) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'You cannot invite yourself',
+      statusMessage: 'You are already a member of this team',
     })
   }
 
+  // 6. Validate invite belongs to correct user
   if (invite.email !== user.email) {
     setCookie(event, 'invite-token', invite.token, {
-      maxAge: 60 * 60 * 24 * 365,
+      maxAge: 60 * 60 * 24, // 1 day
       path: '/',
+      secure: true,
+      sameSite: 'lax',
     })
-    sendRedirect(event, '/auth/login', 302)
+    return sendRedirect(event, '/auth/login', 302)
   }
 
+  // 7. Process invite acceptance
   await addUserToTeam(invite.teamId, user.id)
   await updateInviteStatus(invite.id, 'accepted')
+
   return {
     message: 'Invite accepted',
+    teamId: invite.teamId,
   }
 })

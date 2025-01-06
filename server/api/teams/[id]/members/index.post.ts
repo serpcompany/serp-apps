@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
   const htmlTemplate = await render(TeamInvitation, {
     organizationName: team.name,
     inviterName: user.name,
-    inviteLink: `${env.BASE_URL}/api/teams/invites/verify?token=${inviteToken}`,
+    inviteLink: `${env.BASE_URL}/api/teams/verify-invite?token=${inviteToken}`,
   })
 
   if (env.MOCK_EMAIL) {
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
       email: body.email,
       teamName: team.name,
       inviterName: user.name,
-      inviteLink: `${env.BASE_URL}/api/teams/invites/verify?token=${inviteToken}`,
+      inviteLink: `${env.BASE_URL}/api/teams/verify-invite?token=${inviteToken}`,
     })
   } else {
     await sendEmail({
