@@ -1,7 +1,5 @@
-import { z } from 'zod'
-const toast = useToast()
-
 export const usePasskeys = () => {
+  const toast = useToast()
   const creating = ref(false)
   const deleting = ref<string | null>(null)
 

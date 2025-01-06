@@ -47,141 +47,15 @@
       v-model="activeTab"
     />
 
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
-        <thead>
-          <tr>
-            <th
-              class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-zinc-900 dark:text-white"
-            >
-              Member
-            </th>
-            <th
-              class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white"
-            >
-              Email
-            </th>
-            <th
-              class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white"
-            >
-              Last Active
-            </th>
-            <th
-              class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white"
-            >
-              Date Added
-            </th>
-            <th
-              class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white"
-            >
-              Role
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-zinc-200 dark:divide-white/10">
-          <!-- Active Members -->
-          <template v-if="activeTab === '0'">
-            <tr v-for="member in teamMembers" :key="member.id">
-              <td class="py-4 pr-3 pl-4 whitespace-nowrap">
-                <div class="flex items-center gap-3">
-                  <UAvatar
-                    :src="
-                      getAvatarUrl({
-                        path: member.avatarUrl,
-                        identifier: member.email,
-                        type: 'team',
-                      })
-                    "
-                    size="md"
-                    :alt="member.name"
-                  />
-                  <span class="font-medium text-zinc-900 dark:text-white">{{
-                    member.name
-                  }}</span>
-                </div>
-              </td>
-              <td
-                class="px-3 py-4 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400"
-              >
-                {{ member.email }}
-              </td>
-              <td
-                class="px-3 py-4 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400"
-              >
-                {{
-                  member.lastLoginAt
-                    ? new Date(member.lastLoginAt).toLocaleDateString()
-                    : 'Never'
-                }}
-              </td>
-              <td
-                class="px-3 py-4 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400"
-              >
-                {{ new Date(member.createdAt).toLocaleDateString() }}
-              </td>
-              <td class="px-3 py-4 text-sm whitespace-nowrap">
-                <UBadge
-                  :color="member.role === 'owner' ? 'primary' : 'neutral'"
-                  size="sm"
-                  variant="subtle"
-                  class="uppercase"
-                >
-                  {{ member.role }}
-                </UBadge>
-              </td>
-            </tr>
-          </template>
-
-          <!-- Pending Invites -->
-          <template v-else>
-            <tr v-for="invite in teamInvites" :key="invite.id">
-              <td class="py-4 pr-3 pl-4 whitespace-nowrap">
-                <div class="flex items-center gap-3">
-                  <UAvatar
-                    :src="
-                      getAvatarUrl({
-                        identifier: invite.email,
-                        type: 'team',
-                      })
-                    "
-                    size="md"
-                    :alt="invite.email"
-                  />
-                  <span class="font-medium text-zinc-900 dark:text-white">
-                    {{ invite.email }}
-                  </span>
-                </div>
-              </td>
-              <td
-                class="px-3 py-4 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400"
-              >
-                {{ invite.email }}
-              </td>
-              <td
-                class="px-3 py-4 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400"
-              >
-                {{ invite.status }}
-              </td>
-              <td
-                class="px-3 py-4 text-sm whitespace-nowrap text-zinc-500 dark:text-zinc-400"
-              >
-                {{ new Date(invite.createdAt).toLocaleDateString() }}
-              </td>
-              <td class="px-3 py-4 text-sm whitespace-nowrap">
-                <UBadge
-                  :color="invite.status === 'pending' ? 'warning' : 'neutral'"
-                  size="sm"
-                  variant="subtle"
-                  class="uppercase"
-                >
-                  {{ invite.role }}
-                </UBadge>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
+    <AppTeamMembersTable
+      v-if="activeTab === '0'"
+      :members="teamMembers || []"
+    />
+    <AppTeamInvitesTable
+      v-if="activeTab === '1'"
+      :invites="teamInvites || []"
+      @invite-cancelled="fetchTeamInvites"
+    />
   </AppContainer>
 </template>
 
@@ -195,7 +69,7 @@ const tabs = ref([
   },
 ])
 const activeTab = ref('0')
-import { getAvatarUrl } from '@/utils/avatar'
+
 import type { FormSubmitEvent } from '#ui/types'
 const { currentTeam, inviteMember, loading } = useTeam()
 import { z } from 'zod'
@@ -213,7 +87,7 @@ const { data: teamMembers } = await useFetch<
     createdAt: Date
   }[]
 >(`/api/teams/${currentTeam.value?.id}/members`)
-const { data: teamInvites } = await useFetch<
+const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
   {
     id: string
     teamId: string

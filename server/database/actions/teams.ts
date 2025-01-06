@@ -138,3 +138,9 @@ export const getTeamInvites = async (teamId: string) => {
     .where(eq(tables.teamInvites.teamId, teamId))
   return invites
 }
+
+export const cancelInvite = async (inviteId: string) => {
+  await useDB()
+    .delete(tables.teamInvites)
+    .where(eq(tables.teamInvites.id, inviteId))
+}
