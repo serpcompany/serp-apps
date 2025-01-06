@@ -2,6 +2,7 @@ import { z } from 'zod'
 import type { Team } from '@@/types/database'
 
 export const useTeam = () => {
+  const { user } = useUserSession()
   const toast = useToast()
   const teamSchema = z.object({
     name: z.string().min(1, 'Team name is required'),
@@ -17,8 +18,12 @@ export const useTeam = () => {
   const teamSlug = useRoute().params.team as string
   const loading = ref(false)
   const teams = useState<Team[]>('teams')
+  
   const currentTeam = computed(() =>
     teams.value.find((team) => team.slug === teamSlug),
+  )
+  const isTeamOwner = computed(
+    () => currentTeam.value?.ownerId === user.value?.id,
   )
 
   const createTeam = async (teamData: z.infer<typeof teamSchema>) => {
@@ -144,6 +149,7 @@ export const useTeam = () => {
     deleteTeam,
     inviteMember,
     cancelInvite,
+    isTeamOwner,
     teamSchema,
     currentTeam,
     teams,

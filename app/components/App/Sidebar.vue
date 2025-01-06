@@ -10,10 +10,12 @@
         <li v-for="link in links" :key="link.to">
           <AppSidebarLink v-bind="link" />
         </li>
-        <USeparator class="my-4" />
-        <li v-for="link in settings" :key="link.to">
-          <AppSidebarLink v-bind="link" />
-        </li>
+        <template v-if="isTeamOwner">
+          <USeparator class="my-4" />
+          <li v-for="link in settings" :key="link.to">
+            <AppSidebarLink v-bind="link" />
+          </li>
+        </template>
       </ul>
     </div>
     <footer class="p-2">
@@ -32,7 +34,7 @@
             @click="mobileMenu = false"
           />
         </div>
-        <div class="flex-1 overflow-y-auto mt-2">
+        <div class="mt-2 flex-1 overflow-y-auto">
           <ul class="space-y-1">
             <li v-for="link in links" :key="link.to">
               <AppSidebarLink v-bind="link" />
@@ -52,6 +54,7 @@
 </template>
 
 <script lang="ts" setup>
+const { isTeamOwner } = useTeam()
 const teamSlug = useRoute().params.team as string
 const mobileMenu = useState('mobileMenu', () => false)
 const links = [
