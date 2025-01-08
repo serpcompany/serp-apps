@@ -17,6 +17,15 @@ const handleTeamRedirect = async () => {
     return
   }
 
+  // check if there is an invite token pending in cookies
+  const inviteToken = useCookie('invite-token')
+  if (inviteToken.value) {
+    const url = `/api/teams/verify-invite?token=${inviteToken.value}`
+    // remove the cookie
+    inviteToken.value = null
+    return await navigateTo(url)
+  }
+
   // Redirect to onboarding if no teams
   if (!teams.value?.length) {
     await navigateTo('/dashboard/onboard')

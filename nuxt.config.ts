@@ -2,7 +2,13 @@ import './env'
 import vue from '@vitejs/plugin-vue'
 
 export default defineNuxtConfig({
-  modules: ['@nuxthub/core', '@nuxt/ui', '@vueuse/nuxt', 'nuxt-auth-utils'],
+  modules: [
+    '@nuxthub/core',
+    '@nuxt/ui',
+    '@vueuse/nuxt',
+    'nuxt-auth-utils',
+    'nitro-kutu',
+  ],
   colorMode: {
     preference: 'system',
   },

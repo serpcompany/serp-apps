@@ -169,16 +169,25 @@ export const updateInviteStatus = async (inviteId: string, status: string) => {
 }
 
 export const addUserToTeam = async (teamId: string, userId: string) => {
-  await useDB()
-    .insert(tables.teamMembers)
-    .values({ teamId, userId, role: 'member' })
+  try {
+    await useDB()
+      .insert(tables.teamMembers)
+      .values({ teamId, userId, role: 'member' })
+  } catch (error) {
+    console.error(error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to add user to team',
+    })
+  }
 }
 
 export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
-  const member = await useDB()
-    .select({ id: tables.teamMembers.id })
-    .from(tables.teamMembers)
-    .where(
+  try {
+    const member = await useDB()
+      .select({ id: tables.teamMembers.id })
+      .from(tables.teamMembers)
+      .where(
       and(
         eq(tables.teamMembers.teamId, teamId),
         eq(tables.teamMembers.userId, userId),
@@ -186,5 +195,12 @@ export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
     )
     .get()
 
-  return !!member
+    return !!member
+  } catch (error) {
+    console.error(error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to check if user is already in team',
+    })
+  }
 }

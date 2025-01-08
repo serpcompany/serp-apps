@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
   // 4. Validate user session and permissions
   const session = await getUserSession(event)
   if (!session?.user) {
-    setCookie(event, 'invite-token', invite.token, {
+    setCookie(event, 'invite-token', token, {
       maxAge: 60 * 60 * 24, // discard cookie after 1 day
       path: '/',
       secure: true,
@@ -79,8 +79,5 @@ export default defineEventHandler(async (event) => {
   await addUserToTeam(invite.teamId, session.user.id)
   await updateInviteStatus(invite.id, 'accepted')
 
-  return {
-    message: 'Invite accepted',
-    teamId: invite.teamId,
-  }
+  return sendRedirect(event, '/dashboard', 302)
 })
