@@ -22,7 +22,10 @@ export const findUserTeams = async (userId: string) => {
       .from(tables.teams)
       .leftJoin(
         tables.teamMembers,
-        eq(tables.teams.id, tables.teamMembers.teamId),
+        and(
+          eq(tables.teams.id, tables.teamMembers.teamId),
+          eq(tables.teamMembers.userId, userId)
+        ),
       )
       .where(
         or(
@@ -30,6 +33,7 @@ export const findUserTeams = async (userId: string) => {
           eq(tables.teamMembers.userId, userId),
         ),
       )
+      .groupBy(tables.teams.id)
     return teams
   } catch (error) {
     console.error(error)

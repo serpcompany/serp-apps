@@ -25,7 +25,7 @@
                   getAvatarUrl({
                     path: member.avatarUrl,
                     identifier: member.email,
-                    type: 'team',
+                    type: 'user',
                   })
                 "
                 size="xs"
