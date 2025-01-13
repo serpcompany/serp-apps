@@ -1,4 +1,4 @@
-import { updateUserPassword } from '~~/server/database/actions/users'
+import { updateUserPassword } from '~~/server/database/queries/users'
 import { validateBody } from '../../utils/bodyValidation'
 import { updateUserPasswordSchema } from '@@/shared/validations/auth'
 

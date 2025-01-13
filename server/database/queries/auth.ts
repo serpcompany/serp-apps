@@ -1,9 +1,5 @@
-import { eq, lt, and } from 'drizzle-orm'
-import type {
-  InsertEmailVerificationCodes,
-  InsertOneTimePasswords,
-} from '../../../types/database'
-import type { WebAuthnCredential } from '#auth-utils'
+import { eq } from 'drizzle-orm'
+import type { InsertEmailVerificationCodes, InsertOneTimePasswords } from '@@/types/database'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 
 export const saveEmailVerificationCode = async (

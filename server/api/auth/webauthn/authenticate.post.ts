@@ -17,12 +17,12 @@ import {
   findCredentialByUserId,
   findCredentialById,
   getAndDeleteChallenge,
-} from '@@/server/database/actions/passkeys'
+} from '~~/server/database/queries/passkeys'
 import {
   findUserByEmail,
   findUserById,
   updateLastActiveTimestamp,
-} from '@@/server/database/actions/users'
+} from '~~/server/database/queries/users'
 import { sanitizeUser } from '@@/server/utils/auth'
 
 export default defineWebAuthnAuthenticateEventHandler({

@@ -3,7 +3,7 @@ import {
   updateInviteStatus,
   addUserToTeam,
   isUserAlreadyInTeam,
-} from '@@/server/database/actions/teams'
+} from '~~/server/database/queries/teams'
 import { z } from 'zod'
 // Define invite status types for better type safety
 type InviteStatus = (typeof INVALID_STATUSES)[number]

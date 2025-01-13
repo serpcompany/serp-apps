@@ -18,7 +18,7 @@ import {
   createUserWithOAuth,
   updateUser,
   linkOAuthAccount,
-} from '@@/server/database/actions/users'
+} from '~~/server/database/queries/users'
 
 export interface OAuthUserData {
   email: string

@@ -1,12 +1,12 @@
 import {
   findOneTimePassword,
   deleteOneTimePassword,
-} from '@@/server/database/actions/auth'
+} from '@@/server/database/queries/auth'
 import { isWithinExpiryDate } from '@@/server/utils/auth'
 import {
   findUserByPhoneNumber,
   updateLastActiveTimestamp,
-} from '@@/server/database/actions/users'
+} from '~~/server/database/queries/users'
 import { phoneVerificationSchema } from '@@/shared/validations/auth'
 
 export default defineEventHandler(async (event) => {

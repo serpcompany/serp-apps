@@ -18,8 +18,8 @@ import { env } from '@@/env'
 import {
   findUserByEmail,
   createUserWithPassword,
-} from '@@/server/database/actions/users'
-import { saveEmailVerificationCode } from '@@/server/database/actions/auth'
+} from '~~/server/database/queries/users'
+import { saveEmailVerificationCode } from '~~/server/database/queries/auth'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'

@@ -10,8 +10,8 @@ import { validateBody } from '@@/server/utils/bodyValidation'
 import {
   findPasswordResetToken,
   deletePasswordResetToken,
-} from '@@/server/database/actions/auth'
-import { updateUser } from '@@/server/database/actions/users'
+} from '@@/server/database/queries/auth'
+import { updateUser } from '~~/server/database/queries/users'
 
 const resetPasswordSchema = z.object({
   token: z.string(),

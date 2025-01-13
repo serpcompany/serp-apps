@@ -1,4 +1,4 @@
-import { findCredentialByUserId } from '@@/server/database/actions/passkeys'
+import { findCredentialByUserId } from '~~/server/database/queries/passkeys'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)

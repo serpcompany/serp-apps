@@ -15,12 +15,12 @@ import { otpLoginSchema } from '@@/shared/validations/auth'
 import {
   findOneTimePassword,
   deleteOneTimePassword,
-} from '@@/server/database/actions/auth'
+} from '@@/server/database/queries/auth'
 import { isWithinExpiryDate } from '@@/server/utils/auth'
 import {
   findUserById,
   updateLastActiveTimestamp,
-} from '@@/server/database/actions/users'
+} from '~~/server/database/queries/users'
 
 export default defineEventHandler(async (event) => {
   const data = await validateBody(event, otpLoginSchema)

@@ -1,4 +1,4 @@
-import { updateTeam, findUserTeams } from '@@/server/database/actions/teams'
+import { updateTeam, findUserTeams } from '~~/server/database/queries/teams'
 import { createTeamSchema } from '@@/shared/validations/team'
 import { validateBody } from '@@/server/utils/bodyValidation'
 

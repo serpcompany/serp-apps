@@ -18,11 +18,11 @@ import {
   findUserById,
   verifyUser,
   updateLastActiveTimestamp,
-} from '@@/server/database/actions/users'
+} from '~~/server/database/queries/users'
 import {
   findEmailVerificationCode,
   deleteEmailVerificationCode,
-} from '@@/server/database/actions/auth'
+} from '@@/server/database/queries/auth'
 
 export default defineEventHandler(async (event) => {
   const { token } = getQuery(event)
