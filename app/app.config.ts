@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { desc } from 'drizzle-orm'
 
 export default defineAppConfig({
   ui: {
@@ -6,17 +6,21 @@ export default defineAppConfig({
       loading: 'i-lucide-loader',
     },
     button: {
+      defaultVariants: {
+        color: 'neutral',
+        variant: 'soft',
+      },
       slots: {
         base: ['cursor-pointer'],
       },
     },
     colors: {
-      primary: 'indigo',
+      primary: 'emerald',
       neutral: 'zinc',
     },
   },
   seo: {
     title: 'Supersaas',
     description: 'The fullstack Nuxt 3 SaaS starter kit',
-  }
+  },
 })
