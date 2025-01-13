@@ -3,7 +3,7 @@ import type {
   Passkey,
   InsertPasskey,
   InsertWebAuthnChallenge,
-} from '../../../types/database'
+} from '@@/types/database'
 
 export const findCredentialByUserId = async (
   userId: string,

@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import type { User, InsertUser } from '../../../types/database'
+import type { User, InsertUser } from '@@/types/database'
 
 export const findUserByEmail = async (email: string): Promise<User | null> => {
   try {

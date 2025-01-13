@@ -16,4 +16,24 @@ export const subscriptions = sqliteTable('subscriptions', {
   variantId: text('variantId').notNull(),
   paymentProvider: text('paymentProvider').notNull(),
   nextPaymentDate: integer('nextPaymentDate', { mode: 'timestamp' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+    () => new Date(),
+  ),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
+})
+
+export const stripeCustomers = sqliteTable('stripe_customers', {
+  id: text('id').primaryKey(),
+  teamId: text('teamId')
+    .notNull()
+    .references(() => teams.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+    () => new Date(),
+  ),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+    () => new Date(),
+  ),
 })

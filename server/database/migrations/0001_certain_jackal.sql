@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD `emailVerified` integer DEFAULT false NOT NULL;
