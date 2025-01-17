@@ -24,7 +24,7 @@ export const findUserTeams = async (userId: string) => {
         tables.teamMembers,
         and(
           eq(tables.teams.id, tables.teamMembers.teamId),
-          eq(tables.teamMembers.userId, userId)
+          eq(tables.teamMembers.userId, userId),
         ),
       )
       .where(
@@ -42,6 +42,15 @@ export const findUserTeams = async (userId: string) => {
       statusMessage: 'Failed to find user teams',
     })
   }
+}
+
+export const getTeam = async (teamId: string) => {
+  const team = await useDB()
+    .select()
+    .from(tables.teams)
+    .where(eq(tables.teams.id, teamId))
+    .get()
+  return team
 }
 
 export const createTeam = async (payload: InsertTeam) => {
@@ -188,12 +197,12 @@ export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
       .select({ id: tables.teamMembers.id })
       .from(tables.teamMembers)
       .where(
-      and(
-        eq(tables.teamMembers.teamId, teamId),
-        eq(tables.teamMembers.userId, userId),
-      ),
-    )
-    .get()
+        and(
+          eq(tables.teamMembers.teamId, teamId),
+          eq(tables.teamMembers.userId, userId),
+        ),
+      )
+      .get()
 
     return !!member
   } catch (error) {

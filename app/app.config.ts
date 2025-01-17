@@ -6,16 +6,12 @@ export default defineAppConfig({
       loading: 'i-lucide-loader',
     },
     button: {
-      defaultVariants: {
-        color: 'neutral',
-        variant: 'soft',
-      },
       slots: {
         base: ['cursor-pointer'],
       },
     },
     colors: {
-      primary: 'emerald',
+      primary: 'sky',
       neutral: 'zinc',
     },
   },

@@ -14,6 +14,7 @@ export enum SubscriptionStatus {
   UNPAID = 'UNPAID',
   INCOMPLETE = 'INCOMPLETE',
   EXPIRED = 'EXPIRED',
+  PENDING = 'PENDING',
 }
 
 export enum OneTimePasswordTypes {

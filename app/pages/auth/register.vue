@@ -16,10 +16,20 @@
           @submit="onSubmit"
         >
           <UFormField label="Name" name="name">
-            <UInput v-model="state.name" class="w-full" size="lg" />
+            <UInput
+              v-model="state.name"
+              class="w-full"
+              size="lg"
+              autocomplete="given-name"
+            />
           </UFormField>
           <UFormField label="Email" name="email">
-            <UInput v-model="state.email" class="w-full" size="lg" />
+            <UInput
+              v-model="state.email"
+              class="w-full"
+              size="lg"
+              autocomplete="email"
+            />
           </UFormField>
 
           <UFormField label="Password" name="password">
@@ -28,6 +38,7 @@
               type="password"
               class="w-full"
               size="lg"
+              autocomplete="new-password"
             />
           </UFormField>
 

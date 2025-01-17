@@ -32,7 +32,7 @@
               label="Forgot password?"
               size="xs"
               color="neutral"
-              class="text-neutral-500"
+              class="text-zinc-500"
             />
           </template>
         </UFormField>

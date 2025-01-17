@@ -43,3 +43,45 @@ export const getAllPlans = async (): Promise<Plan[]> => {
       return lowestPriceA - lowestPriceB
     })
 }
+
+export const createStripeCustomer = async (email: string, teamId: string) => {
+  const customer = await stripe.customers.create({
+    email,
+    metadata: {
+      teamId,
+    },
+  })
+  return customer
+}
+
+export const createCheckoutLink = async (
+  customerId: string,
+  variantId: string,
+  redirectUrl: string,
+) => {
+  if (!customerId) {
+    throw new Error('Customer ID is required')
+  }
+  const checkoutSession = await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    success_url: redirectUrl,
+    customer: customerId,
+    line_items: [
+      {
+        price: variantId,
+        quantity: 1,
+      },
+    ],
+  })
+  return checkoutSession
+}
+
+export const getAllSubscriptions = async (customerId: string) => {
+  const subscriptions = await stripe.subscriptions.list({
+    customer: customerId,
+    limit: 1,
+    status: 'all',
+    expand: ['data.default_payment_method'],
+  })
+  return subscriptions
+}
