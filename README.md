@@ -1,4 +1,4 @@
-# Hello Edge
+# V3 is still in progress
 
 A minimal [Nuxt](https://nuxt.com) starter deployed on the Edge using [NuxtHub](https://hub.nuxt.com).
 
