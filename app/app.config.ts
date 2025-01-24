@@ -1,5 +1,3 @@
-import { desc } from 'drizzle-orm'
-
 export default defineAppConfig({
   ui: {
     icons: {

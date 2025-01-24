@@ -1,0 +1,1 @@
+ALTER TABLE `stripe_webhook_events` DROP COLUMN `eventType`;

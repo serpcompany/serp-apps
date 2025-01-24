@@ -28,7 +28,7 @@ onMounted(async () => {
       },
     })
     // Redirect to billing page after successful sync
-    return navigateTo(`/dashboard/${currentTeam.value.id}/settings/billing`)
+    return navigateTo(`/dashboard/${currentTeam.value.slug}/settings/billing`)
   } catch (error) {
     throw createError('Failed to sync subscription data')
   }

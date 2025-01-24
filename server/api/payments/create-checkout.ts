@@ -8,9 +8,10 @@ import {
   createStripeCustomer,
   createCheckoutLink,
 } from '@@/server/services/stripe'
-import { env } from '~~/env'
+
 const querySchema = z.object({
   teamId: z.string().min(1, 'Team ID is required'),
+  successUrl: z.string().min(1, 'Success URL is required'),
   variantId: z.string().min(1, 'Variant ID is required'),
 })
 
@@ -49,7 +50,7 @@ export default defineEventHandler(async (event) => {
   const checkoutSession = await createCheckoutLink(
     customer.id,
     query.variantId,
-    `${env.BASE_URL}/dashboard/success`,
+    query.successUrl,
   )
 
   return { success: true, url: checkoutSession.url }

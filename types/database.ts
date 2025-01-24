@@ -35,6 +35,9 @@ export type TeamInvite = typeof tables.teamInvites.$inferSelect
 export type InsertTeamInvite = typeof tables.teamInvites.$inferInsert
 export type StripeCustomer = typeof tables.stripeCustomers.$inferSelect
 export type InsertStripeCustomer = typeof tables.stripeCustomers.$inferInsert
+export type StripeWebhookEvent = typeof tables.stripeWebhookEvents.$inferSelect
+export type InsertStripeWebhookEvent =
+  typeof tables.stripeWebhookEvents.$inferInsert
 
 // Zod schemas
 export const insertUserSchema = createInsertSchema(tables.users)
@@ -103,5 +106,16 @@ export const selectWebAuthnChallengeSchema = createSelectSchema(
   tables.webAuthnChallenges,
 )
 
-export const insertStripeCustomerSchema = createInsertSchema(tables.stripeCustomers)
-export const selectStripeCustomerSchema = createSelectSchema(tables.stripeCustomers)
+export const insertStripeCustomerSchema = createInsertSchema(
+  tables.stripeCustomers,
+)
+export const selectStripeCustomerSchema = createSelectSchema(
+  tables.stripeCustomers,
+)
+
+export const insertStripeWebhookEventSchema = createInsertSchema(
+  tables.stripeWebhookEvents,
+)
+export const selectStripeWebhookEventSchema = createSelectSchema(
+  tables.stripeWebhookEvents,
+)

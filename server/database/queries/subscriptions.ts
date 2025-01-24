@@ -1,5 +1,9 @@
 import { eq } from 'drizzle-orm'
-import type { InsertSubscription, InsertStripeCustomer } from '@@/types/database'
+import type {
+  InsertSubscription,
+  InsertStripeCustomer,
+  InsertStripeWebhookEvent,
+} from '@@/types/database'
 
 export const createSubscription = async (payload: InsertSubscription) => {
   try {
@@ -105,6 +109,24 @@ export const addStripeCustomer = async (payload: InsertStripeCustomer) => {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to create Stripe customer',
+    })
+  }
+}
+
+export const addStripeWebhookEvent = async (
+  payload: InsertStripeWebhookEvent,
+) => {
+  try {
+    const event = await useDB()
+      .insert(tables.stripeWebhookEvents)
+      .values(payload)
+      .returning()
+      .get()
+    return event
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to create Stripe webhook event',
     })
   }
 }

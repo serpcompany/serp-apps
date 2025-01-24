@@ -37,3 +37,16 @@ export const stripeCustomers = sqliteTable('stripe_customers', {
     () => new Date(),
   ),
 })
+
+export const stripeWebhookEvents = sqliteTable('stripe_webhook_events', {
+  id: text('id')
+    .primaryKey()
+    .$default(() => nanoid()),
+  teamId: text('teamId')
+    .notNull()
+    .references(() => teams.id, { onDelete: 'cascade' }),
+  eventData: text('eventData', { mode: 'json' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+    () => new Date(),
+  ),
+})

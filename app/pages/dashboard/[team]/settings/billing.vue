@@ -39,6 +39,7 @@
 </template>
 
 <script lang="ts" setup>
+import { env } from '~~/env'
 import type { Plan } from '@@/types/stripe'
 const currentPlan = ref('prod_Ra34EdJKmjJyIS')
 const selectedInterval = ref('month')
@@ -70,6 +71,7 @@ const subscribe = async (planId: string) => {
     query: {
       teamId: currentTeam.value.id,
       variantId: variant.id,
+      successUrl: `${window.location.origin}/dashboard/${currentTeam.value.slug}/settings/payment-success`,
     },
   })
   if (!checkoutSession.url) return
