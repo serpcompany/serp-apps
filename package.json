@@ -13,11 +13,11 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "db:generate": "drizzle-kit generate",
-    "setup-env": "node setup-env.js"
+    "setup-env": "node setup-env.js",
+    "sync-stripe": "npx tsx scripts/sync-stripe-products-prices.ts"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.25",
-    "@lemonsqueezy/lemonsqueezy.js": "4.0.0",
     "@nuxt/eslint": "^0.7.5",
     "@nuxt/ui": "3.0.0-alpha.9",
     "@nuxthub/core": "^0.8.15",
@@ -44,6 +44,7 @@
   "devDependencies": {
     "@vueuse/core": "^12.5.0",
     "@vueuse/nuxt": "12.5.0",
+    "dotenv": "^16.4.7",
     "drizzle-kit": "0.30.3",
     "nitro-kutu": "^0.1.0",
     "nuxthub-ratelimit": "^1.0.4",

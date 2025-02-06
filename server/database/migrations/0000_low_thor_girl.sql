@@ -15,6 +15,15 @@ CREATE TABLE `waitlist` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `waitlist_email_unique` ON `waitlist` (`email`);--> statement-breakpoint
+CREATE TABLE `chats` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`title` text NOT NULL,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `email_verification_codes` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`userId` text NOT NULL,
@@ -71,6 +80,16 @@ CREATE TABLE `webauthn_credentials` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `webauthn_credentials_id_unique` ON `webauthn_credentials` (`id`);--> statement-breakpoint
+CREATE TABLE `customers` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text,
+	`team_id` text,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `images` (
 	`id` text PRIMARY KEY NOT NULL,
 	`userId` text NOT NULL,
@@ -130,29 +149,6 @@ CREATE TABLE `teams` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `teams_slug_unique` ON `teams` (`slug`);--> statement-breakpoint
-CREATE TABLE `stripe_customers` (
-	`id` text PRIMARY KEY NOT NULL,
-	`teamId` text NOT NULL,
-	`email` text NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
-	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE TABLE `subscriptions` (
-	`id` text PRIMARY KEY NOT NULL,
-	`teamId` text NOT NULL,
-	`customerId` text NOT NULL,
-	`status` text DEFAULT 'TRIALING' NOT NULL,
-	`planId` text NOT NULL,
-	`variantId` text NOT NULL,
-	`paymentProvider` text NOT NULL,
-	`nextPaymentDate` integer NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
-	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`email` text NOT NULL,
@@ -171,4 +167,33 @@ CREATE TABLE `users` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_phoneNumber_unique` ON `users` (`phoneNumber`);
+CREATE UNIQUE INDEX `users_phoneNumber_unique` ON `users` (`phoneNumber`);--> statement-breakpoint
+CREATE TABLE `products` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`description` text,
+	`active` integer DEFAULT true NOT NULL,
+	`image` text,
+	`metadata` text,
+	`product_orders` integer DEFAULT 0 NOT NULL,
+	`features` text,
+	`created_at` integer,
+	`updated_at` integer
+);
+--> statement-breakpoint
+CREATE TABLE `prices` (
+	`id` text PRIMARY KEY NOT NULL,
+	`description` text,
+	`currency` text NOT NULL,
+	`unit_amount` integer NOT NULL,
+	`type` text NOT NULL,
+	`interval` text NOT NULL,
+	`interval_count` integer NOT NULL,
+	`trial_period_days` integer,
+	`active` integer DEFAULT true NOT NULL,
+	`metadata` text,
+	`product_id` text NOT NULL,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON UPDATE no action ON DELETE cascade
+);

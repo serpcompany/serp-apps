@@ -18,8 +18,8 @@ export const env = createEnv({
     NUXT_OAUTH_GOOGLE_CLIENT_ID: z.string().min(1),
     NUXT_OAUTH_GOOGLE_CLIENT_SECRET: z.string().min(1),
     NUXT_SESSION_PASSWORD: z.string().min(32),
-    STRIPE_SECRET_KEY: z.string().min(1),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    NUXT_STRIPE_SECRET_KEY: z.string().min(1),
+    NUXT_STRIPE_WEBHOOK_SECRET: z.string().min(1),
     FROM_EMAIL: z.string().email(),
     EMAIL_PROVIDER: z.enum([
       'resend',

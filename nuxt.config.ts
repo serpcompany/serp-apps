@@ -35,4 +35,9 @@ export default defineNuxtConfig({
     blob: true,
     kv: true,
   },
+  vite: {
+    server: {
+      allowedHosts:['local.supersaas.dev']
+    }
+  }
 })

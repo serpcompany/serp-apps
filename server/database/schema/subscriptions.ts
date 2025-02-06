@@ -1,55 +1,29 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { customers } from './customers'
 import { relations } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
+import { prices } from './prices'
 import { teams } from './teams'
-
-export const subscriptionStatusEnum = [
-  'active',
-  'trialing',
-  'past_due',
-  'canceled',
-  'unpaid',
-  'incomplete',
-  'incomplete_expired',
-  'paused',
-  'none',
-] as const
-
-export const stripeCustomers = sqliteTable('stripe_customers', {
-  id: text('id').primaryKey().notNull().unique(),
-  teamId: text('teamId')
-    .notNull()
-    .references(() => teams.id, { onDelete: 'cascade' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
-    () => new Date(),
-  ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
-    () => new Date(),
-  ),
-})
+import { users } from './users'
 
 export const subscriptions = sqliteTable('subscriptions', {
-  id: text('id').primaryKey().notNull().unique(),
-  stripeCustomerId: text('stripeCustomerId')
-    .notNull()
-    .references(() => stripeCustomers.id, { onDelete: 'cascade' }),
-  status: text('status', { enum: subscriptionStatusEnum }).notNull(),
-  currentPeriodEnd: integer('current_period_end', {
-    mode: 'timestamp',
-  }),
+  id: text('id').primaryKey(),
+  customerId: text('customer_id').references(() => customers.id),
+  priceId: text('price_id').references(() => prices.id),
+  teamId: text('team_id').references(() => teams.id),
+  userId: text('user_id').references(() => users.id),
+  status: text('status').notNull(),
+  metadata: text('metadata', { mode: 'json' }),
+  quantity: integer('quantity').notNull(),
   cancelAtPeriodEnd: integer('cancel_at_period_end', {
     mode: 'boolean',
-  }),
-  currentPeriodStart: integer('current_period_start', {
-    mode: 'timestamp',
-  }),
+  }).notNull(),
+  currentPeriodEnd: integer('current_period_end', { mode: 'timestamp' }),
+  currentPeriodStart: integer('current_period_start', { mode: 'timestamp' }),
   endedAt: integer('ended_at', { mode: 'timestamp' }),
-  canceledAt: integer('canceled_at', { mode: 'timestamp' }),
+  cancelAt: integer('cancel_at', { mode: 'timestamp' }),
   trialStart: integer('trial_start', { mode: 'timestamp' }),
   trialEnd: integer('trial_end', { mode: 'timestamp' }),
-  priceId: text('priceId').notNull(),
-  paymentMethodBrand: text('payment_method_brand'),
-  paymentMethodLast4: text('payment_method_last4'),
+
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),
@@ -58,37 +32,21 @@ export const subscriptions = sqliteTable('subscriptions', {
   ),
 })
 
-export const stripeWebhookEvents = sqliteTable('stripe_webhook_events', {
-  id: text('id')
-    .primaryKey()
-    .$default(() => nanoid()),
-  eventId: text('eventId').notNull().unique(),
-  eventType: text('event_type').notNull(),
-  customerId: text('customer_id').references(() => stripeCustomers.id),
-  teamId: text('team_id').references(() => teams.id),
-  eventData: text('event_data', { mode: 'json' }).notNull(),
-  processedAt: integer('processed_at', { mode: 'timestamp' }),
-  processingStatus: text('processing_status', {
-    enum: ['pending', 'processed', 'failed'],
-  })
-    .notNull()
-    .default('pending'),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
-    () => new Date(),
-  ),
-})
-
-export const stripeCustomersRelations = relations(stripeCustomers, ({ one, many }) => ({
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  customer: one(customers, {
+    fields: [subscriptions.customerId],
+    references: [customers.id],
+  }),
+  price: one(prices, {
+    fields: [subscriptions.priceId],
+    references: [prices.id],
+  }),
   team: one(teams, {
-    fields: [stripeCustomers.teamId],
+    fields: [subscriptions.teamId],
     references: [teams.id],
   }),
-  subscriptions: many(subscriptions),
-}));
-
-export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
-  customer: one(stripeCustomers, {
-    fields: [subscriptions.stripeCustomerId],
-    references: [stripeCustomers.id],
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
   }),
-}));
+}))

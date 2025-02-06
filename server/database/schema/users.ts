@@ -17,6 +17,7 @@ export const users = sqliteTable('users', {
   phoneNumber: text('phoneNumber').unique(),
   bannedUntil: integer('bannedUntil', { mode: 'timestamp' }),
   onboarded: integer('onboarded', { mode: 'boolean' }).notNull().default(false),
+  proAccount: integer('proAccount', { mode: 'boolean' }).notNull().default(false),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),

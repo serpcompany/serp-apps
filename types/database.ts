@@ -3,8 +3,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 
 export type User = typeof tables.users.$inferSelect
 export type InsertUser = typeof tables.users.$inferInsert
-export type Subscription = typeof tables.subscriptions.$inferSelect
-export type InsertSubscription = typeof tables.subscriptions.$inferInsert
+
 export type Waitlist = typeof tables.waitlist.$inferSelect
 export type InsertWaitlist = typeof tables.waitlist.$inferInsert
 export type OAuthAccounts = typeof tables.oauthAccounts.$inferSelect
@@ -33,18 +32,18 @@ export type InsertWebAuthnChallenge =
   typeof tables.webAuthnChallenges.$inferInsert
 export type TeamInvite = typeof tables.teamInvites.$inferSelect
 export type InsertTeamInvite = typeof tables.teamInvites.$inferInsert
-export type StripeCustomer = typeof tables.stripeCustomers.$inferSelect
-export type InsertStripeCustomer = typeof tables.stripeCustomers.$inferInsert
-export type StripeWebhookEvent = typeof tables.stripeWebhookEvents.$inferSelect
-export type InsertStripeWebhookEvent =
-  typeof tables.stripeWebhookEvents.$inferInsert
+export type Product = typeof tables.products.$inferSelect
+export type InsertProduct = typeof tables.products.$inferInsert
+export type Price = typeof tables.prices.$inferSelect
+export type InsertPrice = typeof tables.prices.$inferInsert
+export type Customer = typeof tables.customers.$inferSelect
+export type InsertCustomer = typeof tables.customers.$inferInsert
+export type Subscription = typeof tables.subscriptions.$inferSelect
+export type InsertSubscription = typeof tables.subscriptions.$inferInsert
 
 // Zod schemas
 export const insertUserSchema = createInsertSchema(tables.users)
 export const selectUserSchema = createSelectSchema(tables.users)
-
-export const insertSubscriptionSchema = createInsertSchema(tables.subscriptions)
-export const selectSubscriptionSchema = createSelectSchema(tables.subscriptions)
 
 export const insertWaitlistSchema = createInsertSchema(tables.waitlist)
 export const selectWaitlistSchema = createSelectSchema(tables.waitlist)
@@ -106,16 +105,14 @@ export const selectWebAuthnChallengeSchema = createSelectSchema(
   tables.webAuthnChallenges,
 )
 
-export const insertStripeCustomerSchema = createInsertSchema(
-  tables.stripeCustomers,
-)
-export const selectStripeCustomerSchema = createSelectSchema(
-  tables.stripeCustomers,
-)
+export const insertProductSchema = createInsertSchema(tables.products)
+export const selectProductSchema = createSelectSchema(tables.products)
 
-export const insertStripeWebhookEventSchema = createInsertSchema(
-  tables.stripeWebhookEvents,
-)
-export const selectStripeWebhookEventSchema = createSelectSchema(
-  tables.stripeWebhookEvents,
-)
+export const insertPriceSchema = createInsertSchema(tables.prices)
+export const selectPriceSchema = createSelectSchema(tables.prices)
+
+export const insertCustomerSchema = createInsertSchema(tables.customers)
+export const selectCustomerSchema = createSelectSchema(tables.customers)
+
+export const insertSubscriptionSchema = createInsertSchema(tables.subscriptions)
+export const selectSubscriptionSchema = createSelectSchema(tables.subscriptions)
