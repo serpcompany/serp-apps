@@ -1,31 +1,32 @@
 <template>
-  <div class="p-4">
-    <header class="flex items-center gap-2">
-      <UButton
-        icon="i-lucide-menu"
-        color="neutral"
-        variant="ghost"
-        class="flex md:hidden"
-        @click="mobileMenu = !mobileMenu"
-      />
-      <div class="min-w-0 flex-1">
-        <h1 class="flex-1 truncate font-bold">{{ title }}</h1>
-        <p class="truncate text-xs text-neutral-500 md:text-sm">
-          {{ description }}
-        </p>
-      </div>
-      <slot name="actions" />
-    </header>
-    <div class="mt-4">
-      <slot />
+  <header class="sticky top-0 flex h-12 items-center gap-2 px-4 bg-white dark:bg-neutral-900 z-40">
+    <UButton
+      icon="i-lucide-panel-left"
+      color="neutral"
+      variant="ghost"
+      class="flex md:hidden"
+      @click="mobileMenu = !mobileMenu"
+    />
+    <div class="min-w-0 flex-1">
+      <h1 class="flex-1 truncate font-bold">{{ title }}</h1>
     </div>
+    <slot name="actions" />
+  </header>
+  <div :class="{ 'p-4': padding }">
+    <slot />
   </div>
 </template>
 
 <script lang="ts" setup>
 const mobileMenu = useState('mobileMenu')
-defineProps<{
-  title: string
-  description?: string
-}>()
+withDefaults(
+  defineProps<{
+    title: string
+    description?: string
+    padding?: boolean
+  }>(),
+  {
+    padding: true,
+  },
+)
 </script>

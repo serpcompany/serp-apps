@@ -79,6 +79,9 @@ const items = ref([
       label: 'Account Settings',
       icon: 'i-lucide-user-cog',
       to: '/dashboard/account-settings',
+      onSelect: () => {
+        mobileMenu.value = false
+      },
     },
   ],
   [

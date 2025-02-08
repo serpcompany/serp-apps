@@ -52,7 +52,7 @@
         :interval="plan.interval"
         :price-id="plan.id"
         :features="plan.product.features"
-        :active="false"
+        :active="currentPlan.id === plan.id"
         :loading="loadingPriceId === plan.id"
         :disabled="disabled"
         @subscribe="handleSubscribe"
