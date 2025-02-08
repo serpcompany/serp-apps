@@ -5,7 +5,7 @@
   >
     <div
       v-if="activeSubscription"
-      class="flex h-full flex-col rounded-xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900"
+      class="flex h-full flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-6 dark:border-neutral-800 dark:bg-neutral-900"
     >
       <div class="flex flex-col space-y-4">
         <div
@@ -21,7 +21,7 @@
                 <span class="text-xl font-semibold">{{
                   formatPrice(currentPlan.amount)
                 }}</span>
-                <span class="text-zinc-500"
+                <span class="text-neutral-500"
                   >every {{ currentPlan.interval }}</span
                 >
               </div>
@@ -31,7 +31,7 @@
                 variant="subtle"
                 class="capitalize"
               />
-              <span class="text-sm text-zinc-500">
+              <span class="text-sm text-neutral-500">
                 Renews on
                 {{
                   useDateFormat(currentPlan.currentPeriodEnd, 'MMM DD, YYYY')

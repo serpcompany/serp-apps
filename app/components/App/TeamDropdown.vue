@@ -12,7 +12,7 @@
       :avatar="getAvatarProps(activeTeam)"
       color="neutral"
       variant="ghost"
-      class="w-full hover:bg-zinc-200/80 dark:hover:bg-white/10"
+      class="w-full hover:bg-neutral-200/80 dark:hover:bg-white/10"
       block
       trailing-icon="i-lucide-chevrons-up-down"
       :ui="{ trailingIcon: 'size-4' }"

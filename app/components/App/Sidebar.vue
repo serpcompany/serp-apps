@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative hidden w-0 flex-col items-stretch border-r border-zinc-200 bg-zinc-100 md:flex md:w-64 dark:border-zinc-900 dark:bg-black"
+    class="relative hidden w-0 flex-col items-stretch border-r border-neutral-200 bg-neutral-100 md:flex md:w-64 dark:border-neutral-900 dark:bg-black"
   >
     <header class="p-2">
       <AppTeamDropdown />

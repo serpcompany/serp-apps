@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <header class="flex items-start gap-2 md:items-center">
+    <header class="flex items-center gap-2">
       <UButton
         icon="i-lucide-menu"
         color="neutral"
@@ -10,7 +10,7 @@
       />
       <div class="min-w-0 flex-1">
         <h1 class="flex-1 truncate font-bold">{{ title }}</h1>
-        <p class="truncate text-xs text-zinc-500 md:text-sm">
+        <p class="truncate text-xs text-neutral-500 md:text-sm">
           {{ description }}
         </p>
       </div>

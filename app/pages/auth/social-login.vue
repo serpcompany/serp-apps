@@ -4,7 +4,7 @@
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
       <div class="text-center">
         <p class="text-lg font-bold">Sign in to your account</p>
-        <p class="text-sm text-zinc-500">
+        <p class="text-sm text-neutral-500">
           Welcome back! Please sign in to continue.
         </p>
       </div>

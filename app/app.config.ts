@@ -10,7 +10,7 @@ export default defineAppConfig({
     },
     colors: {
       primary: 'sky',
-      neutral: 'zinc',
+      neutral: 'neutral',
     },
   },
   seo: {

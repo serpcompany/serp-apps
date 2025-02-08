@@ -2,7 +2,7 @@
   <UCard>
     <template #header>
       <h3 class="font-medium">Security</h3>
-      <p class="mt-1 text-sm text-zinc-500">
+      <p class="mt-1 text-sm text-neutral-500">
         Your credentials are encrypted and stored securely.
       </p>
     </template>

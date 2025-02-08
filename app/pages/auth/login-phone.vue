@@ -5,7 +5,7 @@
       <template v-if="mode === 'phone'">
         <div class="text-center">
           <p class="text-lg font-bold">Sign in with phone number</p>
-          <p class="text-sm text-zinc-500">
+          <p class="text-sm text-neutral-500">
             Enter your phone number to receive a verification code
           </p>
         </div>
@@ -40,7 +40,7 @@
       <div v-else>
         <div class="text-center">
           <p class="text-lg font-bold">Enter verification code</p>
-          <p class="text-sm text-zinc-500">
+          <p class="text-sm text-neutral-500">
             We've sent a 6-digit code to your phone
           </p>
         </div>

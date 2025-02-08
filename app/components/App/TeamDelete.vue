@@ -11,7 +11,7 @@
       </div>
       <div class="flex-1">
         <h4 class="font-medium">Delete Team</h4>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400">
+        <p class="text-xs text-neutral-500 dark:text-neutral-400">
           Deleting a team is irreversible and will remove all data associated
           with it.
         </p>

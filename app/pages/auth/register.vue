@@ -5,7 +5,7 @@
         <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
         <div class="text-center">
           <p class="text-lg font-bold">Create a new account</p>
-          <p class="text-sm text-zinc-500">
+          <p class="text-sm text-neutral-500">
             Welcome! Please fill in your details to get started.
           </p>
         </div>
@@ -57,7 +57,7 @@
       <UCard v-else>
         <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
         <p class="mt-4 text-lg font-bold">Check your email</p>
-        <p class="mt-1 text-sm text-zinc-500">
+        <p class="mt-1 text-sm text-neutral-500">
           We've sent you an email to verify your account.
         </p>
       </UCard>

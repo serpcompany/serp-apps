@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
+    <table class="min-w-full divide-y divide-neutral-200 dark:divide-white/10">
       <thead>
         <tr class="text-sm">
           <th
@@ -12,7 +12,7 @@
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-zinc-200 dark:divide-white/10">
+      <tbody class="divide-y divide-neutral-200 dark:divide-white/10">
         <tr
           v-for="member in members"
           :key="member.id"
@@ -31,7 +31,7 @@
                 size="xs"
                 :alt="member.name"
               />
-              <span class="font-medium text-zinc-900 dark:text-white">{{
+              <span class="font-medium text-neutral-900 dark:text-white">{{
                 member.name
               }}</span>
             </div>

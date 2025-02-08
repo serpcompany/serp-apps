@@ -1,17 +1,17 @@
 <template>
   <div
-    class="flex h-full flex-col rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900"
+    class="flex h-full flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900"
     :class="{
-      'border-zinc-300 bg-zinc-50 ring-4 ring-zinc-500/20': active,
+      'border-neutral-300 bg-neutral-50 ring-4 ring-neutral-500/20': active,
     }"
   >
     <p class="font-semibold">{{ title }}</p>
-    <p class="mt-1 text-sm text-zinc-500">{{ description }}</p>
+    <p class="mt-1 text-sm text-neutral-500">{{ description }}</p>
     <div class="mt-auto mb-2 flex items-baseline pt-4">
       <span class="text-3xl font-bold">
         {{ formatPrice(unitAmount) }}
       </span>
-      <span class="ml-1 text-zinc-500">/{{ interval }} </span>
+      <span class="ml-1 text-neutral-500">/{{ interval }} </span>
     </div>
     <UButton
       color="neutral"
@@ -28,7 +28,7 @@
         :key="feature.name"
         class="flex items-center gap-3 text-[var(--ui-text-muted)]"
       >
-        <UIcon name="i-lucide-circle-check" class="h-4 w-4 text-zinc-400" />
+        <UIcon name="i-lucide-circle-check" class="h-4 w-4 text-neutral-400" />
         <span class="text-sm">{{ feature.name }}</span>
       </li>
     </ul>

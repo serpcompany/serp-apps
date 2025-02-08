@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table class="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
+    <table class="min-w-full divide-y divide-neutral-200 dark:divide-white/10">
       <thead>
         <tr class="text-sm">
           <th
@@ -12,7 +12,7 @@
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+      <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
         <tr
           v-for="invite in invites"
           :key="invite.id"
