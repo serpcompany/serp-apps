@@ -1,11 +1,24 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
     <div class="mx-auto w-full max-w-sm space-y-4">
-      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
+      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
       <div class="text-center">
-        <p class="text-lg font-bold">Sign in to your account</p>
+        <p class="text-lg font-bold">Sign in to Supersaas</p>
         <p class="text-sm text-neutral-500">
-          Welcome back! Please sign in to continue.
+          Dont have an account?
+          <UButton
+            padding="none"
+            trailing-icon="i-lucide-arrow-right"
+            color="neutral"
+            to="/auth/register"
+            variant="link"
+            label="Get Started"
+            class="font-normal"
+            :ui="{
+              trailingIcon: 'size-4',
+            }"
+            square
+          />
         </p>
       </div>
       <UForm
@@ -48,52 +61,17 @@
           Submit
         </UButton>
       </UForm>
-      <USeparator label="or continue with" />
-      <div class="space-y-2">
-        <UButton
-          to="/auth/magic-link"
-          block
-          color="neutral"
-          size="lg"
-          icon="i-lucide-link"
-          variant="soft"
-        >
-          Email Link
-        </UButton>
-        <UButton
-          to="/auth/login-passkey"
-          block
-          color="neutral"
-          size="lg"
-          icon="i-lucide-fingerprint"
-          variant="soft"
-        >
-          Passkey
-        </UButton>
-        <UButton
-          to="/auth/login-phone"
-          block
-          color="neutral"
-          size="lg"
-          icon="i-lucide-phone"
-          variant="soft"
-        >
-          Phone
-        </UButton>
+      <USeparator label="OR" />
+      <div class="grid grid-cols-2 gap-2">
         <AuthSocialLoginButton
           label="Google"
-          icon="i-mdi-google"
+          icon="i-logos-google-icon"
           provider="google"
         />
         <AuthSocialLoginButton
           label="Github"
           icon="i-mdi-github"
           provider="github"
-        />
-        <AuthSocialLoginButton
-          label="Discord"
-          icon="i-simple-icons-discord"
-          provider="discord"
         />
       </div>
     </div>
@@ -106,10 +84,9 @@ import type { FormSubmitEvent } from '#ui/types'
 import { loginUserSchema } from '@@/shared/validations/auth'
 type Schema = z.output<typeof loginUserSchema>
 
-const toast = useToast()
-
-const { fetch: refreshSession } = useUserSession()
 const loading = ref(false)
+const { login } = useAuth()
+const router = useRouter()
 
 const state = reactive<Partial<Schema>>({
   email: undefined,
@@ -117,26 +94,11 @@ const state = reactive<Partial<Schema>>({
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  try {
-    loading.value = true
-    await $fetch('/api/auth/password/login', {
-      method: 'POST',
-      body: event.data,
-    })
-    await refreshSession()
-    toast.add({
-      title: 'Logged in',
-      color: 'success',
-    })
-    navigateTo('/dashboard')
-  } catch (error) {
-    toast.add({
-      title: 'Something went wrong',
-      description: (error as any).data.message,
-      color: 'error',
-    })
-  } finally {
-    loading.value = false
+  loading.value = true
+  const { error } = await login(event.data)
+  if (!error) {
+    await router.push('/dashboard')
   }
+  loading.value = false
 }
 </script>

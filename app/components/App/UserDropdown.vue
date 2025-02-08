@@ -9,21 +9,46 @@
     }"
   >
     <UButton
-      :avatar="{
-        src:
-          user?.avatarUrl ||
-          `https://api.dicebear.com/9.x/thumbs/svg?seed=${user?.name}`,
-        alt: user?.name,
-        size: 'xs',
-      }"
-      :label="user?.name"
+      block
       color="neutral"
       variant="ghost"
-      trailing-icon="i-lucide-chevron-up"
-      class="w-full hover:bg-neutral-200/80 dark:hover:bg-white/10"
-      :ui="{ trailingIcon: 'size-4' }"
-      block
-    />
+      class="w-full justify-normal text-left hover:bg-zinc-200/80 dark:hover:bg-white/10"
+    >
+      <UAvatar
+        :src="user?.avatarUrl || ''"
+        :alt="user?.name"
+        size="xs"
+        class="ring-2 ring-gray-200 dark:ring-white/10"
+      />
+      <div class="flex flex-1 items-center gap-2">
+        <p class="text-sm">{{ user?.name }}</p>
+        <UBadge
+          :label="user?.pro_account ? 'Pro' : 'Free'"
+          color="neutral"
+          variant="subtle"
+          size="sm"
+        />
+      </div>
+      <UIcon name="i-lucide-chevron-up" />
+    </UButton>
+    <template #profile>
+      <div class="flex items-center gap-2">
+        <UAvatar
+          :src="user?.avatarUrl || ''"
+          :alt="user?.name"
+          class="ring-2 ring-gray-200 dark:ring-white/10"
+        />
+        <div class="flex-1">
+          <p :style="{ fontWeight: 500 }" class="text-sm">{{ user?.name }}</p>
+          <p
+            class="text-xs text-zinc-500 dark:text-zinc-400"
+            :style="{ fontWeight: 400 }"
+          >
+            {{ user?.email }}
+          </p>
+        </div>
+      </div>
+    </template>
   </UDropdownMenu>
 </template>
 
@@ -37,11 +62,16 @@ async function signOut() {
 const items = ref([
   [
     {
-      label: user.value?.name,
+      slot: 'profile',
+      label: user?.value?.name,
       avatar: {
-        src: user.value?.avatarUrl,
+        src: user?.value?.avatarUrl || '',
+        alt: user?.value?.name,
       },
       type: 'label',
+      onSelect: () => {
+        mobileMenu.value = false
+      },
     },
   ],
   [

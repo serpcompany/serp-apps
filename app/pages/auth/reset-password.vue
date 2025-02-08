@@ -42,9 +42,10 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 
-const toast = useToast()
 const route = useRoute()
+const router = useRouter()
 const loading = ref(false)
+const { resetPassword } = useAuth()
 
 const resetPasswordSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -57,28 +58,12 @@ const state = reactive<Partial<Schema>>({
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  try {
-    loading.value = true
-    await $fetch('/api/auth/password/reset', {
-      method: 'POST',
-      body: {
-        token: route.query.token,
-        password: event.data.password,
-      },
-    })
-    toast.add({
-      title: 'Password reset successfully',
-      color: 'success',
-    })
-    navigateTo('/auth/login')
-  } catch (error: any) {
-    toast.add({
-      title: 'Failed to reset password',
-      description: error.data?.message || 'Failed to reset password',
-      color: 'error',
-    })
-  } finally {
-    loading.value = false
+  loading.value = true
+  const token = route.query.token as string
+  const { error } = await resetPassword(event.data.password, token)
+  if (!error) {
+    await router.push('/auth/login')
   }
+  loading.value = false
 }
 </script>

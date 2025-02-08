@@ -37,36 +37,18 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema } from '@@/shared/validations/auth'
-const toast = useToast()
 
 type PasswordResetSchema = z.output<typeof emailSchema>
 const loading = ref(false)
+const { forgotPassword } = useAuth()
 
 const state = reactive<Partial<PasswordResetSchema>>({
   email: undefined,
 })
 
-const onSubmit = async (
-  event: FormSubmitEvent<PasswordResetSchema>,
-): Promise<void> => {
-  try {
-    loading.value = true
-    await $fetch('/api/auth/password/forgot', {
-      method: 'POST',
-      body: event.data,
-    })
-    toast.add({
-      title: 'If the email is correct, you will receive a password reset link.',
-      color: 'success',
-    })
-  } catch (error: any) {
-    toast.add({
-      title: 'Failed to send password reset instructions',
-      description: error.data.message,
-      color: 'error',
-    })
-  } finally {
-    loading.value = false
-  }
+const onSubmit = async (event: FormSubmitEvent<PasswordResetSchema>) => {
+  loading.value = true
+  await forgotPassword(event.data.email)
+  loading.value = false
 }
 </script>

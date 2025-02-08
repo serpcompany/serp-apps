@@ -1,0 +1,1 @@
+DROP INDEX `teams_slug_unique`;

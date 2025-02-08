@@ -1,12 +1,25 @@
 <template>
-  <main class="flex min-h-screen items-center justify-center">
+  <main class="relative flex min-h-screen items-center justify-center">
     <div class="mx-auto w-full max-w-sm space-y-4">
       <template v-if="!registered">
-        <img src="/logo.png" alt="logo" class="mx-auto h-10 w-10" />
+        <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
         <div class="text-center">
-          <p class="text-lg font-bold">Create a new account</p>
+          <p class="text-lg font-bold">Get Started with Supersaas</p>
           <p class="text-sm text-neutral-500">
-            Welcome! Please fill in your details to get started.
+            Already have an account?
+            <UButton
+              padding="none"
+              trailing-icon="i-lucide-arrow-right"
+              color="neutral"
+              to="/auth/login"
+              variant="link"
+              label="Login"
+              class="font-normal"
+              :ui="{
+                trailingIcon: 'size-4',
+              }"
+              square
+            />
           </p>
         </div>
         <UForm
@@ -53,6 +66,19 @@
             Submit
           </UButton>
         </UForm>
+        <USeparator label="OR" />
+        <div class="grid grid-cols-2 gap-2">
+          <AuthSocialLoginButton
+            label="Google"
+            icon="i-logos-google-icon"
+            provider="google"
+          />
+          <AuthSocialLoginButton
+            label="Github"
+            icon="i-mdi-github"
+            provider="github"
+          />
+        </div>
       </template>
       <UCard v-else>
         <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
@@ -61,6 +87,11 @@
           We've sent you an email to verify your account.
         </p>
       </UCard>
+    </div>
+    <div class="absolute bottom-2 left-1/2 -translate-x-1/2">
+      <NuxtLink to="/auth/all-auth-options" class="text-sm text-neutral-500"
+        >All auth options</NuxtLink
+      >
     </div>
   </main>
 </template>
@@ -71,9 +102,9 @@ import type { FormSubmitEvent } from '#ui/types'
 import { registerUserSchema } from '@@/shared/validations/auth'
 type Schema = z.output<typeof registerUserSchema>
 
-const toast = useToast()
 const registered = ref(false)
 const loading = ref(false)
+const { register } = useAuth()
 
 const state = reactive<Partial<Schema>>({
   email: undefined,
@@ -82,21 +113,11 @@ const state = reactive<Partial<Schema>>({
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  try {
-    loading.value = true
-    await $fetch('/api/auth/password/register', {
-      method: 'POST',
-      body: event.data,
-    })
+  loading.value = true
+  const { error } = await register(event.data)
+  if (!error) {
     registered.value = true
-  } catch (error) {
-    toast.add({
-      title: 'Failed to register',
-      description: (error as any).data.message,
-      color: 'error',
-    })
-  } finally {
-    loading.value = false
   }
+  loading.value = false
 }
 </script>

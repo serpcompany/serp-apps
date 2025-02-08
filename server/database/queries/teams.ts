@@ -70,12 +70,6 @@ export const createTeam = async (payload: InsertTeam) => {
     return team
   } catch (error) {
     if (error instanceof Error) {
-      if (error.message.includes('UNIQUE constraint failed: teams.slug')) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'Team slug not available, please pick another one',
-        })
-      }
       throw new Error(error.message)
     }
     throw new Error('Failed to create team')
