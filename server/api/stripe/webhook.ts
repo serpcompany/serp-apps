@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   }
   let stripeEvent
   try {
-    stripeEvent = await stripe.webhooks.constructEvent(
+    stripeEvent = await stripe.webhooks.constructEventAsync(
       body,
       stripeSignature,
       webhookSecret,
