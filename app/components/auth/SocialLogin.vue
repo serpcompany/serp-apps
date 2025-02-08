@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <AuthSocialLoginButton
       label="Google"
-      icon="i-mdi-google"
+      icon="i-logos-google-icon"
       provider="google"
     />
     <AuthSocialLoginButton
@@ -12,7 +12,7 @@
     />
     <AuthSocialLoginButton
       label="Discord"
-      icon="i-simple-icons-discord"
+      icon="i-logos-discord-icon"
       provider="discord"
     />
   </div>

@@ -8,7 +8,7 @@
     color="neutral"
     size="lg"
     :icon="icon"
-    variant="soft"
+    variant="subtle"
   >
     {{ label }}
   </UButton>
