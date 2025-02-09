@@ -9,7 +9,7 @@
     v-else
     side="left"
     v-model:open="model"
-    :ui="{ content: 'max-w-[85%]' }"
+    :ui="{ content: 'max-w-[75%] sm:max-w-[50%]' }"
   >
     <template #content>
       <div class="flex h-full flex-col p-2">

@@ -22,12 +22,6 @@
       />
       <div class="flex flex-1 items-center gap-2">
         <p class="text-sm">{{ user?.name }}</p>
-        <UBadge
-          :label="user?.pro_account ? 'Pro' : 'Free'"
-          color="neutral"
-          variant="subtle"
-          size="sm"
-        />
       </div>
       <UIcon name="i-lucide-chevron-up" />
     </UButton>
