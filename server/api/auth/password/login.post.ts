@@ -17,7 +17,7 @@ import {
   findUserByEmail,
   findLinkedAccountsByUserId,
   updateLastActiveTimestamp,
-} from '~~/server/database/queries/users'
+} from '@@/server/database/queries/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 

@@ -2,7 +2,7 @@ import {
   storeWebAuthnChallenge,
   getAndDeleteChallenge,
   createCredential,
-} from '~~/server/database/queries/passkeys'
+} from '@@/server/database/queries/passkeys'
 import type { InsertPasskey } from '@@/types/database'
 import { linkPasskeySchema } from '@@/shared/validations/auth'
 

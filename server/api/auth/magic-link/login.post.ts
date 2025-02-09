@@ -22,11 +22,11 @@ import {
   generateAlphaNumericCode,
   generateNumericCode,
 } from '@@/server/utils/nanoid'
-import { findUserByEmail } from '~~/server/database/queries/users'
+import { findUserByEmail } from '@@/server/database/queries/users'
 import {
   saveEmailVerificationCode,
   saveOneTimePassword,
-} from '~~/server/database/queries/auth'
+} from '@@/server/database/queries/auth'
 import { OneTimePasswordTypes } from '@@/constants'
 import EmailVerification from '@@/emails/magic-link.vue'
 import { render } from '@vue-email/render'

@@ -1,4 +1,4 @@
-import { deleteTeam, findUserTeams } from '~~/server/database/queries/teams'
+import { deleteTeam, findUserTeams } from '@@/server/database/queries/teams'
 
 export default defineEventHandler(async (event) => {
   // 1. Get authenticated user and team ID

@@ -11,7 +11,7 @@ import {
   findPasswordResetToken,
   deletePasswordResetToken,
 } from '@@/server/database/queries/auth'
-import { updateUser } from '~~/server/database/queries/users'
+import { updateUser } from '@@/server/database/queries/users'
 
 const resetPasswordSchema = z.object({
   token: z.string(),

@@ -1,5 +1,5 @@
-import { findUserTeams } from '~~/server/database/queries/teams'
-import { getUserPreferences } from '~~/server/database/queries/users'
+import { findUserTeams } from '@@/server/database/queries/teams'
+import { getUserPreferences } from '@@/server/database/queries/users'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)

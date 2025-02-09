@@ -18,7 +18,7 @@ import {
   findUserById,
   verifyUser,
   updateLastActiveTimestamp,
-} from '~~/server/database/queries/users'
+} from '@@/server/database/queries/users'
 import {
   findEmailVerificationCode,
   deleteEmailVerificationCode,

@@ -1,4 +1,4 @@
-import { updateUser } from '~~/server/database/queries/users'
+import { updateUser } from '@@/server/database/queries/users'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { updateUserSchema } from '@@/shared/validations/user'
 

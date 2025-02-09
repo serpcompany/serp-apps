@@ -6,7 +6,7 @@
 
 import { emailSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
-import { findUserByEmail } from '~~/server/database/queries/users'
+import { findUserByEmail } from '@@/server/database/queries/users'
 import { createPasswordResetToken } from '@@/server/database/queries/auth'
 import { sendEmail } from '@@/server/services/email'
 import { env } from '@@/env'

@@ -1,8 +1,8 @@
-import { findUserByPhoneNumber } from '~~/server/database/queries/users'
+import { findUserByPhoneNumber } from '@@/server/database/queries/users'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { phoneSchema } from '@@/shared/validations/auth'
 import { generateNumericCode } from '@@/server/utils/nanoid'
-import { env } from '~~/env'
+import { env } from '@@/env'
 import { saveOneTimePassword } from '@@/server/database/queries/auth'
 import { OneTimePasswordTypes } from '@@/constants'
 

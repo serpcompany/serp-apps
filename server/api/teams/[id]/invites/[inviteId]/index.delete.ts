@@ -1,5 +1,5 @@
 import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
-import { cancelInvite } from '~~/server/database/queries/teams'
+import { cancelInvite } from '@@/server/database/queries/teams'
 
 export default defineEventHandler(async (event) => {
   const teamId = getRouterParam(event, 'id')

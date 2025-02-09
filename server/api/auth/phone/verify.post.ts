@@ -6,7 +6,7 @@ import { isWithinExpiryDate } from '@@/server/utils/auth'
 import {
   findUserByPhoneNumber,
   updateLastActiveTimestamp,
-} from '~~/server/database/queries/users'
+} from '@@/server/database/queries/users'
 import { phoneVerificationSchema } from '@@/shared/validations/auth'
 
 export default defineEventHandler(async (event) => {

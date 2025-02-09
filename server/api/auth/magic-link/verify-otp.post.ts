@@ -20,7 +20,7 @@ import { isWithinExpiryDate } from '@@/server/utils/auth'
 import {
   findUserById,
   updateLastActiveTimestamp,
-} from '~~/server/database/queries/users'
+} from '@@/server/database/queries/users'
 
 export default defineEventHandler(async (event) => {
   const data = await validateBody(event, otpLoginSchema)

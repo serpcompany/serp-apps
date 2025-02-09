@@ -1,4 +1,4 @@
-import { updateUserPassword } from '~~/server/database/queries/users'
+import { updateUserPassword } from '@@/server/database/queries/users'
 import { updateUserPasswordSchema } from '@@/shared/validations/auth'
 
 export default defineEventHandler(async (event) => {
