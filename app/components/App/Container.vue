@@ -4,7 +4,7 @@
       icon="i-lucide-panel-left"
       color="neutral"
       variant="ghost"
-      class="flex md:hidden"
+      class="flex lg:hidden"
       @click="mobileMenu = !mobileMenu"
     />
     <div class="min-w-0 flex-1">
