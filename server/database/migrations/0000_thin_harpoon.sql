@@ -17,11 +17,34 @@ CREATE TABLE `waitlist` (
 CREATE UNIQUE INDEX `waitlist_email_unique` ON `waitlist` (`email`);--> statement-breakpoint
 CREATE TABLE `chats` (
 	`id` text PRIMARY KEY NOT NULL,
+	`team_id` text NOT NULL,
 	`user_id` text NOT NULL,
 	`title` text NOT NULL,
 	`created_at` integer,
 	`updated_at` integer,
+	FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `messages` (
+	`id` text PRIMARY KEY NOT NULL,
+	`chat_id` text NOT NULL,
+	`user_id` text NOT NULL,
+	`role` text NOT NULL,
+	`content` text NOT NULL,
+	`created_at` integer,
+	FOREIGN KEY (`chat_id`) REFERENCES `chats`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `public_chats` (
+	`id` text PRIMARY KEY NOT NULL,
+	`title` text NOT NULL,
+	`author` text NOT NULL,
+	`author_avatar` text NOT NULL,
+	`messages` text DEFAULT '[]' NOT NULL,
+	`created_at` integer,
+	`updated_at` integer
 );
 --> statement-breakpoint
 CREATE TABLE `email_verification_codes` (
@@ -148,7 +171,6 @@ CREATE TABLE `teams` (
 	FOREIGN KEY (`ownerId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `teams_slug_unique` ON `teams` (`slug`);--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`email` text NOT NULL,
@@ -161,6 +183,7 @@ CREATE TABLE `users` (
 	`phoneNumber` text,
 	`bannedUntil` integer,
 	`onboarded` integer DEFAULT false NOT NULL,
+	`proAccount` integer DEFAULT false NOT NULL,
 	`created_at` integer,
 	`updated_at` integer,
 	`last_active` integer
@@ -196,4 +219,28 @@ CREATE TABLE `prices` (
 	`created_at` integer,
 	`updated_at` integer,
 	FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `subscriptions` (
+	`id` text PRIMARY KEY NOT NULL,
+	`customer_id` text,
+	`price_id` text,
+	`team_id` text,
+	`user_id` text,
+	`status` text NOT NULL,
+	`metadata` text,
+	`quantity` integer NOT NULL,
+	`cancel_at_period_end` integer NOT NULL,
+	`current_period_end` integer,
+	`current_period_start` integer,
+	`ended_at` integer,
+	`cancel_at` integer,
+	`trial_start` integer,
+	`trial_end` integer,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`price_id`) REFERENCES `prices`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );

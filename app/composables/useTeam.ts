@@ -18,10 +18,14 @@ export const useTeam = () => {
   const teamSlug = useRoute().params.team as string
   const loading = ref(false)
   const teams = useState<Team[]>('teams')
-  
-  const currentTeam = computed(() =>
-    teams.value.find((team) => team.slug === teamSlug),
-  )
+
+  const currentTeam = computed(() => {
+    const team = teams.value.find((team) => team.slug === teamSlug)
+    if (!team) {
+      throw createError('Team not found')
+    }
+    return team
+  })
   const isTeamOwner = computed(
     () => currentTeam.value?.ownerId === user.value?.id,
   )

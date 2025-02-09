@@ -6,7 +6,7 @@
           <tr
             v-for="contact in contacts"
             :key="contact.id"
-            class="border-b border-neutral-100 dark:border-white/10 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-sm [&>td]:whitespace-nowrap"
+            class="border-b border-neutral-100 text-sm text-neutral-500 hover:bg-neutral-50 dark:border-white/10 dark:text-neutral-400 dark:hover:bg-neutral-800/50 [&>td]:whitespace-nowrap"
           >
             <td class="p-2">
               <div class="flex items-center gap-2">
@@ -30,19 +30,22 @@
               <UBadge
                 class="w-20"
                 variant="subtle"
+                :ui="{
+                  leadingIcon: 'size-3',
+                }"
                 :color="
                   contact.status === 'Active'
                     ? 'success'
                     : contact.status === 'Inactive'
-                    ? 'info'
-                    : 'warning'
+                      ? 'info'
+                      : 'warning'
                 "
                 :icon="
                   contact.status === 'Active'
-                    ? 'i-lucide-flame'
+                    ? 'i-lucide-circle'
                     : contact.status === 'Inactive'
-                    ? 'i-lucide-snowflake'
-                    : 'i-lucide-sun'
+                      ? 'i-lucide-circle-dashed'
+                      : 'i-lucide-circle-dot-dashed'
                 "
               >
                 {{ contact.status }}
@@ -67,7 +70,7 @@ const contacts = [
     phone: '+1 415 555 0123',
     company: 'Vercel',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.vercel.com'
+      'https://www.vercel.com',
     )}`,
     status: 'Active',
     ARR: '$110K',
@@ -81,7 +84,7 @@ const contacts = [
     phone: '+1 206 555 0134',
     company: 'Jio',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.jio.com'
+      'https://www.jio.com',
     )}`,
     status: 'Active',
     ARR: '$460K',
@@ -95,7 +98,7 @@ const contacts = [
     phone: '+1 650 555 0145',
     company: 'Google',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.openai.com'
+      'https://www.openai.com',
     )}`,
     status: 'Inactive',
     ARR: '$1.9M',
@@ -109,7 +112,7 @@ const contacts = [
     phone: '+1 206 555 0156',
     company: 'Campsite',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.campsite.com'
+      'https://www.campsite.com',
     )}`,
     status: 'Active',
     ARR: '$210M',
@@ -123,7 +126,7 @@ const contacts = [
     phone: '+1 408 555 0167',
     company: 'Paypal',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.paypal.com'
+      'https://www.paypal.com',
     )}`,
     status: 'Active',
     ARR: '$908K',
@@ -137,7 +140,7 @@ const contacts = [
     phone: '+1 650 555 0178',
     company: 'Stripe',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.stripe.com'
+      'https://www.stripe.com',
     )}`,
     status: 'Pending',
     ARR: '$330M',
@@ -151,7 +154,7 @@ const contacts = [
     phone: '+1 415 555 0189',
     company: 'Adobe',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.adobe.com'
+      'https://www.adobe.com',
     )}`,
     status: 'Active',
     ARR: '$1.2M',
@@ -165,7 +168,7 @@ const contacts = [
     phone: '+1 503 555 0190',
     company: 'Shopify',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.shopify.com'
+      'https://www.shopify.com',
     )}`,
     status: 'Active',
     ARR: '$620M',
@@ -179,7 +182,7 @@ const contacts = [
     phone: '+1 415 555 0112',
     company: 'Notion',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.notion.so'
+      'https://www.notion.so',
     )}`,
     status: 'Inactive',
     ARR: '$2M',
@@ -193,7 +196,7 @@ const contacts = [
     phone: '+1 650 555 0123',
     company: 'Mintlify',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.mintlify.com'
+      'https://www.mintlify.com',
     )}`,
     status: 'Active',
     ARR: '$80K',
@@ -207,7 +210,7 @@ const contacts = [
     phone: '+1 415 555 0134',
     company: 'Twitter',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.twitter.com'
+      'https://www.twitter.com',
     )}`,
     status: 'Pending',
     ARR: '$108K',
@@ -221,7 +224,7 @@ const contacts = [
     phone: '+1 650 555 0145',
     company: 'Facebook',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.facebook.com'
+      'https://www.facebook.com',
     )}`,
     status: 'Active',
     ARR: '$890M',
@@ -235,7 +238,7 @@ const contacts = [
     phone: '+1 408 555 0156',
     company: 'Apple',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.apple.com'
+      'https://www.apple.com',
     )}`,
     status: 'Active',
     ARR: '$1.2B',
@@ -249,7 +252,7 @@ const contacts = [
     phone: '+1 415 555 0167',
     company: 'LinkedIn',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.linkedin.com'
+      'https://www.linkedin.com',
     )}`,
     status: 'Active',
     ARR: '$450M',
@@ -263,7 +266,7 @@ const contacts = [
     phone: '+1 408 555 0178',
     company: 'Twenty',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://twenty.com/'
+      'https://twenty.com/',
     )}`,
     status: 'Inactive',
     ARR: '$780M',
@@ -277,7 +280,7 @@ const contacts = [
     phone: '+1 415 555 0189',
     company: 'Uber',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.uber.com'
+      'https://www.uber.com',
     )}`,
     status: 'Active',
     ARR: '$320M',
@@ -291,7 +294,7 @@ const contacts = [
     phone: '+1 415 555 0190',
     company: 'Airbnb',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.airbnb.com'
+      'https://www.airbnb.com',
     )}`,
     status: 'Active',
     ARR: '$560M',
@@ -305,7 +308,7 @@ const contacts = [
     phone: '+1 212 555 0112',
     company: 'Spotify',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.spotify.com'
+      'https://www.spotify.com',
     )}`,
     status: 'Pending',
     ARR: '$290M',
@@ -319,7 +322,7 @@ const contacts = [
     phone: '+1 650 555 0123',
     company: 'Netflix',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.netflix.com'
+      'https://www.netflix.com',
     )}`,
     status: 'Active',
     ARR: '$980M',
@@ -333,11 +336,11 @@ const contacts = [
     phone: '+1 415 555 0134',
     company: 'Slack',
     logo: `https://logo.clearbit.com/${encodeURIComponent(
-      'https://www.slack.com'
+      'https://www.slack.com',
     )}`,
     status: 'Active',
     ARR: '$850M',
     country: '🇺🇸 United States',
   },
-];
+]
 </script>

@@ -2,13 +2,21 @@ import './env'
 import vue from '@vitejs/plugin-vue'
 
 export default defineNuxtConfig({
-  modules: ['@nuxthub/core', '@nuxt/ui', '@vueuse/nuxt', 'nuxt-auth-utils'],
+  modules: [
+    '@nuxthub/core',
+    '@nuxt/ui',
+    '@vueuse/nuxt',
+    'nuxt-auth-utils',
+    '@formkit/auto-animate/nuxt',
+    '@nuxtjs/mdc',
+  ],
   colorMode: {
     preference: 'system',
   },
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
+    openaiApiKey: process.env.OPENAI_API_KEY,
     fromEmail: process.env.FROM_EMAIL,
     emailProvider: process.env.EMAIL_PROVIDER,
     // @ts-expect-error - We're just extending the type
@@ -24,6 +32,33 @@ export default defineNuxtConfig({
   auth: {
     webAuthn: true,
   },
+  mdc: {
+    headings: {
+      anchorLinks: false,
+    },
+    highlight: {
+      langs: [
+        'ts',
+        'js',
+        'html',
+        'css',
+        'json',
+        'md',
+        'yaml',
+        'bash',
+        'css',
+        'py',
+        'tsx',
+        'jsx',
+        'go',
+        'rust',
+        'java',
+        'kotlin',
+        'swift',
+        'csharp',
+      ],
+    },
+  },
   nitro: {
     rollupConfig: {
       // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
@@ -37,7 +72,7 @@ export default defineNuxtConfig({
   },
   vite: {
     server: {
-      allowedHosts:['local.supersaas.dev']
-    }
-  }
+      allowedHosts: ['local.supersaas.dev'],
+    },
+  },
 })

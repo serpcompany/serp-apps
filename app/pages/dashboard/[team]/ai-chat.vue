@@ -1,9 +1,3 @@
 <template>
-  <AppContainer title="AI Chat">
-    <p>AI Chat</p>
-  </AppContainer>
+  <NuxtPage />
 </template>
-
-<script lang="ts" setup>
-
-</script>
