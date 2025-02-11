@@ -42,31 +42,6 @@ const teamNavLinks = computed(() => [
     icon: 'i-lucide-file-text',
     to: `/dashboard/${props.teamSlug}/notes`,
   },
-  {
-    label: 'Tasks',
-    icon: 'i-lucide-check-circle',
-    to: `/dashboard/${props.teamSlug}/tasks`,
-  },
-  {
-    label: 'Link Shortner',
-    icon: 'i-lucide-link',
-    to: `/dashboard/${props.teamSlug}/link-shortner`,
-  },
-  {
-    label: 'Image gallery',
-    icon: 'i-lucide-images',
-    to: `/dashboard/${props.teamSlug}/image-gallery`,
-  },
-  {
-    label: 'AI Chat',
-    icon: 'i-lucide-message-circle',
-    to: `/dashboard/${props.teamSlug}/ai-chat`,
-  },
-  {
-    label: 'AI Image Gen',
-    icon: 'i-lucide-sparkles',
-    to: `/dashboard/${props.teamSlug}/ai-image-gen`,
-  },
 ])
 
 const teamSettingsLinks = computed(() => [
@@ -76,7 +51,7 @@ const teamSettingsLinks = computed(() => [
     to: `/dashboard/${props.teamSlug}/settings`,
   },
   {
-    label: 'Team Members',
+    label: 'Workspace Members',
     icon: 'i-lucide-users',
     to: `/dashboard/${props.teamSlug}/settings/members`,
   },
