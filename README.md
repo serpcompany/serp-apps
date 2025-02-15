@@ -1,32 +1,76 @@
-# V3 is still in progress
+# Supersaas V3
 
-A minimal [Nuxt](https://nuxt.com) starter deployed on the Edge using [NuxtHub](https://hub.nuxt.com).
+> [!WARNING]  
+> Supersaas V3 is still in progress. The code is not production ready but quite usable.
 
-https://hello.nuxt.dev
+There are two versions of the repo
 
-<a href="https://hello.nuxt.dev">
-<img src="https://github.com/nuxt-hub/hello-edge/assets/904724/99d1bd54-ef7e-4ac9-83ad-0a290f85edcf" alt="Hello World template for NuxtHub" />
-</a>
+1. `main` - The main branch with the new Supersaas V3 code, this uses (NuxtHub)[https://hub.nuxt.com/] for deployment, a cloudflare D1 database and a cloudflare R2 bucket.
+2. `postgres` - This branch is a 1 to 1 copy of the `main` branch but uses a postgres database and a custom S3 compatible blob storage.
 
-## Features
+You can find a demo here - [https://v3.supersaas.dev](https://v3.supersaas.dev)
 
-- Server-Side rendering on Cloudflare Workers
-- ESLint setup
-- Ready to add a database, blob and KV storage
-- One click deploy on 275+ locations for free
+## What's new in V3?
 
-## Setup
+- Typescript only - no more mix of JS and TS as it was in V2, so I had to rewrite it from scratch. Not just the utils, the whole codebase is now in TS, the apis, the vue components, the nuxt middleware, the nuxt server, etc.
 
-Make sure to install the dependencies with [pnpm](https://pnpm.io/installation#using-corepack):
+- Teams/Workspaces - Supersaas now has teams and workspaces, you can create multiple teams and switch between them. Act as an admin and invite users to your team. Kick people out of the team. Cancel invites.
+
+- Stripe integration - A much better and more robust Stripe integration.
+
+- A lot of code cleanup and refactoring.
+
+## Tech Stack
+
+- [Nuxt 3](https://nuxt.com)
+- [Nuxt UI v3](https://ui3.nuxt.dev/)
+- [TailwindCSS V4](https://tailwindcss.com)
+- [Drizzle ORM](https://orm.drizzle.team/)
+- [Cloudflare D1, R2, Workers, KV, Pages for the NuxtHub people](https://hub.nuxt.com)
+- [Postgres for the postgres folks](https://www.postgresql.org)
+- [VueUse](https://vueuse.org/)
+
+## Env Variables
+
+| NAME       | Key                             | Value                                         |
+| ---------- | ------------------------------- | --------------------------------------------- |
+| APP_CONFIG | APP_NAME                        | Supersaas                                     |
+| APP_CONFIG | APP_DESCRIPTION                 | The complete Nuxt 3 SaaS starter kit.         |
+| APP_CONFIG | LOGO_URL                        | https://supersaas.dev/logo.png                |
+| APP_CONFIG | BASE_URL                        | http://localhost:3000                         |
+| EMAIL      | RESEND_API_TOKEN                | (empty)                                       |
+| EMAIL      | FROM_EMAIL                      | fayaz@mail.supersaas.dev                      |
+| EMAIL      | EMAIL_PROVIDER                  | resend                                        |
+| AUTH       | NUXT_OAUTH_GOOGLE_CLIENT_ID     | (empty)                                       |
+| AUTH       | NUXT_OAUTH_GOOGLE_CLIENT_SECRET | (empty)                                       |
+| SESSION    | NUXT_SESSION_PASSWORD           | (empty)                                       |
+| STRIPE     | NUXT_STRIPE_SECRET_KEY          | (empty)                                       |
+| STRIPE     | NUXT_STRIPE_WEBHOOK_SECRET      | (empty)                                       |
+| DEV        | MOCK_EMAIL                      | true                                          |
+| TWILIO     | TWILIO_ACCOUNT_SID              | (empty)                                       |
+| TWILIO     | TWILIO_AUTH_TOKEN               | (empty)                                       |
+| TWILIO     | TWILIO_PHONE_NUMBER             | (empty)                                       |
+| S3         | S3_ACCESS_KEY_ID                | (empty)                                       |
+| S3         | S3_SECRET_ACCESS_KEY            | (empty)                                       |
+| S3         | S3_BUCKET                       | (empty)                                       |
+| S3         | S3_REGION                       | (empty)                                       |
+| S3         | S3_ENDPOINT                     | (empty)                                       |
+| S3         | S3_PUBLIC_ENDPOINT              | (empty)                                       |
+| POSTGRES   | POSTGRES_URL                    | postgresql://postgres@127.0.0.1:5432/postgres |
+
+Make sure to install the dependencies with [pnpm](https://pnpm.io/installation#using-corepack)
+
+Once you have the env variables, you can install the dependencies with:
 
 ```bash
+#pnpm
 pnpm install
-```
 
-You can update the main text displayed by creating a `.env`:
+#yarn
+yarn install
 
-```bash
-NUXT_PUBLIC_HELLO_TEXT="Hello my world!"
+#npm
+npm install
 ```
 
 ## Development Server
@@ -37,6 +81,35 @@ Start the development server on `http://localhost:3000`:
 pnpm dev
 ```
 
+## Running Migrations
+
+> NuxtHub
+
+If you are using **NuxtHub**, you don't need to apply the migrations manually. The migrations are applied automatically when the dev server starts.
+
+> [!NOTE]  
+> Always push the migrations to your repo if you are using NuxtHub, because the builds are triggered on Git push which looks for migrations folder in the repo.
+
+> Postgres
+
+1. Generating the migrations, run the following command to generate the migrations from the Drizzle schema.
+
+```bash
+pnpm db:generate
+```
+
+2. Apply the migrations, run the following command to apply the migrations to the database. This will gracefully apply the migrations to the database and prompts you to confirm any destructive changes.
+
+```bash
+pnpm db:migrate
+```
+
+3. Push Migrations. - Push and Apply the migrations to the database directly
+
+```bash
+pnpm db:push
+```
+
 ## Production
 
 Build the application for production:
@@ -44,15 +117,3 @@ Build the application for production:
 ```bash
 pnpm build
 ```
-
-## Deploy
-
-Deploy the application on the Edge with [NuxtHub](https://hub.nuxt.com) on your Cloudflare account:
-
-```bash
-npx nuxthub deploy
-```
-
-Then checkout your server logs, analaytics and more in the [NuxtHub Admin](https://admin.hub.nuxt.com).
-
-You can also deploy using [Cloudflare Pages CI](https://hub.nuxt.com/docs/getting-started/deploy#cloudflare-pages-ci).
