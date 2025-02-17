@@ -146,6 +146,48 @@ export const useTeam = () => {
     }
   }
 
+  const resendInvite = async (inviteId: string) => {
+    loading.value = true
+    try {
+      await $fetch(
+        `/api/teams/${currentTeam?.value?.id}/invites/${inviteId}/resend`,
+        {
+          method: 'POST',
+        },
+      )
+    } catch (error) {
+      toast.add({
+        title: 'Failed to resend invite',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
+    }
+  }
+
+  const removeTeamMember = async (memberId: string) => {
+    loading.value = true
+    try {
+      if (!currentTeam.value?.id) return
+
+      await $fetch(`/api/teams/${currentTeam.value.id}/members/${memberId}`, {
+        method: 'DELETE',
+      })
+      toast.add({
+        title: 'Team member removed successfully',
+        color: 'success',
+      })
+    } catch (error) {
+      toast.add({
+        title: 'Failed to remove team member',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading,
     createTeam,
@@ -153,9 +195,11 @@ export const useTeam = () => {
     deleteTeam,
     inviteMember,
     cancelInvite,
+    resendInvite,
     isTeamOwner,
     teamSchema,
     currentTeam,
     teams,
+    removeTeamMember,
   }
 }

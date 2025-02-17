@@ -1,10 +1,11 @@
 <template>
-  <AppContainer
-    title="Members"
-    description="Invite and manage your team members"
-  >
+  <AppContainer title="Workspace Members">
     <template #actions>
-      <UButton color="neutral" @click="newMemberModal = true">Invite</UButton>
+      <UButton
+        color="neutral"
+        label="Invite Member"
+        @click="newMemberModal = true"
+      />
     </template>
     <UModal
       size="xl"
@@ -38,67 +39,19 @@
         </UForm>
       </template>
     </UModal>
-    <UTabs
-      color="neutral"
-      variant="link"
-      :content="false"
-      :items="tabs"
-      class="w-full"
-      v-model="activeTab"
-    />
-
-    <AppTeamMembersTable
-      v-if="activeTab === '0'"
-      :members="teamMembers || []"
-    />
-    <AppTeamInvitesTable
-      v-if="activeTab === '1'"
-      :invites="teamInvites || []"
-      @invite-cancelled="fetchTeamInvites"
-    />
+    <div class="mx-auto max-w-5xl space-y-12">
+      <AppTeamMembers />
+      <AppTeamInvites />
+    </div>
   </AppContainer>
 </template>
 
 <script lang="ts" setup>
-const tabs = ref([
-  {
-    label: 'Active Members',
-  },
-  {
-    label: 'Invitations',
-  },
-])
-const activeTab = ref('0')
-
 import type { FormSubmitEvent } from '#ui/types'
-const { currentTeam, inviteMember, loading } = useTeam()
 import { z } from 'zod'
+const { currentTeam, inviteMember, loading } = useTeam()
 const toast = useToast()
-const { data: teamMembers } = await useFetch<
-  {
-    id: string
-    teamId: string
-    userId: string
-    role: string
-    email: string
-    name: string
-    avatarUrl: string | null
-    lastLoginAt: Date | null
-    createdAt: Date
-  }[]
->(`/api/teams/${currentTeam.value?.id}/members`)
-const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
-  {
-    id: string
-    teamId: string
-    email: string
-    role: string
-    token: string
-    status: string
-    expiresAt: Date
-    createdAt: Date
-  }[]
->(`/api/teams/${currentTeam.value?.id}/invites`)
+
 const { user } = useUserSession()
 const newMemberModal = ref(false)
 const state = reactive({
@@ -123,6 +76,7 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
       color: 'success',
     })
     newMemberModal.value = false
+    await refreshNuxtData('team-invites')
   } catch (error) {
     console.error(error)
     toast.add({

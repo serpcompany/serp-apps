@@ -104,7 +104,7 @@ pnpm db:generate
 pnpm db:migrate
 ```
 
-3. Push Migrations. - Push and Apply the migrations to the database directly
+  3. Push Migrations. - Push and Apply the migrations to the database directly
 
 ```bash
 pnpm db:push

@@ -207,3 +207,40 @@ export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
     })
   }
 }
+
+export const findTeamInvite = async (inviteId: string) => {
+  const invite = await useDB()
+    .select()
+    .from(tables.teamInvites)
+    .where(eq(tables.teamInvites.id, inviteId))
+    .get()
+  return invite
+}
+
+export const updateTeamInvite = async (
+  inviteId: string,
+  payload: Partial<TeamInvite>,
+) => {
+  await useDB()
+    .update(tables.teamInvites)
+    .set(payload)
+    .where(eq(tables.teamInvites.id, inviteId))
+}
+
+export const deleteTeamMember = async (teamId: string, memberId: string) => {
+  try {
+    await useDB()
+      .delete(tables.teamMembers)
+      .where(
+        and(
+          eq(tables.teamMembers.teamId, teamId),
+          eq(tables.teamMembers.id, memberId),
+        ),
+      )
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to delete team member',
+    })
+  }
+}
