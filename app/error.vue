@@ -10,7 +10,7 @@
         <p class="mt-2 text-sm text-neutral-500">
           {{ message }}
         </p>
-        <p v-if="props.error.statusCode === 404" class="mt-2 text-xs text-neutral-400">
+        <p class="mt-2 text-xs text-neutral-400">
           <span class="font-semibold">URL:</span> <span class="font-mono">{{ path }}</span>
         </p>
       </div>
