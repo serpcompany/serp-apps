@@ -86,6 +86,8 @@ export const updatePost = async (
           eq(tables.posts.userId, userId),
         ),
       )
+      .returning()
+      .get()
     return updatedPost
   } catch (error) {
     throw createError({

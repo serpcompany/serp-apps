@@ -2,7 +2,7 @@
   <div>
     <p class="text-sm font-semibold">Active Members</p>
     <div
-      class="mt-2 overflow-x-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"
+      class="mt-2 overflow-x-auto rounded-lg border border-neutral-200 dark:divide-white/10 dark:border-white/10"
     >
       <table
         class="min-w-full divide-y divide-neutral-200 dark:divide-white/10"

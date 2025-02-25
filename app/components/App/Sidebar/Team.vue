@@ -23,9 +23,9 @@ const links = [
     to: `/dashboard/${teamSlug}`,
   },
   {
-    label: 'Notes',
+    label: 'Posts',
     icon: 'i-lucide-file-text',
-    to: `/dashboard/${teamSlug}/notes`,
+    to: `/dashboard/${teamSlug}/posts`,
   },
 ]
 

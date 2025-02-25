@@ -2,7 +2,7 @@
   <div>
     <p class="text-sm font-semibold">Invitations</p>
     <div
-      class="mt-2 overflow-x-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"
+      class="mt-2 overflow-x-auto rounded-lg border border-neutral-200 dark:divide-white/10 dark:border-white/10"
     >
       <table
         v-if="teamInvites?.length"

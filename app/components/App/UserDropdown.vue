@@ -18,7 +18,7 @@
         :src="user?.avatarUrl || ''"
         :alt="user?.name"
         size="xs"
-        class="ring-2 ring-gray-200 dark:ring-white/10"
+        class="ring-2 ring-neutral-200 dark:ring-white/10"
       />
       <div class="flex flex-1 items-center gap-2">
         <p class="text-sm">{{ user?.name }}</p>
@@ -30,7 +30,7 @@
         <UAvatar
           :src="user?.avatarUrl || ''"
           :alt="user?.name"
-          class="ring-2 ring-gray-200 dark:ring-white/10"
+          class="ring-2 ring-neutral-200 dark:ring-white/10"
         />
         <div class="flex-1">
           <p :style="{ fontWeight: 500 }" class="text-sm">{{ user?.name }}</p>

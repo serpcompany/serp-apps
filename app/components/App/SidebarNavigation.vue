@@ -38,9 +38,9 @@ const teamNavLinks = computed(() => [
     to: `/dashboard/${props.teamSlug}`,
   },
   {
-    label: 'Notes',
+    label: 'Posts',
     icon: 'i-lucide-file-text',
-    to: `/dashboard/${props.teamSlug}/notes`,
+    to: `/dashboard/${props.teamSlug}/posts`,
   },
 ])
 
