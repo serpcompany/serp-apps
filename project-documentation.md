@@ -48,6 +48,7 @@
   📁 composables/
     📄 useAuth.ts
     📄 usePasskeys.ts
+    📄 usePosts.ts
     📄 useTeam.ts
     📄 useTeamPreferences.ts
     📄 useTeamRedirect.ts
@@ -147,9 +148,17 @@
         📁 invites/
           📁 [inviteId]/
             📄 index.delete.ts
+            📄 resend.post.ts
           📄 index.get.ts
         📁 members/
+          📄 [memberId].delete.ts
           📄 [memberId].get.ts
+          📄 index.get.ts
+          📄 index.post.ts
+        📁 posts/
+          📄 [id].delete.ts
+          📄 [id].get.ts
+          📄 [id].patch.ts
           📄 index.get.ts
           📄 index.post.ts
       📄 index.get.ts
@@ -168,6 +177,7 @@
       📄 auth.ts
       📄 customers.ts
       📄 passkeys.ts
+      📄 posts.ts
       📄 stripe.ts
       📄 subscriptions.ts
       📄 teams.ts
@@ -2131,12 +2141,88 @@ const items = computed(() => {
 ```vue
 <template>
   <div>
-    
+    <p class="text-sm font-semibold">Invitations</p>
+    <div
+      class="mt-2 overflow-x-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"
+    >
+      <table
+        v-if="teamInvites?.length"
+        class="min-w-full divide-y divide-neutral-200 dark:divide-white/10"
+      >
+        <thead>
+          <tr class="text-sm">
+            <th
+              v-for="column in columns"
+              :key="column"
+              class="px-4 py-3 text-left text-sm font-semibold"
+            >
+              {{ column }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-200 dark:divide-white/10">
+          <tr
+            v-for="invite in teamInvites"
+            :key="invite.id"
+            class="text-sm [&>td]:whitespace-nowrap"
+          >
+            <td class="px-4 py-3">{{ invite.email }}</td>
+            <td class="px-4 py-3">
+              <UBadge
+                color="neutral"
+                size="sm"
+                variant="subtle"
+                class="uppercase"
+              >
+                {{ invite.role }}
+              </UBadge>
+            </td>
+            <td class="px-4 py-3">
+              <UBadge
+                :color="invite.status === 'pending' ? 'warning' : 'success'"
+                size="sm"
+                variant="subtle"
+                class="uppercase"
+              >
+                {{ invite.status }}
+              </UBadge>
+            </td>
+            <td class="px-4 py-3">
+              {{ useDateFormat(invite.expiresAt, 'MMM D, YYYY').value }}
+            </td>
+            <td class="px-4 py-3">
+              {{ useDateFormat(invite.createdAt, 'MMM D, YYYY').value }}
+            </td>
+            <td class="px-4 py-3">
+              <UDropdownMenu
+                :items="getRowItems(invite)"
+                :content="{
+                  align: 'end',
+                  side: 'bottom',
+                }"
+              >
+                <UButton
+                  icon="i-lucide-ellipsis"
+                  variant="ghost"
+                  color="neutral"
+                />
+              </UDropdownMenu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else class="flex h-64 flex-col items-center justify-center gap-3">
+        <UIcon name="i-lucide-inbox" class="size-10" />
+        <p class="text-sm text-neutral-500">No invitations found</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const { currentTeam } = useTeam()
+import { useDateFormat } from '@vueuse/core'
+const { currentTeam, cancelInvite } = useTeam()
+const toast = useToast()
 
 const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
   {
@@ -2149,7 +2235,57 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
     expiresAt: Date
     createdAt: Date
   }[]
->(`/api/teams/${currentTeam.value?.id}/invites`)
+>(`/api/teams/${currentTeam.value?.id}/invites`, {
+  key: 'team-invites',
+})
+
+const columns = ['Email', 'Role', 'Status', 'Expires At', 'Created At', '']
+
+const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
+  return [
+    {
+      label: 'Copy Email',
+      onSelect: () => {
+        navigator.clipboard.writeText(invite.email)
+        toast.add({
+          title: 'Email copied to clipboard!',
+          color: 'success',
+        })
+      },
+    },
+    {
+      label: 'Resend Invite',
+      onSelect: async () => {
+        try {
+          await $fetch(
+            `/api/teams/${currentTeam.value?.id}/invites/${invite.id}/resend`,
+            {
+              method: 'POST',
+            },
+          )
+          toast.add({
+            title: 'Invite resent successfully!',
+            color: 'success',
+          })
+        } catch (error) {
+          toast.add({
+            title: 'Failed to resend invite',
+            color: 'error',
+          })
+        }
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Cancel Invite',
+      color: 'error' as const,
+      onSelect: async () => {
+        await cancelInvite(invite.id)
+        await fetchTeamInvites()
+      },
+    },
+  ]
+}
 </script>
 
 ```
@@ -2160,9 +2296,11 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
   <div>
     <p class="text-sm font-semibold">Active Members</p>
     <div
-      class="overflow-x-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10 mt-2"
+      class="mt-2 overflow-x-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"
     >
-      <table class="min-w-full divide-y divide-neutral-200">
+      <table
+        class="min-w-full divide-y divide-neutral-200 dark:divide-white/10"
+      >
         <thead>
           <tr class="text-sm">
             <th
@@ -2174,7 +2312,7 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-neutral-200">
+        <tbody class="divide-y divide-neutral-200 dark:divide-white/10">
           <tr
             v-for="member in members"
             :key="member.id"
@@ -2201,10 +2339,10 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
             <td class="px-4 py-3">{{ member.email }}</td>
             <td class="px-4 py-3">
               <UBadge
-                color="neutral"
                 size="sm"
                 variant="subtle"
                 class="uppercase"
+                :color="member.role === 'owner' ? 'success' : 'neutral'"
               >
                 {{ member.role }}
               </UBadge>
@@ -2245,7 +2383,7 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
 <script setup lang="ts">
 import { useDateFormat } from '@vueuse/core'
 import { getAvatarUrl } from '@/utils/avatar'
-const { currentTeam } = useTeam()
+const { currentTeam, removeTeamMember } = useTeam()
 interface TeamMember {
   id: string
   teamId: string
@@ -2257,7 +2395,7 @@ interface TeamMember {
   lastLoginAt: Date | null
   createdAt: Date
 }
-const { data: members } = await useFetch<TeamMember[]>(
+const { data: members, refresh: refreshMembers } = await useFetch<TeamMember[]>(
   `/api/teams/${currentTeam.value?.id}/members`,
 )
 const columns = ['Name', 'Email', 'Role', 'Last Login', 'Created At']
@@ -2288,12 +2426,16 @@ const getRowItems = (member: TeamMember) => {
     {
       label: 'Remove from team',
       color: 'error' as const,
-      onSelect: () => {
-        console.log('Remove user:', member.userId)
-        toast.add({
-          title: 'User removed from team!',
-          color: 'error',
-        })
+      onSelect: async () => {
+        try {
+          await removeTeamMember(member.id)
+          await refreshMembers()
+        } catch (error) {
+          toast.add({
+            title: 'Failed to remove member',
+            color: 'error',
+          })
+        }
       },
     },
   ]
@@ -2827,6 +2969,55 @@ export const usePasskeys = () => {
 
 ```
 ---
+### filename: app/composables/usePosts.ts
+```ts
+import type { Post, InsertPost } from '@@/types/database'
+
+export const usePosts = () => {
+  const { currentTeam } = useTeam()
+  const getAllPosts = async () => {
+    return await useFetch<Post[]>(`/api/teams/${currentTeam.value?.id}/posts`)
+  }
+
+  const createPost = async (post: Partial<InsertPost>) => {
+    const data = await $fetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts`,
+      {
+        method: 'POST',
+        body: post,
+      },
+    )
+    return data
+  }
+
+  const getPost = async (id: string) => {
+    return await useFetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`)
+  }
+
+  const updatePost = async (id: string, post: Partial<Post>) => {
+    return await $fetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`, {
+      method: 'PATCH',
+      body: post,
+    })
+  }
+
+  const deletePost = async (id: string) => {
+    return await $fetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  return {
+    getAllPosts,
+    createPost,
+    getPost,
+    updatePost,
+    deletePost,
+  }
+}
+
+```
+---
 ### filename: app/composables/useTeam.ts
 ```ts
 import { z } from 'zod'
@@ -2977,6 +3168,48 @@ export const useTeam = () => {
     }
   }
 
+  const resendInvite = async (inviteId: string) => {
+    loading.value = true
+    try {
+      await $fetch(
+        `/api/teams/${currentTeam?.value?.id}/invites/${inviteId}/resend`,
+        {
+          method: 'POST',
+        },
+      )
+    } catch (error) {
+      toast.add({
+        title: 'Failed to resend invite',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
+    }
+  }
+
+  const removeTeamMember = async (memberId: string) => {
+    loading.value = true
+    try {
+      if (!currentTeam.value?.id) return
+
+      await $fetch(`/api/teams/${currentTeam.value.id}/members/${memberId}`, {
+        method: 'DELETE',
+      })
+      toast.add({
+        title: 'Team member removed successfully',
+        color: 'success',
+      })
+    } catch (error) {
+      toast.add({
+        title: 'Failed to remove team member',
+        description: (error as any).statusMessage,
+        color: 'error',
+      })
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading,
     createTeam,
@@ -2984,10 +3217,12 @@ export const useTeam = () => {
     deleteTeam,
     inviteMember,
     cancelInvite,
+    resendInvite,
     isTeamOwner,
     teamSchema,
     currentTeam,
     teams,
+    removeTeamMember,
   }
 }
 
@@ -4103,13 +4338,213 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 ```vue
 <template>
   <AppContainer title="Notes">
-    <p>Demo Notes App</p>
+    <template #actions>
+      <UButton label="New Note" @click="postModal.show = true" />
+    </template>
+    <div v-if="!posts?.length">
+      <p>No posts found</p>
+    </div>
+    <div v-else class="space-y-4">
+      <div
+        v-for="post in posts"
+        :key="post.id"
+        class="rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+      >
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="text-lg font-semibold">{{ post.title }}</h3>
+            <p class="mt-2">{{ post.content }}</p>
+          </div>
+          <div class="flex space-x-2">
+            <UButton
+              icon="i-lucide-pencil"
+              color="neutral"
+              variant="ghost"
+              @click="editPost(post)"
+            />
+            <UButton
+              icon="i-lucide-trash"
+              color="error"
+              variant="ghost"
+              @click="confirmDelete(post)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <UModal
+      v-model:open="postModal.show"
+      :title="postModal.isEdit ? 'Edit Note' : 'New Note'"
+    >
+      <template #body>
+        <UForm
+          :schema="schema"
+          :state="state"
+          class="space-y-4"
+          @submit="onSubmit"
+        >
+          <UFormField label="Title" name="title">
+            <UInput v-model="state.title" class="w-full" size="xl" />
+          </UFormField>
+
+          <UFormField label="Content" name="content">
+            <UTextarea v-model="state.content" class="w-full" size="xl" />
+          </UFormField>
+
+          <UButton label="Submit" type="submit" :loading="loading" />
+        </UForm>
+      </template>
+    </UModal>
+
+    <UModal v-model:open="confirmModal.show" size="xs" title="Delete Note">
+      <template #body>
+        <p>
+          Are you sure you want to delete this note? This action cannot be
+          undone.
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end space-x-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            label="Cancel"
+            @click="confirmModal.show = false"
+          />
+          <UButton
+            color="error"
+            label="Delete"
+            :loading="loading"
+            @click="handleDelete"
+          />
+        </div>
+      </template>
+    </UModal>
   </AppContainer>
 </template>
 
 <script lang="ts" setup>
+import type { Post } from '@@/types/database'
+const postModal = reactive({
+  show: false,
+  isEdit: false,
+  currentPost: null as Post | null,
+})
 
+const confirmModal = reactive({
+  show: false,
+  post: null as Post | null,
+})
+
+const { getAllPosts, createPost, updatePost, deletePost } = usePosts()
+const { data: posts } = await getAllPosts()
+
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
+const schema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
+  content: z
+    .string()
+    .min(1, 'Content is required')
+    .max(1000, 'Content must be less than 1000 characters'),
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  title: undefined,
+  content: undefined,
+})
+
+const toast = useToast()
+const loading = ref(false)
+
+function editPost(post: Post) {
+  postModal.isEdit = true
+  postModal.currentPost = post
+  state.title = post.title
+  state.content = post.content
+  postModal.show = true
+}
+
+function confirmDelete(post: Post) {
+  confirmModal.post = post
+  confirmModal.show = true
+}
+
+async function handleDelete() {
+  if (!confirmModal.post) return
+
+  loading.value = true
+  try {
+    await deletePost(confirmModal.post.id)
+    posts.value = posts.value?.filter((p) => p.id !== confirmModal.post?.id)
+    toast.add({
+      title: 'Success',
+      description: 'Note deleted',
+      color: 'success',
+    })
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: 'Failed to delete note',
+      color: 'error',
+    })
+  } finally {
+    loading.value = false
+    confirmModal.show = false
+    confirmModal.post = null
+  }
+}
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  loading.value = true
+  try {
+    if (postModal.isEdit && postModal.currentPost) {
+      const updatedPost = await updatePost(postModal.currentPost.id, event.data)
+      const index =
+        posts.value?.findIndex((p) => p.id === postModal.currentPost?.id) ?? -1
+      if (index !== -1 && posts.value) {
+        posts.value[index] = updatedPost
+      }
+      toast.add({
+        title: 'Success',
+        description: 'Note updated',
+        color: 'success',
+      })
+    } else {
+      const newPost = await createPost(event.data)
+      if (posts.value) {
+        posts.value.unshift(newPost)
+      }
+      toast.add({
+        title: 'Success',
+        description: 'Note created',
+        color: 'success',
+      })
+    }
+    postModal.show = false
+    postModal.isEdit = false
+    postModal.currentPost = null
+    state.title = undefined
+    state.content = undefined
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: 'Failed to save note',
+      color: 'error',
+    })
+  } finally {
+    loading.value = false
+  }
+}
 </script>
+
 ```
 ---
 ### filename: app/pages/dashboard/[team]/settings/billing.vue
@@ -4320,15 +4755,94 @@ onMounted(async () => {
 <template>
   <AppContainer title="Workspace Members">
     <template #actions>
-      <UButton color="neutral" label="Invite Member" />
+      <UButton
+        color="neutral"
+        label="Invite Member"
+        @click="newMemberModal = true"
+      />
     </template>
-    <div class="mx-auto max-w-5xl">
+    <UModal
+      size="xl"
+      v-model:open="newMemberModal"
+      :title="`Invite a new member to ${currentTeam?.name}`"
+      description="We will email them a link to join your team. Invitations are valid for 7 days."
+    >
+      <template #body>
+        <UForm
+          class="space-y-4"
+          :state="state"
+          :schema="schema"
+          @submit="onSubmit as any"
+        >
+          <UFormField required label="Member email" name="email">
+            <UInput
+              v-model="state.email"
+              placeholder="john@doe.com"
+              class="w-full"
+              size="lg"
+            />
+          </UFormField>
+          <UButton
+            :loading="loading"
+            color="neutral"
+            type="submit"
+            block
+            size="lg"
+            label="Send invitation"
+          />
+        </UForm>
+      </template>
+    </UModal>
+    <div class="mx-auto max-w-5xl space-y-12">
       <AppTeamMembers />
+      <AppTeamInvites />
     </div>
   </AppContainer>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import type { FormSubmitEvent } from '#ui/types'
+import { z } from 'zod'
+const { currentTeam, inviteMember, loading } = useTeam()
+const toast = useToast()
+
+const { user } = useUserSession()
+const newMemberModal = ref(false)
+const state = reactive({
+  email: '',
+})
+const schema = z.object({
+  email: z
+    .string()
+    .email()
+    .refine((email) => email !== user.value?.email, {
+      message: 'You cannot invite yourself',
+    }),
+})
+
+const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
+  loading.value = true
+  try {
+    await inviteMember(event.data.email)
+    toast.add({
+      title: 'Member invited successfully',
+      description: `We have sent an invitation to ${event.data.email}`,
+      color: 'success',
+    })
+    newMemberModal.value = false
+    await refreshNuxtData('team-invites')
+  } catch (error) {
+    console.error(error)
+    toast.add({
+      title: 'Error inviting member',
+      description: (error as any).data.message,
+      color: 'error',
+    })
+  } finally {
+    loading.value = false
+  }
+}
+</script>
 
 ```
 ---
@@ -6668,6 +7182,68 @@ export default defineEventHandler(async (event) => {
 
 ```
 ---
+### filename: server/api/teams/[id]/invites/[inviteId]/resend.post.ts
+```ts
+import { render } from '@vue-email/render'
+import TeamInvitation from '@@/emails/member-invite.vue'
+import { sendEmail } from '@@/server/services/email'
+import { env } from '@@/env'
+import { findTeamInvite, updateTeamInvite } from '@@/server/database/queries/teams'
+
+export default defineEventHandler(async (event) => {
+  const teamId = getRouterParam(event, 'id')
+  const inviteId = getRouterParam(event, 'inviteId')
+  if (!teamId || !inviteId) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Team ID and invite ID are required',
+    })
+  }
+
+  // Validate team ownership and get team and user details
+  const { user, team } = await validateTeamOwnership(event, teamId)
+
+  // Find the existing invitation
+  const invitation = await findTeamInvite(inviteId)
+  if (!invitation) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Invitation not found',
+    })
+  }
+
+  // Update invitation expiry
+  const updatedInvitation = await updateTeamInvite(inviteId, {
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
+  })
+
+  // Resend invitation email
+  const htmlTemplate = await render(TeamInvitation, {
+    organizationName: team.name,
+    inviterName: user.name,
+    inviteLink: `${env.BASE_URL}/api/teams/verify-invite?token=${invitation.token}`,
+  })
+
+  if (env.MOCK_EMAIL) {
+    console.table({
+      email: invitation.email,
+      teamName: team.name,
+      inviterName: user.name,
+      inviteLink: `${env.BASE_URL}/api/teams/verify-invite?token=${invitation.token}`,
+    })
+  } else {
+    await sendEmail({
+      to: invitation.email,
+      subject: `Invitation to join ${team.name} on ${env.APP_NAME}`,
+      html: htmlTemplate,
+    })
+  }
+
+  return updatedInvitation
+})
+
+```
+---
 ### filename: server/api/teams/[id]/invites/index.get.ts
 ```ts
 import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
@@ -6685,6 +7261,31 @@ export default defineEventHandler(async (event) => {
   await validateTeamOwnership(event, teamId)
   const teamInvites = await getTeamInvites(teamId)
   return teamInvites
+})
+
+```
+---
+### filename: server/api/teams/[id]/members/[memberId].delete.ts
+```ts
+import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
+import { deleteTeamMember } from '@@/server/database/queries/teams'
+
+export default defineEventHandler(async (event) => {
+  await requireUserSession(event)
+  const teamId = getRouterParam(event, 'id')
+  const memberId = getRouterParam(event, 'memberId')
+
+  if (!teamId || !memberId) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Team ID and member ID are required',
+    })
+  }
+  await validateTeamOwnership(event, teamId)
+  await deleteTeamMember(teamId, memberId)
+  return {
+    message: 'Team member deleted successfully',
+  }
 })
 
 ```
@@ -6785,6 +7386,90 @@ export default defineEventHandler(async (event) => {
 
   setResponseStatus(event, 201)
   return invitation
+})
+
+```
+---
+### filename: server/api/teams/[id]/posts/[id].delete.ts
+```ts
+import { deletePost } from '@@/server/database/queries/posts'
+
+export default defineEventHandler(async (event) => {
+  const { id: teamId, id: postId } = getRouterParams(event)
+  const { user } = await requireUserSession(event)
+  const post = await deletePost(postId, teamId, user.id)
+  return post
+})
+
+```
+---
+### filename: server/api/teams/[id]/posts/[id].get.ts
+```ts
+import { getPostById } from '@@/server/database/queries/posts'
+
+export default defineEventHandler(async (event) => {
+  const { id: teamId, id: postId } = getRouterParams(event)
+  const { user } = await requireUserSession(event)
+  const post = await getPostById(postId, teamId, user.id)
+  if (!post) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Post not found',
+    })
+  }
+  return post
+})
+
+```
+---
+### filename: server/api/teams/[id]/posts/[id].patch.ts
+```ts
+import { updatePost } from '@@/server/database/queries/posts'
+import type { Post } from '@@/types/database'
+
+export default defineEventHandler(async (event) => {
+  const { id: teamId, id: postId } = getRouterParams(event)
+  const { user } = await requireUserSession(event)
+  const body = await readBody<Partial<Post>>(event)
+  
+  const post = await updatePost(postId, teamId, user.id, {
+    title: body.title,
+    content: body.content,
+  })
+  return post
+})
+
+```
+---
+### filename: server/api/teams/[id]/posts/index.get.ts
+```ts
+import { getAllPosts } from '@@/server/database/queries/posts'
+
+export default defineEventHandler(async (event) => {
+  const { id: teamId } = getRouterParams(event)
+  const { user } = await requireUserSession(event)
+  const posts = await getAllPosts(teamId, user.id)
+  return posts
+})
+
+```
+---
+### filename: server/api/teams/[id]/posts/index.post.ts
+```ts
+import { createPost } from '@@/server/database/queries/posts'
+import type { InsertPost } from '@@/types/database'
+export default defineEventHandler(async (event) => {
+  const { id: teamId } = getRouterParams(event)
+  const { user } = await requireUserSession(event)
+  const { title, content } = await readBody<InsertPost>(event)
+  const payload = {
+    title,
+    content,
+    teamId,
+    userId: user.id,
+  }
+  const post = await createPost(payload)
+  return post
 })
 
 ```
@@ -10689,6 +11374,131 @@ export const deleteCredential = async (
 
 ```
 ---
+### filename: server/database/queries/posts.ts
+```ts
+import { eq, and, desc } from 'drizzle-orm'
+import type { InsertPost, Post } from '@@/types/database'
+import { createError } from 'h3'
+
+export const getAllPosts = async (teamId: string, userId: string) => {
+  try {
+    const posts = await useDB().query.posts.findMany({
+      where: and(
+        eq(tables.posts.teamId, teamId),
+        eq(tables.posts.userId, userId),
+      ),
+      orderBy: [desc(tables.posts.createdAt)],
+      with: {
+        userId: {
+          columns: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    })
+    return posts
+  } catch (error) {
+    console.error(error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to get all posts',
+    })
+  }
+}
+
+export const createPost = async (post: InsertPost) => {
+  try {
+    const newPost = await useDB()
+      .insert(tables.posts)
+      .values(post)
+      .returning()
+      .get()
+    return newPost
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to create post',
+    })
+  }
+}
+
+export const getPostById = async (
+  id: string,
+  teamId: string,
+  userId: string,
+) => {
+  try {
+    const post = await useDB().query.posts.findFirst({
+      where: and(
+        eq(tables.posts.id, id),
+        eq(tables.posts.teamId, teamId),
+        eq(tables.posts.userId, userId),
+      ),
+    })
+    return post
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to get post by ID',
+    })
+  }
+}
+
+export const updatePost = async (
+  id: string,
+  teamId: string,
+  userId: string,
+  post: Partial<Post>,
+) => {
+  try {
+    const updatedPost = await useDB()
+      .update(tables.posts)
+      .set(post)
+      .where(
+        and(
+          eq(tables.posts.id, id),
+          eq(tables.posts.teamId, teamId),
+          eq(tables.posts.userId, userId),
+        ),
+      )
+    return updatedPost
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to update post',
+    })
+  }
+}
+
+export const deletePost = async (
+  id: string,
+  teamId: string,
+  userId: string,
+) => {
+  try {
+    const deletedPost = await useDB()
+      .delete(tables.posts)
+      .where(
+        and(
+          eq(tables.posts.id, id),
+          eq(tables.posts.teamId, teamId),
+          eq(tables.posts.userId, userId),
+        ),
+      )
+    return deletedPost
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to delete post',
+    })
+  }
+}
+
+```
+---
 ### filename: server/database/queries/stripe.ts
 ```ts
 import { eq } from 'drizzle-orm'
@@ -10995,6 +11805,43 @@ export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to check if user is already in team',
+    })
+  }
+}
+
+export const findTeamInvite = async (inviteId: string) => {
+  const invite = await useDB()
+    .select()
+    .from(tables.teamInvites)
+    .where(eq(tables.teamInvites.id, inviteId))
+    .get()
+  return invite
+}
+
+export const updateTeamInvite = async (
+  inviteId: string,
+  payload: Partial<TeamInvite>,
+) => {
+  await useDB()
+    .update(tables.teamInvites)
+    .set(payload)
+    .where(eq(tables.teamInvites.id, inviteId))
+}
+
+export const deleteTeamMember = async (teamId: string, memberId: string) => {
+  try {
+    await useDB()
+      .delete(tables.teamMembers)
+      .where(
+        and(
+          eq(tables.teamMembers.teamId, teamId),
+          eq(tables.teamMembers.id, memberId),
+        ),
+      )
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to delete team member',
     })
   }
 }
@@ -11427,7 +12274,7 @@ import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { users } from './users'
 import { teams } from './teams'
-
+import { relations } from 'drizzle-orm'
 export const posts = sqliteTable('posts', {
   id: text('id')
     .primaryKey()
@@ -11447,6 +12294,17 @@ export const posts = sqliteTable('posts', {
     () => new Date(),
   ),
 })
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  userId: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+  teamId: one(teams, {
+    fields: [posts.teamId],
+    references: [teams.id],
+  }),
+}))
 
 ```
 ---

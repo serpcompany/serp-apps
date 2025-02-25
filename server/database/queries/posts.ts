@@ -33,7 +33,11 @@ export const getAllPosts = async (teamId: string, userId: string) => {
 
 export const createPost = async (post: InsertPost) => {
   try {
-    const newPost = await useDB().insert(tables.posts).values(post).returning()
+    const newPost = await useDB()
+      .insert(tables.posts)
+      .values(post)
+      .returning()
+      .get()
     return newPost
   } catch (error) {
     throw createError({
