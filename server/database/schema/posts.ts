@@ -10,6 +10,7 @@ export const posts = sqliteTable('posts', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  image: text('image'),
   teamId: text('teamId')
     .notNull()
     .references(() => teams.id, { onDelete: 'cascade' }),

@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
   const post = await updatePost(postId, teamId, user.id, {
     title: body.title,
     content: body.content,
+    image: body.image,
   })
   return post
 })

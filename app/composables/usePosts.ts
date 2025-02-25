@@ -11,6 +11,7 @@ export const schema = z.object({
     .string()
     .min(1, 'Content is required')
     .max(1000, 'Content must be less than 1000 characters'),
+  image: z.string().optional(),
 })
 
 export type Schema = z.output<typeof schema>
@@ -20,6 +21,7 @@ export const usePosts = () => {
   const toast = useToast()
   const loading = ref(false)
   const posts = ref<Post[]>([])
+  const selectedFile = ref<File | null>(null)
 
   // Modal states
   const postModal = reactive({
@@ -36,6 +38,7 @@ export const usePosts = () => {
   const state = reactive<Partial<Schema>>({
     title: undefined,
     content: undefined,
+    image: undefined,
   })
 
   const getAllPosts = async () => {
@@ -70,11 +73,35 @@ export const usePosts = () => {
     })
   }
 
+  const uploadImage = async () => {
+    try {
+      if (!selectedFile.value) return ''
+      const formData = new FormData()
+      formData.append('image', selectedFile.value)
+      const filePath = await $fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData,
+      })
+      return `/images/${filePath}`
+    } catch (error) {
+      throw createError('Failed to upload image')
+    }
+  }
+
+  const handleFileSelected = (file: File | null) => {
+    selectedFile.value = file
+    if (!file) {
+      state.image = undefined
+    }
+  }
+
   const resetPostModal = () => {
     postModal.isEdit = false
     postModal.currentPost = null
     state.title = undefined
     state.content = undefined
+    state.image = undefined
+    selectedFile.value = null
   }
 
   const editPost = (post: Post) => {
@@ -82,6 +109,7 @@ export const usePosts = () => {
     postModal.currentPost = post
     state.title = post.title
     state.content = post.content
+    state.image = post.image
     postModal.show = true
   }
 
@@ -110,15 +138,26 @@ export const usePosts = () => {
   const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
     loading.value = true
     try {
+      let image = state.image
+
+      if (selectedFile.value) {
+        image = await uploadImage()
+      }
+
+      const postData = {
+        ...event.data,
+        image,
+      }
+
       if (postModal.isEdit && postModal.currentPost) {
-        const updatedPost = await updatePost(postModal.currentPost.id, event.data)
+        const updatedPost = await updatePost(postModal.currentPost.id, postData)
         const index = posts.value?.findIndex((p) => p.id === postModal.currentPost?.id) ?? -1
         if (index !== -1) {
           posts.value[index] = updatedPost
         }
         toast.add({ title: 'Success', description: 'Note updated', color: 'success' })
       } else {
-        const newPost = await createPost(event.data)
+        const newPost = await createPost(postData)
         posts.value.unshift(newPost)
         toast.add({ title: 'Success', description: 'Note created', color: 'success' })
       }
@@ -156,5 +195,6 @@ export const usePosts = () => {
     handleDelete,
     handleSubmit,
     initializePosts,
+    handleFileSelected,
   }
 }

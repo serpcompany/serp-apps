@@ -6,32 +6,59 @@
     <div v-if="!posts?.length">
       <p>No posts found</p>
     </div>
-    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div
+      v-else
+      class="w-full columns-1 gap-3 space-y-3 md:columns-2 lg:columns-5"
+    >
       <div
         v-for="post in posts"
         :key="post.id"
-        class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800"
+        class="break-inside-avoid-column rounded-xl bg-neutral-100 dark:bg-neutral-950"
       >
-        <div class="flex items-start justify-between">
-          <div class="text-sm">
-            <h3 class="font-semibold">{{ post.title }}</h3>
-            <p class="mt-2">{{ post.content }}</p>
-          </div>
-          <div class="flex space-x-2">
-            <UButton
-              icon="i-lucide-pencil"
-              color="neutral"
-              variant="ghost"
-              size="sm"
-              @click="editPost(post)"
-            />
-            <UButton
-              icon="i-lucide-trash"
-              color="error"
-              variant="ghost"
-              size="sm"
-              @click="confirmDelete(post)"
-            />
+        <div class="rounded-xl bg-[#fbfaf9] p-1.5 dark:bg-neutral-950">
+          <div
+            class="card-shadow group rounded-md bg-white dark:bg-neutral-900"
+          >
+            <header
+              class="flex min-w-0 items-center gap-2 border-b border-neutral-100 px-4 py-2 dark:border-white/10"
+            >
+              <p
+                class="flex-1 truncate text-sm text-neutral-600 dark:text-neutral-400"
+              >
+                {{ post.title }}
+              </p>
+              <div
+                class="flex opacity-10 transition-opacity group-hover:opacity-100"
+              >
+                <UButton
+                  icon="i-lucide-pencil"
+                  color="neutral"
+                  variant="ghost"
+                  size="xs"
+                  @click="editPost(post)"
+                />
+                <UButton
+                  icon="i-lucide-trash"
+                  color="error"
+                  variant="ghost"
+                  size="xs"
+                  @click="confirmDelete(post)"
+                />
+              </div>
+            </header>
+            <div class="p-4">
+              <img
+                v-if="post.image"
+                :src="post.image"
+                class="mb-2 min-h-40 w-full rounded-md object-cover"
+                :alt="post.title"
+              />
+              <p
+                class="text-sm whitespace-pre-wrap text-neutral-600 dark:text-neutral-400"
+              >
+                {{ post.content }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -48,6 +75,13 @@
           class="space-y-4"
           @submit="handleSubmit"
         >
+          <UFormField label="Image" name="imagePath">
+            <AppPostImageUploader
+              v-model="state.image"
+              @file-selected="handleFileSelected"
+            />
+          </UFormField>
+
           <UFormField label="Title" name="title">
             <UInput v-model="state.title" class="w-full" size="xl" />
           </UFormField>
@@ -89,6 +123,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { Post } from '@@/types/database'
+
 const {
   posts,
   loading,
@@ -101,7 +137,33 @@ const {
   handleDelete,
   handleSubmit,
   initializePosts,
+  handleFileSelected,
 } = usePosts()
 
 await initializePosts()
+
+const options = ref([
+  {
+    label: 'Edit',
+    onSelect(e: Event) {
+      console.log(e)
+    },
+  },
+  {
+    label: 'Delete',
+    color: 'error',
+    onSelect(e: Event) {
+      console.log(e)
+    },
+  },
+])
 </script>
+
+<style scoped>
+.card-shadow {
+  box-shadow:
+    0 1px 2px #5f4a2e14,
+    0 4px 6px #5f4a2e0a,
+    0 24px 40px -16px #684b2514;
+}
+</style>
