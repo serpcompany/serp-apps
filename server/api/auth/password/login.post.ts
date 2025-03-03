@@ -20,6 +20,7 @@ import {
 } from '@@/server/database/queries/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
+import { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
@@ -94,6 +95,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Failed to process user data',
     })
   }
-  await setUserSession(event, { user: sanitizedUser })
+  await setUserSession(event, { user: sanitizedUser } as UserSession)
   return sendNoContent(event)
 })

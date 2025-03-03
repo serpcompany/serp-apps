@@ -23,6 +23,7 @@ import {
   findEmailVerificationCode,
   deleteEmailVerificationCode,
 } from '@@/server/database/queries/auth'
+import { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   const { token } = getQuery(event)
@@ -69,7 +70,7 @@ export default defineEventHandler(async (event) => {
 
   await updateLastActiveTimestamp(user.id)
   const transformedUser = sanitizeUser(user)
-  await setUserSession(event, { user: transformedUser })
+  await setUserSession(event, { user: transformedUser } as UserSession)
   await deleteEmailVerificationCode(user.id as string)
   return sendRedirect(event, '/dashboard')
 })

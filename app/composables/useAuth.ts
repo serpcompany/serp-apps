@@ -1,3 +1,5 @@
+import { FetchError } from 'ofetch'
+
 interface AuthError {
   message: string
   statusCode?: number
@@ -13,12 +15,11 @@ export const useAuth = () => {
   const toast = useToast()
   const { fetch: refreshSession } = useUserSession()
 
-  const handleAuthError = (error: any) => {
+  const handleAuthError = (error: FetchError | any) => {
     const errorMessage = error?.data?.message || 'An unexpected error occurred'
     const statusCode = error?.data?.statusCode
     
-    // Check if this is an unverified email error
-    console.log(error);
+    // Check if this is an unverified email error (from /api/auth/password/register)
     if (error?.data?.data?.needsVerification && error?.data?.data?.email) {
       const email = error.data.data.email
       
@@ -65,7 +66,7 @@ export const useAuth = () => {
       await refreshSession()
       toast.add({ title: 'Logged in successfully', color: 'success' })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
@@ -81,7 +82,7 @@ export const useAuth = () => {
         body: userData,
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
@@ -98,7 +99,7 @@ export const useAuth = () => {
         color: 'success',
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
@@ -114,7 +115,7 @@ export const useAuth = () => {
         color: 'success',
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
@@ -132,7 +133,7 @@ export const useAuth = () => {
         duration: 5000,
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       // Use a custom error handler to avoid recursion with handleAuthError
       const errorMessage = error?.data?.message || 'Failed to send verification email'
       toast.add({
