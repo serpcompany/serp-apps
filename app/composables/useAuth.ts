@@ -1,6 +1,7 @@
 interface AuthError {
   message: string
   statusCode?: number
+  data?: any
 }
 
 interface AuthResponse {
@@ -14,12 +15,45 @@ export const useAuth = () => {
 
   const handleAuthError = (error: any) => {
     const errorMessage = error?.data?.message || 'An unexpected error occurred'
-    toast.add({
-      title: 'Error',
-      description: errorMessage,
-      color: 'error',
-    })
-    return { error: { message: errorMessage } as AuthError }
+    const statusCode = error?.data?.statusCode
+    
+    // Check if this is an unverified email error
+    console.log(error);
+    if (error?.data?.data?.needsVerification && error?.data?.data?.email) {
+      const email = error.data.data.email
+      
+      // Add toast with action button
+      toast.add({
+        title: 'Email not verified',
+        description: 'This email is registered but not verified.',
+        color: 'warning',
+        actions: [
+          {
+            icon: 'i-lucide-refresh-cw',
+            label: 'Resend verification',
+            onClick: async () => {
+              if (email) {
+                await resendVerification(email)
+              }
+            }
+          }
+        ]
+      })
+    } else {
+      // Regular error toast
+      toast.add({
+        title: 'Error',
+        description: errorMessage,
+        color: 'error',
+      })
+    }
+    
+    return { 
+      error: { 
+        message: errorMessage,
+        statusCode 
+      } as AuthError 
+    }
   }
 
   const login = async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
@@ -85,10 +119,36 @@ export const useAuth = () => {
     }
   }
 
+  const resendVerification = async (email: string): Promise<AuthResponse> => {
+    try {
+      await $fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        body: { email },
+      })
+      toast.add({
+        title: 'Verification email sent',
+        description: 'Please check your inbox',
+        color: 'success',
+        duration: 5000,
+      })
+      return { success: true }
+    } catch (error) {
+      // Use a custom error handler to avoid recursion with handleAuthError
+      const errorMessage = error?.data?.message || 'Failed to send verification email'
+      toast.add({
+        title: 'Error',
+        description: errorMessage,
+        color: 'error',
+      })
+      return { error: { message: errorMessage } as AuthError }
+    }
+  }
+
   return {
     login,
     register,
     forgotPassword,
     resetPassword,
+    resendVerification,
   }
 }

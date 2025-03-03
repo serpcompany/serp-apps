@@ -38,16 +38,17 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (!isWithinExpiryDate(storedToken.expiresAt.getTime())) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Verification code has expired',
-    })
-  }
-
   const user = await findUserById(storedToken.userId)
   if (!user) {
     throw createError({ statusCode: 400, statusMessage: 'User not found' })
+  }
+
+  if (!isWithinExpiryDate(storedToken.expiresAt.getTime())) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Verification code has expired. Please check your inbox or request a new verification email.',
+      data: { email: user.email, needsVerification: true },
+    })
   }
 
   if (!user.emailVerified) {
@@ -64,6 +65,6 @@ export default defineEventHandler(async (event) => {
   await updateLastActiveTimestamp(user.id)
   const transformedUser = sanitizeUser(user)
   await setUserSession(event, { user: transformedUser })
-  await deleteEmailVerificationCode(token as string)
+  await deleteEmailVerificationCode(user.id as string)
   return sendRedirect(event, '/dashboard')
 })
