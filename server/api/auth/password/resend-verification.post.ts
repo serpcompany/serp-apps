@@ -10,7 +10,7 @@ import { env } from '@@/env'
 import {
   findUserByEmail,
 } from '@@/server/database/queries/users'
-import { saveEmailVerificationCode, countEmailVerificationCodes } from '@@/server/database/queries/auth'
+import { saveEmailVerificationCode, countEmailVerificationCodes, deleteExpiredEmailVerificationCodes } from '@@/server/database/queries/auth'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
@@ -31,12 +31,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 2. Check if user has hit rate limit for verification emails
+  // 2. Delete expired verification codes and check if user has hit rate limit for verification emails
+  await deleteExpiredEmailVerificationCodes(user.id)
   const codeCount = await countEmailVerificationCodes(user.id)
   if (codeCount >= 3) {
     throw createError({
       statusCode: 429,
-      statusMessage: 'Too many emails have been sent. Please try again later.',
+      statusMessage: 'Too many emails have been sent recently. Please try again later.',
     })
   }
 
