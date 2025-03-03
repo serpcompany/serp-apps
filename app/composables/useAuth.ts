@@ -122,7 +122,7 @@ export const useAuth = () => {
 
   const resendVerification = async (email: string): Promise<AuthResponse> => {
     try {
-      await $fetch('/api/auth/resend-verification', {
+      await $fetch('/api/auth/password/resend-verification', {
         method: 'POST',
         body: { email },
       })
