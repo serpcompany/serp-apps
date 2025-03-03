@@ -15,8 +15,8 @@
           color="neutral"
           class="cursor-pointer"
           size="lg"
-          :loading="loading"
-          @click="resendVerification"
+          loading-auto
+          @click="resend"
         >
           Resend Verification Email
         </UButton>
@@ -46,32 +46,10 @@ const route = useRoute()
 const errorMessage = ref(route.query.message || 'An error occurred during email verification.')
 const hasEmail = computed(() => !!route.query.email)
 const email = ref(route.query.email as string || '')
-const loading = ref(false)
 const toast = useToast()
+const { resendVerification } = useAuth()
 
-async function resendVerification() {
-  if (!email.value) return
-  
-  loading.value = true
-  try {
-    await $fetch('/api/auth/resend-verification', {
-      method: 'POST',
-      body: { email: email.value },
-    })
-    toast.add({
-      title: 'Verification email sent',
-      description: 'Please check your inbox',
-      color: 'success',
-      duration: 5000,
-    })
-  } catch (error: FetchError) {
-    toast.add({
-      title: 'Error',
-      description: error.statusMessage || 'Failed to resend verification email',
-      color: 'error',
-    })
-  } finally {
-    loading.value = false
-  }
+async function resend() {
+  await resendVerification(email.value)
 }
 </script>

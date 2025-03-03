@@ -35,7 +35,7 @@ export const useAuth = () => {
               if (email) {
                 await resendVerification(email)
               }
-            }
+            },
           }
         ]
       })
@@ -51,7 +51,7 @@ export const useAuth = () => {
     return { 
       error: { 
         message: errorMessage,
-        statusCode 
+        statusCode,
       } as AuthError 
     }
   }

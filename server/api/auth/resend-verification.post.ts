@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
   })
 
-  // 6. Render email template and send
+  // 4. Render email template and send
   const htmlTemplate = await render(EmailVerification, {
     verificationCode: emailVerificationCode,
   })
