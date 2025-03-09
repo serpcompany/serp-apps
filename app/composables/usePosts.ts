@@ -2,7 +2,7 @@ import { ref, reactive } from 'vue'
 import type { Post, InsertPost } from '@@/types/database'
 import { z } from 'zod'
 
-export const usePosts = () => {
+export const usePosts = async () => {
   const { currentTeam } = useTeam()
   const toast = useToast()
   const loading = ref(false)
@@ -40,7 +40,7 @@ export const usePosts = () => {
 
   type Schema = z.output<typeof schema>
 
-  const { data: posts, refresh } = useFetch<Post[]>(
+  const { data: posts, refresh } = await useFetch<Post[]>(
     () => `/api/teams/${currentTeam.value?.id}/posts`,
     {
       watch: [currentTeam],
