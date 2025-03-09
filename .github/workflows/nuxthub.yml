@@ -3,7 +3,7 @@ on: push
 
 jobs:
   deploy:
-    name: "Deploy to NuxtHub"
+    name: 'Deploy to NuxtHub'
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
@@ -11,6 +11,38 @@ jobs:
     permissions:
       contents: read
       id-token: write
+
+    env:
+      # Auth Utils
+      NUXT_OAUTH_GITHUB_CLIENT_ID: ${{ vars.NUXT_OAUTH_GITHUB_CLIENT_ID }}
+      NUXT_OAUTH_GITHUB_CLIENT_SECRET: ${{ vars.NUXT_OAUTH_GITHUB_CLIENT_SECRET }}
+      NUXT_OAUTH_GOOGLE_CLIENT_ID: ${{ vars.NUXT_OAUTH_GOOGLE_CLIENT_ID }}
+      NUXT_OAUTH_GOOGLE_CLIENT_SECRET: ${{ vars.NUXT_OAUTH_GOOGLE_CLIENT_SECRET }}
+      NUXT_OAUTH_DISCORD_CLIENT_ID: ${{ vars.NUXT_OAUTH_DISCORD_CLIENT_ID }}
+      NUXT_OAUTH_DISCORD_CLIENT_SECRET: ${{ vars.NUXT_OAUTH_DISCORD_CLIENT_SECRET }}
+      NUXT_SESSION_PASSWORD: ${{ vars.NUXT_SESSION_PASSWORD }}
+
+      # Payment
+      PAYMENT_PROVIDER: ${{ vars.PAYMENT_PROVIDER }}
+      NUXT_STRIPE_SECRET_KEY: ${{ vars.NUXT_STRIPE_SECRET_KEY }}
+      NUXT_STRIPE_WEBHOOK_SECRET: ${{ vars.NUXT_STRIPE_WEBHOOK_SECRET }}
+
+      # Email
+      RESEND_API_TOKEN: ${{ vars.RESEND_API_TOKEN }}
+      FROM_EMAIL: ${{ vars.FROM_EMAIL }}
+      EMAIL_PROVIDER: ${{ vars.EMAIL_PROVIDER }}
+
+      # App Config
+      BASE_URL: ${{ vars.BASE_URL }}
+      APP_NAME: ${{ vars.APP_NAME }}
+      APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
+      LOGO_URL: ${{ vars.LOGO_URL }}
+      MOCK_EMAIL: ${{ vars.MOCK_EMAIL }}
+
+      # Twilio
+      TWILIO_ACCOUNT_SID: ${{ vars.TWILIO_ACCOUNT_SID }}
+      TWILIO_AUTH_TOKEN: ${{ vars.TWILIO_AUTH_TOKEN }}
+      TWILIO_PHONE_NUMBER: ${{ vars.TWILIO_PHONE_NUMBER }}
 
     steps:
       - uses: actions/checkout@v4
@@ -38,37 +70,3 @@ jobs:
         id: deploy
         with:
           project-key: essentials-v3-dzwp
-      
-    env:
-      # Auth Utils
-      NUXT_OAUTH_GITHUB_CLIENT_ID: ${{ vars.NUXT_OAUTH_GITHUB_CLIENT_ID }}
-      NUXT_OAUTH_GITHUB_CLIENT_SECRET: ${{ vars.NUXT_OAUTH_GITHUB_CLIENT_SECRET }}
-      NUXT_OAUTH_GOOGLE_CLIENT_ID: ${{ vars.NUXT_OAUTH_GOOGLE_CLIENT_ID }}
-      NUXT_OAUTH_GOOGLE_CLIENT_SECRET: ${{ vars.NUXT_OAUTH_GOOGLE_CLIENT_SECRET }}
-      NUXT_OAUTH_DISCORD_CLIENT_ID: ${{ vars.NUXT_OAUTH_DISCORD_CLIENT_ID }}
-      NUXT_OAUTH_DISCORD_CLIENT_SECRET: ${{ vars.NUXT_OAUTH_DISCORD_CLIENT_SECRET }}
-      NUXT_SESSION_PASSWORD: ${{ vars.NUXT_SESSION_PASSWORD }}
-      
-      # Payment
-      PAYMENT_PROVIDER: ${{ vars.PAYMENT_PROVIDER }}
-      NUXT_STRIPE_SECRET_KEY: ${{ vars.NUXT_STRIPE_SECRET_KEY }}
-      NUXT_STRIPE_WEBHOOK_SECRET: ${{ vars.NUXT_STRIPE_WEBHOOK_SECRET }}
-
-      # Email
-      RESEND_API_TOKEN: ${{ vars.RESEND_API_TOKEN }}
-      FROM_EMAIL: ${{ vars.FROM_EMAIL }}
-      EMAIL_PROVIDER: ${{ vars.EMAIL_PROVIDER }}
-
-      # App Config
-      BASE_URL: ${{ vars.BASE_URL }}
-      APP_NAME: ${{ vars.APP_NAME }}
-      APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
-      LOGO_URL: ${{ vars.LOGO_URL }}
-      MOCK_EMAIL: ${{ vars.MOCK_EMAIL }}
-      
-      # Twilio
-      TWILIO_ACCOUNT_SID: ${{ vars.TWILIO_ACCOUNT_SID }}
-      TWILIO_AUTH_TOKEN: ${{ vars.TWILIO_AUTH_TOKEN }}
-      TWILIO_PHONE_NUMBER: ${{ vars.TWILIO_PHONE_NUMBER }}
-
-
