@@ -5,9 +5,7 @@ import { createError } from 'h3'
 export const getAllPosts = async (teamId: string) => {
   try {
     const posts = await useDB().query.posts.findMany({
-      where: and(
-        eq(tables.posts.teamId, teamId),
-      ),
+      where: and(eq(tables.posts.teamId, teamId)),
       orderBy: [desc(tables.posts.createdAt)],
       with: {
         userId: {
@@ -75,7 +73,7 @@ export const updatePost = async (
   post: Partial<Post>,
 ) => {
   try {
-    const updatedPost = await useDB()
+    const result = await useDB()
       .update(tables.posts)
       .set(post)
       .where(
@@ -86,9 +84,19 @@ export const updatePost = async (
         ),
       )
       .returning()
-      .get()
-    return updatedPost
-  } catch (error) {
+
+    if (!result.length) {
+      throw createError({
+        statusCode: 403,
+        statusMessage:
+          'You are not authorized to update this post or it does not exist',
+      })
+    }
+
+    return result[0]
+  } catch (error: any) {
+    if (error.statusCode) throw error
+
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to update post',
@@ -102,7 +110,7 @@ export const deletePost = async (
   userId: string,
 ) => {
   try {
-    const deletedPost = await useDB()
+    const result = await useDB()
       .delete(tables.posts)
       .where(
         and(
@@ -111,8 +119,20 @@ export const deletePost = async (
           eq(tables.posts.userId, userId),
         ),
       )
-    return deletedPost
-  } catch (error) {
+      .returning()
+
+    if (!result.length) {
+      throw createError({
+        statusCode: 403,
+        statusMessage:
+          'You are not authorized to delete this post or it does not exist',
+      })
+    }
+
+    return result[0]
+  } catch (error: any) {
+    if (error.statusCode) throw error
+
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to delete post',
