@@ -9,7 +9,7 @@
       </div>
       <div
         v-else
-        class="w-full columns-1 gap-3 space-y-3 md:columns-2 xl:columns-4"
+        class="w-full columns-1 gap-3 space-y-3 md:columns-2 lg:columns-3 xl:columns-5"
       >
         <div
           v-for="post in posts"
