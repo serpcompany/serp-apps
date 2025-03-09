@@ -1,9 +1,10 @@
 import {
   getInvite,
   updateInviteStatus,
-  addUserToTeam,
+  acceptTeamInvite,
   isUserAlreadyInTeam,
 } from '@@/server/database/queries/teams'
+import { verifyUser } from '@@/server/database/queries/users'
 import { z } from 'zod'
 // Define invite status types for better type safety
 type InviteStatus = (typeof INVALID_STATUSES)[number]
@@ -67,16 +68,12 @@ export default defineEventHandler(async (event) => {
   }
 
   // 6. Validate invite belongs to correct user
-  if (invite.email !== session.user.email) {
-    // Invite belongs to a different user
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'Invalid invite',
-    })
+  if (invite.email === session.user.email) {
+    verifyUser(session.user.id)
   }
 
   // 7. Process invite acceptance
-  await addUserToTeam(invite.teamId, session.user.id)
+  await acceptTeamInvite(invite, session.user.id)
   await updateInviteStatus(invite.id, 'accepted')
 
   return sendRedirect(event, '/dashboard', 302)

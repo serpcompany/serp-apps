@@ -171,11 +171,11 @@ export const updateInviteStatus = async (inviteId: string, status: string) => {
     .where(eq(tables.teamInvites.id, inviteId))
 }
 
-export const addUserToTeam = async (teamId: string, userId: string) => {
+export const acceptTeamInvite = async (invite: TeamInvite, userId: string) => {
   try {
     await useDB()
       .insert(tables.teamMembers)
-      .values({ teamId, userId, role: 'member' })
+      .values({ teamId: invite.teamId, userId, role: invite.role })
   } catch (error) {
     console.error(error)
     throw createError({
