@@ -25,33 +25,6 @@ export default defineNuxtConfig({
   auth: {
     webAuthn: true,
   },
-  mdc: {
-    headings: {
-      anchorLinks: false,
-    },
-    highlight: {
-      langs: [
-        'ts',
-        'js',
-        'html',
-        'css',
-        'json',
-        'md',
-        'yaml',
-        'bash',
-        'css',
-        'py',
-        'tsx',
-        'jsx',
-        'go',
-        'rust',
-        'java',
-        'kotlin',
-        'swift',
-        'csharp',
-      ],
-    },
-  },
   nitro: {
     rollupConfig: {
       // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
@@ -62,10 +35,5 @@ export default defineNuxtConfig({
     database: true,
     blob: true,
     kv: true,
-  },
-  vite: {
-    server: {
-      allowedHosts: ['local.supersaas.dev'],
-    },
   },
 })
