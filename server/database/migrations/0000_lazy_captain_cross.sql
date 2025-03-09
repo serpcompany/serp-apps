@@ -15,38 +15,6 @@ CREATE TABLE `waitlist` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `waitlist_email_unique` ON `waitlist` (`email`);--> statement-breakpoint
-CREATE TABLE `chats` (
-	`id` text PRIMARY KEY NOT NULL,
-	`team_id` text NOT NULL,
-	`user_id` text NOT NULL,
-	`title` text NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
-	FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE TABLE `messages` (
-	`id` text PRIMARY KEY NOT NULL,
-	`chat_id` text NOT NULL,
-	`user_id` text NOT NULL,
-	`role` text NOT NULL,
-	`content` text NOT NULL,
-	`created_at` integer,
-	FOREIGN KEY (`chat_id`) REFERENCES `chats`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE TABLE `public_chats` (
-	`id` text PRIMARY KEY NOT NULL,
-	`title` text NOT NULL,
-	`author` text NOT NULL,
-	`author_avatar` text NOT NULL,
-	`messages` text DEFAULT '[]' NOT NULL,
-	`created_at` integer,
-	`updated_at` integer
-);
---> statement-breakpoint
 CREATE TABLE `email_verification_codes` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`userId` text NOT NULL,
@@ -128,6 +96,7 @@ CREATE TABLE `images` (
 CREATE TABLE `posts` (
 	`id` text PRIMARY KEY NOT NULL,
 	`userId` text NOT NULL,
+	`image` text,
 	`teamId` text NOT NULL,
 	`title` text NOT NULL,
 	`content` text NOT NULL,

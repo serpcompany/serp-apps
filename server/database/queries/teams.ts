@@ -185,7 +185,7 @@ export const addUserToTeam = async (teamId: string, userId: string) => {
   }
 }
 
-export const isUserAlreadyInTeam = async (teamId: string, userId: string) => {
+export const isTeamMember = async (teamId: string, userId: string) => {
   try {
     const member = await useDB()
       .select({ id: tables.teamMembers.id })
@@ -244,3 +244,4 @@ export const deleteTeamMember = async (teamId: string, memberId: string) => {
     })
   }
 }
+

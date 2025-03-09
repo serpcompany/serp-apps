@@ -2,12 +2,11 @@ import { eq, and, desc } from 'drizzle-orm'
 import type { InsertPost, Post } from '@@/types/database'
 import { createError } from 'h3'
 
-export const getAllPosts = async (teamId: string, userId: string) => {
+export const getAllPosts = async (teamId: string) => {
   try {
     const posts = await useDB().query.posts.findMany({
       where: and(
         eq(tables.posts.teamId, teamId),
-        eq(tables.posts.userId, userId),
       ),
       orderBy: [desc(tables.posts.createdAt)],
       with: {

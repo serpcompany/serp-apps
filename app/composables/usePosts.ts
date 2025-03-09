@@ -22,7 +22,7 @@ export const usePosts = () => {
   const loading = ref(false)
   const posts = ref<Post[]>([])
   const selectedFile = ref<File | null>(null)
-
+  const { user } = useUserSession()
   // Modal states
   const postModal = reactive({
     show: false,
@@ -53,24 +53,33 @@ export const usePosts = () => {
         body: post,
       },
     )
-    return data
+    // Append user data locally, when refreshed or new data fetched userId from db is added
+    return { ...data, userId: user.value }
   }
 
   const getPost = async (id: string) => {
-    return await useFetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`)
+    return await useFetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+    )
   }
 
   const updatePost = async (id: string, post: Partial<Post>) => {
-    return await $fetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`, {
-      method: 'PATCH',
-      body: post,
-    })
+    return await $fetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+      {
+        method: 'PATCH',
+        body: post,
+      },
+    )
   }
 
   const deletePost = async (id: string) => {
-    return await $fetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`, {
-      method: 'DELETE',
-    })
+    return await $fetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+      {
+        method: 'DELETE',
+      },
+    )
   }
 
   const uploadImage = async () => {
@@ -84,6 +93,12 @@ export const usePosts = () => {
       })
       return `/images/${filePath}`
     } catch (error) {
+      console.log(error)
+      toast.add({
+        title: 'Failed to upload image',
+        description: error.data.message,
+        color: 'error',
+      })
       throw createError('Failed to upload image')
     }
   }
@@ -125,9 +140,17 @@ export const usePosts = () => {
     try {
       await deletePost(confirmModal.post.id)
       posts.value = posts.value?.filter((p) => p.id !== confirmModal.post?.id)
-      toast.add({ title: 'Success', description: 'Note deleted', color: 'success' })
+      toast.add({
+        title: 'Success',
+        description: 'Note deleted',
+        color: 'success',
+      })
     } catch (error) {
-      toast.add({ title: 'Error', description: 'Failed to delete note', color: 'error' })
+      toast.add({
+        title: 'Error',
+        description: 'Failed to delete note',
+        color: 'error',
+      })
     } finally {
       loading.value = false
       confirmModal.show = false
@@ -151,20 +174,34 @@ export const usePosts = () => {
 
       if (postModal.isEdit && postModal.currentPost) {
         const updatedPost = await updatePost(postModal.currentPost.id, postData)
-        const index = posts.value?.findIndex((p) => p.id === postModal.currentPost?.id) ?? -1
+        const index =
+          posts.value?.findIndex((p) => p.id === postModal.currentPost?.id) ??
+          -1
         if (index !== -1) {
           posts.value[index] = updatedPost
         }
-        toast.add({ title: 'Success', description: 'Note updated', color: 'success' })
+        toast.add({
+          title: 'Success',
+          description: 'Note updated',
+          color: 'success',
+        })
       } else {
         const newPost = await createPost(postData)
         posts.value.unshift(newPost)
-        toast.add({ title: 'Success', description: 'Note created', color: 'success' })
+        toast.add({
+          title: 'Success',
+          description: 'Note created',
+          color: 'success',
+        })
       }
       postModal.show = false
       resetPostModal()
     } catch (error) {
-      toast.add({ title: 'Error', description: 'Failed to save note', color: 'error' })
+      toast.add({
+        title: 'Error',
+        description: 'Failed to save note',
+        color: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -177,11 +214,14 @@ export const usePosts = () => {
   }
 
   // Watch modal state
-  watch(() => postModal.show, (isOpen) => {
-    if (!isOpen) {
-      resetPostModal()
-    }
-  })
+  watch(
+    () => postModal.show,
+    (isOpen) => {
+      if (!isOpen) {
+        resetPostModal()
+      }
+    },
+  )
 
   return {
     posts,

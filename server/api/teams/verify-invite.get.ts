@@ -2,7 +2,7 @@ import {
   getInvite,
   updateInviteStatus,
   addUserToTeam,
-  isUserAlreadyInTeam,
+  isTeamMember,
 } from '@@/server/database/queries/teams'
 import { z } from 'zod'
 // Define invite status types for better type safety
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 5. Check if user is already a team member
-  const isAlreadyMember = await isUserAlreadyInTeam(
+  const isAlreadyMember = await isTeamMember(
     invite.teamId,
     session.user.id,
   )

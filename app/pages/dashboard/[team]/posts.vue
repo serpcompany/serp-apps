@@ -8,12 +8,12 @@
     </div>
     <div
       v-else
-      class="w-full columns-1 gap-3 space-y-3 md:columns-2 lg:columns-5"
+      class="w-full columns-1 gap-3 space-y-3 md:columns-2 xl:columns-4"
     >
       <div
         v-for="post in posts"
         :key="post.id"
-        class="break-inside-avoid-column rounded-xl bg-neutral-100 dark:bg-neutral-950"
+        class="break-inside-avoid-column rounded-2xl bg-neutral-100 dark:bg-neutral-950"
       >
         <div class="rounded-xl bg-[#fbfaf9] p-1.5 dark:bg-neutral-950">
           <div
@@ -46,7 +46,7 @@
                 />
               </div>
             </header>
-            <div class="p-4">
+            <div class="px-4 py-6">
               <img
                 v-if="post.image"
                 :src="post.image"
@@ -54,11 +54,24 @@
                 :alt="post.title"
               />
               <p
-                class="text-sm whitespace-pre-wrap text-neutral-600 dark:text-neutral-400"
+                class="text-sm whitespace-pre-wrap text-neutral-500 dark:text-neutral-400"
               >
                 {{ post.content }}
               </p>
             </div>
+            <footer
+              class="flex min-w-0 items-center justify-between gap-2 border-t border-neutral-100 px-4 py-2 dark:border-white/10"
+            >
+              <div class="flex items-center gap-2">
+                <UAvatar :src="post.userId.avatarUrl" size="xs" />
+                <p class="text-xs font-medium text-neutral-500">
+                  {{ post.userId.name }}
+                </p>
+              </div>
+              <p class="text-xs font-medium text-neutral-500">
+                {{ useDateFormat(post.createdAt, 'MMM DD hh:mm A') }}
+              </p>
+            </footer>
           </div>
         </div>
       </div>
@@ -124,6 +137,7 @@
 
 <script lang="ts" setup>
 import type { Post } from '@@/types/database'
+import { useDateFormat } from '@vueuse/core'
 
 const {
   posts,
