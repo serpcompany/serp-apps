@@ -15,7 +15,6 @@
 
 <script lang="ts" setup>
 const { isTeamOwner } = useTeam()
-console.log('Team.vue', isTeamOwner.value)
 const teamSlug = useState('teamSlug')
 const links = computed(() => [
   {

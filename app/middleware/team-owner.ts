@@ -13,11 +13,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo('/auth/login')
   }
 
-  // If teams aren't loaded yet, fetch them
-  if (!teams.value) {
-    console.log('Teams not loaded yet...')
-  }
-
   // Get team slug from route parameter
   const currentTeam = teams.value?.find((team) => team.slug === to.params.team as string)
 
@@ -30,7 +25,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   if (!isTeamOwner.value) {
-    console.log('Not team owner (team-owner middleware')
     toast.add({
       title: 'Unauthorized Access',
       color: 'error',

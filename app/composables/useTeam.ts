@@ -19,19 +19,6 @@ export const useTeam = () => {
   const teams = useState<Team[]>('teams', () => [])
   const teamSlug = useState<string>('teamSlug')
 
-  // const currentTeam = ref<Team>()
-  // watch([teamSlug, teams], ([slug, allTeams]) => {
-  //   if (!slug || !allTeams.length) {
-  //     return
-  //   }
-  //   console.log('currentTeam', slug, allTeams)
-  //   const team = allTeams.find((t) => t && t.slug === slug)
-  //   if (!team) {
-  //     console.log('Team not found')
-  //     //throw createError('Team not found')
-  //   }
-  //   currentTeam.value = team
-  // }, { immediate: true })
   const currentTeam = computed(() => {
     if (!teamSlug.value || !teams.value.length) {
       return teams.value[0] || {} as Team
