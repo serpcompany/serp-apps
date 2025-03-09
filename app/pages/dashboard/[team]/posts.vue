@@ -3,6 +3,7 @@
     <template #actions>
       <UButton label="New Post" @click="postModal.show = true" />
     </template>
+    <pre>{{ posts }}</pre>
     <div v-if="!posts?.length">
       <p>No posts found</p>
     </div>
