@@ -20,6 +20,7 @@ import {
 } from '@@/server/database/queries/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
+import type { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
@@ -85,15 +86,6 @@ export default defineEventHandler(async (event) => {
   // 7. Update last active timestamp
   await updateLastActiveTimestamp(user.id)
 
-  const sanitizedUser = sanitizeUser(user)
-
-
-  if (!sanitizedUser) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to process user data',
-    })
-  }
-  await setUserSession(event, { user: sanitizedUser })
+  await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
   return sendNoContent(event)
 })

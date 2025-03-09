@@ -15,20 +15,49 @@ export const useTeam = () => {
         'Only lowercase letters, numbers, and single hyphens between characters allowed',
       ),
   })
-  const teamSlug = useRoute().params.team as string
   const loading = ref(false)
-  const teams = useState<Team[]>('teams')
+  const teams = useState<Team[]>('teams', () => [])
+  const teamSlug = useState<string>('teamSlug')
 
+  // const currentTeam = ref<Team>()
+  // watch([teamSlug, teams], ([slug, allTeams]) => {
+  //   if (!slug || !allTeams.length) {
+  //     return
+  //   }
+  //   console.log('currentTeam', slug, allTeams)
+  //   const team = allTeams.find((t) => t && t.slug === slug)
+  //   if (!team) {
+  //     console.log('Team not found')
+  //     //throw createError('Team not found')
+  //   }
+  //   currentTeam.value = team
+  // }, { immediate: true })
   const currentTeam = computed(() => {
-    const team = teams.value.find((team) => team.slug === teamSlug)
+    if (!teamSlug.value || !teams.value.length) {
+      return teams.value[0] || {} as Team
+    }
+    const team = teams.value.find((team) => team.slug === teamSlug.value)
     if (!team) {
       throw createError('Team not found')
     }
     return team
   })
-  const isTeamOwner = computed(
-    () => currentTeam.value?.ownerId === user.value?.id,
-  )
+  
+  const isTeamOwner = ref(false)
+  watch(currentTeam, (team) => {
+    isTeamOwner.value = team?.ownerId === user.value?.id
+  }, { immediate: true })
+
+  const getMemberships = async () => {
+    loading.value = true
+    try {
+      const { data: memberships } = await useFetch<Team[]>('/api/me/memberships')
+      return memberships.value as Team[]
+    }
+    finally {
+      loading.value = false
+    }
+  }
 
   const createTeam = async (teamData: z.infer<typeof teamSchema>) => {
     loading.value = true
@@ -105,12 +134,12 @@ export const useTeam = () => {
     }
   }
 
-  const inviteMember = async (email: string) => {
+  const inviteMember = async (email: string, role: string = 'member') => {
     loading.value = true
     try {
       await $fetch(`/api/teams/${currentTeam?.value?.id}/members`, {
         method: 'POST',
-        body: { email },
+        body: { email, role },
       })
     } catch (error) {
       toast.add({
@@ -190,6 +219,7 @@ export const useTeam = () => {
 
   return {
     loading,
+    getMemberships,
     createTeam,
     updateTeam,
     deleteTeam,

@@ -8,6 +8,7 @@ import {
   updateLastActiveTimestamp,
 } from '@@/server/database/queries/users'
 import { phoneVerificationSchema } from '@@/shared/validations/auth'
+import type { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   const data = await validateBody(event, phoneVerificationSchema)
@@ -39,6 +40,6 @@ export default defineEventHandler(async (event) => {
   }
 
   await updateLastActiveTimestamp(user.id)
-  await setUserSession(event, { user: sanitizeUser(user) })
+  await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
   return sanitizeUser(user)
 })

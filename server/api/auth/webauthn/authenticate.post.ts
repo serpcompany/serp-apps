@@ -12,6 +12,7 @@
 // Used in:
 // - app/pages/auth/login-passkey.vue
 
+import type { UserSession } from '#auth-utils'
 import {
   storeWebAuthnChallenge,
   findCredentialByUserId,
@@ -75,7 +76,6 @@ export default defineWebAuthnAuthenticateEventHandler({
     }
 
     await updateLastActiveTimestamp(user.id)
-    const transformedUser = sanitizeUser(user)
-    await setUserSession(event, { user: transformedUser })
+    await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
   },
 })

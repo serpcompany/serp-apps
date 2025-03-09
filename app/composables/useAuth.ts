@@ -10,7 +10,7 @@ interface AuthResponse {
 
 export const useAuth = () => {
   const toast = useToast()
-  const { fetch: refreshSession } = useUserSession()
+  const { fetch: refreshSession, clear, user } = useUserSession()
 
   const handleAuthError = (error: any) => {
     const errorMessage = error?.data?.message || 'An unexpected error occurred'
@@ -34,6 +34,12 @@ export const useAuth = () => {
     } catch (error) {
       return handleAuthError(error)
     }
+  }
+
+  const logout = async () => {
+    await clear()
+    useState('teamSlug').value = ''
+    useState('teams').value = []
   }
 
   const register = async (userData: {
@@ -87,6 +93,7 @@ export const useAuth = () => {
 
   return {
     login,
+    logout,
     register,
     forgotPassword,
     resetPassword,

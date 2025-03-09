@@ -13,6 +13,7 @@
 // - server/api/auth/oauth/google.ts
 // - server/api/auth/oauth/github.ts
 
+import { UserSession } from '#auth-utils'
 import {
   findUserByEmail,
   createUserWithOAuth,
@@ -67,10 +68,7 @@ export const handleOAuthSuccess = async (
     })
   }
 
-  // 7. Sanitize user data
-  const sanitizedUser = sanitizeUser(dbUser)
-
-  // 8. Set user session and redirect to dashboard
-  await setUserSession(event, { user: sanitizedUser })
+  // 7. Set user session and redirect to dashboard
+  await setUserSession(event, { user: sanitizeUser(dbUser) } as UserSession)
   return sendRedirect(event, '/dashboard')
 }

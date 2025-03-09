@@ -1,3 +1,4 @@
+import type { User } from '#auth-utils'
 import { InsertUser } from '@@/types/database'
 
 export const sanitizeUser = (
@@ -10,7 +11,7 @@ export const sanitizeUser = (
     delete user.bannedReason
   }
   delete user.hashedPassword
-  return user
+  return user as User
 }
 
 /**

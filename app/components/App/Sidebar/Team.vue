@@ -15,35 +15,36 @@
 
 <script lang="ts" setup>
 const { isTeamOwner } = useTeam()
-const teamSlug = useRoute().params.team as string
-const links = [
+console.log('Team.vue', isTeamOwner.value)
+const teamSlug = useState('teamSlug')
+const links = computed(() => [
   {
     label: 'Home',
     icon: 'i-lucide-home',
-    to: `/dashboard/${teamSlug}`,
+    to: `/dashboard/${teamSlug.value}`,
   },
   {
     label: 'Posts',
     icon: 'i-lucide-file-text',
-    to: `/dashboard/${teamSlug}/posts`,
+    to: `/dashboard/${teamSlug.value}/posts`,
   },
-]
+])
 
-const settings = [
+const settings = computed(() => [
   {
     label: 'Workspace Settings',
     icon: 'i-lucide-settings',
-    to: `/dashboard/${teamSlug}/settings`,
+    to: `/dashboard/${teamSlug.value}/settings`,
   },
   {
     label: 'Workspace Members',
     icon: 'i-lucide-users',
-    to: `/dashboard/${teamSlug}/settings/members`,
+    to: `/dashboard/${teamSlug.value}/settings/members`,
   },
   {
     label: 'Billing',
     icon: 'i-lucide-credit-card',
-    to: `/dashboard/${teamSlug}/settings/billing`,
+    to: `/dashboard/${teamSlug.value}/settings/billing`,
   },
-]
+])
 </script>

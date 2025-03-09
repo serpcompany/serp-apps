@@ -25,7 +25,8 @@
 </template>
 
 <script setup lang="ts">
-const { user, clear } = useUserSession()
+const { user } = useUserSession()
+const { logout } = useAuth()
 import type { Team } from '@@/types/database'
 
 const onTeamCreated = (team: Team) => {
@@ -33,7 +34,7 @@ const onTeamCreated = (team: Team) => {
 }
 
 async function signOut() {
-  await clear()
+  await logout()
   await navigateTo('/')
 }
 </script>

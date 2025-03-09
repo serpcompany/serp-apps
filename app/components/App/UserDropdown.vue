@@ -1,6 +1,6 @@
 <template>
   <UDropdownMenu
-    :items="items"
+    :items="items as DropdownMenuItem[]"
     :ui="{
       content: 'w-[240px]',
     }"
@@ -47,10 +47,12 @@
 </template>
 
 <script setup lang="ts">
-const { user, clear } = useUserSession()
+import type { DropdownMenuItem } from '@nuxt/ui'
+const { user } = useUserSession()
+const { logout } = useAuth()
 const mobileMenu = useState('mobileMenu')
 async function signOut() {
-  await clear()
+  await logout()
   await navigateTo('/')
 }
 const items = ref([
