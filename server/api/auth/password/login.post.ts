@@ -36,11 +36,19 @@ export default defineEventHandler(async (event) => {
   if (!user.hashedPassword && user.emailVerified) {
     const linkedAccounts = await findLinkedAccountsByUserId(user.id)
     const providers = linkedAccounts.map((account) => account.provider)
+    // Function to capitalize provider names
+    const formatProviderName = (provider: string) => 
+      provider.charAt(0).toUpperCase() + provider.slice(1);
+
+    // Format the list of providers
+    const formattedProviders = providers.map(formatProviderName);
+    const providerList = formattedProviders.length > 1 
+      ? formattedProviders.slice(0, -1).join(', ') + ' and ' + formattedProviders.slice(-1) 
+      : formattedProviders[0];
+
     throw createError({
       statusCode: 400,
-      statusMessage: `Looks like you had signed up with ${providers.join(
-        ', ',
-      )}. Please use ${providers.join(', ')} to login instead.`,
+      statusMessage: `Your account is linked to ${providerList}. Please sign in using ${providers.length > 1 ? 'one of these providers' : 'this provider'} instead of password.`,
     })
   }
   // 4. Verify password
