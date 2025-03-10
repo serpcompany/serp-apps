@@ -20,9 +20,8 @@ import {
 } from '@@/server/database/queries/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
-import { UserSession } from '#auth-utils'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event) => { 
   // 1. Validate body
   const data = await validateBody(event, loginUserSchema)
   // 2. Find user by email
@@ -58,7 +57,6 @@ export default defineEventHandler(async (event) => {
     data.password,
   )
 
-
   if (!isPasswordCorrect) {
     throw createError({
       statusCode: 400,
@@ -71,9 +69,12 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'Email not verified',
+      data: {
+        needsVerification: true,
+        email: user.email
+      }
     })
   }
-
 
   // 6. Check if user is banned
   if (user.banned) {
@@ -88,13 +89,12 @@ export default defineEventHandler(async (event) => {
 
   const sanitizedUser = sanitizeUser(user)
 
-
   if (!sanitizedUser) {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to process user data',
     })
   }
-  await setUserSession(event, { user: sanitizedUser } as UserSession)
+  await setUserSession(event, { user: sanitizedUser })
   return sendNoContent(event)
 })

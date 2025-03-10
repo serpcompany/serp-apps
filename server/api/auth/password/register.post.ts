@@ -37,8 +37,11 @@ export default defineEventHandler(async (event) => {
     if (!existingUser.emailVerified) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'An account with this email exists but is not verified. Please check your inbox or request a new verification email.',
-        data: { email: data.email, needsVerification: true }
+        statusMessage: 'Email not verified',
+        data: { 
+          email: data.email, 
+          needsVerification: true 
+        }
       })
     }
     
