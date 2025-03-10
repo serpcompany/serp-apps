@@ -1,6 +1,7 @@
 import { sendEmail } from '@@/server/services/email'
 import { render } from '@vue-email/render'
 import LoginNotification from '@@/emails/login-notification.vue'
+import { env } from '@@/env'
 
 export default defineEventHandler(async (event) => {
   // Get user data from the request body
@@ -24,12 +25,13 @@ export default defineEventHandler(async (event) => {
       country,
     })
 
-    await sendEmail({
-      to: user.email,
-      subject: 'Login from a new location',
-      html: htmlTemplate,
-    })
-
+    if (!env.MOCK_EMAIL) {
+      await sendEmail({
+        to: user.email,
+        subject: 'Login from a new location',
+        html: htmlTemplate,
+      })
+    }
     return { success: true }
   } catch (error) {
     console.error('Failed to send login notification email:', error)

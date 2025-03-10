@@ -1,5 +1,5 @@
 import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
-import { deleteTeamMember } from '@@/server/database/queries/teams'
+import { deleteTeamMember, getActiveTeamMembers } from '@@/server/database/queries/teams'
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
@@ -12,7 +12,29 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Team ID and member ID are required',
     })
   }
+
+  // Validate team ownership and get team details
   await validateTeamOwnership(event, teamId)
+
+  // Get member details to check role
+  const members = await getActiveTeamMembers(teamId)
+  const memberToDelete = members.find(member => member.id === memberId)
+
+  if (!memberToDelete) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Team member not found',
+    })
+  }
+
+  // Prevent deletion of team owner
+  if (memberToDelete.role === 'owner') {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Cannot remove the team owner',
+    })
+  }
+
   await deleteTeamMember(teamId, memberId)
   return {
     message: 'Team member deleted successfully',
