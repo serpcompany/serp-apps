@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1739102033602,
-      "tag": "0000_thin_harpoon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1739266313939,
-      "tag": "0001_round_leader",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1740459131156,
-      "tag": "0002_useful_black_widow",
+      "when": 1741507457597,
+      "tag": "0000_lazy_captain_cross",
       "breakpoints": true
     }
   ]

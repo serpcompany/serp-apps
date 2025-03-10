@@ -33,6 +33,19 @@ export default defineEventHandler(async (event) => {
   // 2. Check if user exists
   const existingUser = await findUserByEmail(data.email)
   if (existingUser) {
+    // If user exists but email is not verified, show resend option
+    if (!existingUser.emailVerified) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Email not verified',
+        data: { 
+          email: data.email, 
+          needsVerification: true 
+        }
+      })
+    }
+    
+    // If user exists and email is verified, return error
     throw createError({
       statusCode: 400,
       statusMessage: 'An account with this email already exists, please login.',

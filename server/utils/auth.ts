@@ -21,6 +21,18 @@ export const sanitizeUser = (
  * @returns True if the date has not expired, false otherwise.
  */
 export function isWithinExpiryDate(expiresAt: number): boolean {
-  const currentTime = Math.floor(Date.now() / 1000)
+  const currentTime = Date.now()
   return currentTime < expiresAt
+}
+
+export async function sendLoginNotification(user: { name: string; email: string }) {
+  try {
+    await $fetch('/api/auth/login-notification', {
+      method: 'POST',
+      body: { user }
+    })
+  } catch (error) {
+    // Silently fail as this is not critical
+    console.error('Failed to send login notification:', error)
+  }
 }

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import type { User, InsertUser } from '@@/types/database'
 
 export const findUserByEmail = async (email: string): Promise<User | null> => {
@@ -175,17 +175,37 @@ export const linkOAuthAccount = async (
   providerUserId: string,
 ) => {
   try {
-    const record = await useDB()
-      .insert(tables.oauthAccounts)
-      .values({
-        userId,
-        provider,
-        providerUserId,
-      })
-      .onConflictDoNothing()
-      .returning()
-      .get()
-    return record
+    // First check if the record exists
+    const [existingAccount] = await useDB()
+      .select()
+      .from(tables.oauthAccounts)
+      .where(
+        and(
+          eq(tables.oauthAccounts.provider, provider),
+          eq(tables.oauthAccounts.providerUserId, providerUserId)
+        )
+      )
+    
+    if (existingAccount) {
+      // Update if it exists
+      return await useDB()
+        .update(tables.oauthAccounts)
+        .set({ userId })
+        .where(eq(tables.oauthAccounts.id, existingAccount.id))
+        .returning()
+        .get()
+    } else {
+      // Insert if it doesn't exist
+      return await useDB()
+        .insert(tables.oauthAccounts)
+        .values({
+          userId,
+          provider,
+          providerUserId,
+        })
+        .returning()
+        .get()
+    }
   } catch (error) {
     console.error(error)
     throw createError({

@@ -2,7 +2,7 @@ import {
   getInvite,
   updateInviteStatus,
   acceptTeamInvite,
-  isUserAlreadyInTeam,
+  isTeamMember,
 } from '@@/server/database/queries/teams'
 import { verifyUser } from '@@/server/database/queries/users'
 import { z } from 'zod'
@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 5. Check if user is already a team member
-  const isAlreadyMember = await isUserAlreadyInTeam(
+  const isAlreadyMember = await isTeamMember(
     invite.teamId,
     session.user.id,
   )

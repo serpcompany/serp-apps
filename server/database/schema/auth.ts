@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
 import { OneTimePasswordTypes } from '../../../constants'
 import { users } from './users'
 import type { WebAuthnCredential } from '#auth-utils'
@@ -19,6 +19,10 @@ export const oauthAccounts = sqliteTable('oauth_accounts', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
+}, (table) => {
+  return {
+    providerUserIdIdx: primaryKey({ columns: [table.provider, table.providerUserId] }),
+  }
 })
 
 export const emailVerificationCodes = sqliteTable('email_verification_codes', {

@@ -1,6 +1,9 @@
+import { FetchError } from 'ofetch'
+
 interface AuthError {
   message: string
   statusCode?: number
+  data?: any
 }
 
 interface AuthResponse {
@@ -12,17 +15,51 @@ export const useAuth = () => {
   const toast = useToast()
   const { fetch: refreshSession, clear, user } = useUserSession()
 
-  const handleAuthError = (error: any) => {
+  const handleAuthError = (error: FetchError | any) => {
     const errorMessage = error?.data?.message || 'An unexpected error occurred'
-    toast.add({
-      title: 'Error',
-      description: errorMessage,
-      color: 'error',
-    })
-    return { error: { message: errorMessage } as AuthError }
+    const statusCode = error?.data?.statusCode
+
+    // Check if this is an unverified email error
+    if (error?.data?.data?.needsVerification && error?.data?.data?.email) {
+      const email = error.data.data.email
+
+      // Add toast with action button
+      toast.add({
+        title: 'Email not verified',
+        description: 'This email is registered but not verified.',
+        actions: [
+          {
+            label: 'Resend Verification Email',
+            onClick: async () => {
+              if (email) {
+                await resendVerification(email)
+              }
+            },
+          },
+        ],
+      })
+    } else {
+      // Regular error toast
+      toast.add({
+        title: 'Error',
+        description: errorMessage,
+        color: 'error',
+      })
+    }
+
+    return {
+      error: {
+        message: errorMessage,
+        statusCode,
+        data: error?.data?.data,
+      } as AuthError,
+    }
   }
 
-  const login = async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
+  const login = async (credentials: {
+    email: string
+    password: string
+  }): Promise<AuthResponse> => {
     try {
       await $fetch('/api/auth/password/login', {
         method: 'POST',
@@ -31,7 +68,7 @@ export const useAuth = () => {
       await refreshSession()
       toast.add({ title: 'Logged in successfully', color: 'success' })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
@@ -53,7 +90,7 @@ export const useAuth = () => {
         body: userData,
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
@@ -70,12 +107,15 @@ export const useAuth = () => {
         color: 'success',
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
       return handleAuthError(error)
     }
   }
 
-  const resetPassword = async (password: string, token: string): Promise<AuthResponse> => {
+  const resetPassword = async (
+    password: string,
+    token: string,
+  ): Promise<AuthResponse> => {
     try {
       await $fetch('/api/auth/password/reset', {
         method: 'POST',
@@ -86,7 +126,26 @@ export const useAuth = () => {
         color: 'success',
       })
       return { success: true }
-    } catch (error) {
+    } catch (error: FetchError | any) {
+      return handleAuthError(error)
+    }
+  }
+
+  const resendVerification = async (email: string): Promise<AuthResponse> => {
+    try {
+      await $fetch('/api/auth/password/resend-verification', {
+        method: 'POST',
+        body: { email },
+      })
+      toast.add({
+        title: 'Verification email sent',
+        description: 'Please check your inbox',
+        color: 'success',
+        duration: 5000,
+      })
+      return { success: true }
+    } catch (error: FetchError | any) {
+      // Use the same error handler for consistency
       return handleAuthError(error)
     }
   }
@@ -97,5 +156,6 @@ export const useAuth = () => {
     register,
     forgotPassword,
     resetPassword,
+    resendVerification,
   }
 }

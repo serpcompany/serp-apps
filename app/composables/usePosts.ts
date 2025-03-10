@@ -1,38 +1,23 @@
+import { ref, reactive } from 'vue'
 import type { Post, InsertPost } from '@@/types/database'
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
+import { z } from 'zod'
 
-export const schema = z.object({
-  title: z
-    .string()
-    .min(1, 'Title is required')
-    .max(100, 'Title must be less than 100 characters'),
-  content: z
-    .string()
-    .min(1, 'Content is required')
-    .max(1000, 'Content must be less than 1000 characters'),
-  image: z.string().optional(),
-})
-
-export type Schema = z.output<typeof schema>
-
-export const usePosts = () => {
+export const usePosts = async () => {
   const { currentTeam } = useTeam()
   const toast = useToast()
   const loading = ref(false)
-  const posts = ref<Post[]>([])
+  const deletingPostId = ref<string | null>(null)
   const selectedFile = ref<File | null>(null)
 
-  // Modal states
   const postModal = reactive({
-    show: false,
+    isOpen: false,
     isEdit: false,
-    currentPost: null as Post | null,
+    editId: null as string | null,
   })
 
-  const confirmModal = reactive({
-    show: false,
-    post: null as Post | null,
+  const deleteModal = reactive({
+    isOpen: false,
+    postId: null as string | null,
   })
 
   const state = reactive<Partial<Schema>>({
@@ -41,37 +26,27 @@ export const usePosts = () => {
     image: undefined,
   })
 
-  const getAllPosts = async () => {
-    return await useFetch<Post[]>(`/api/teams/${currentTeam.value?.id}/posts`)
-  }
+  const schema = z.object({
+    title: z
+      .string()
+      .min(1, 'Title is required')
+      .max(100, 'Title must be less than 100 characters'),
+    content: z
+      .string()
+      .min(1, 'Content is required')
+      .max(1000, 'Content must be less than 1000 characters'),
+    image: z.string().optional(),
+  })
 
-  const createPost = async (post: Partial<InsertPost>) => {
-    const data = await $fetch<Post>(
-      `/api/teams/${currentTeam.value?.id}/posts`,
-      {
-        method: 'POST',
-        body: post,
-      },
-    )
-    return data
-  }
+  type Schema = z.output<typeof schema>
 
-  const getPost = async (id: string) => {
-    return await useFetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`)
-  }
-
-  const updatePost = async (id: string, post: Partial<Post>) => {
-    return await $fetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`, {
-      method: 'PATCH',
-      body: post,
-    })
-  }
-
-  const deletePost = async (id: string) => {
-    return await $fetch<Post>(`/api/teams/${currentTeam.value?.id}/posts/${id}`, {
-      method: 'DELETE',
-    })
-  }
+  const { data: posts, refresh } = await useFetch<Post[]>(
+    () => `/api/teams/${currentTeam.value?.id}/posts`,
+    {
+      watch: [currentTeam],
+      default: () => [],
+    },
+  )
 
   const uploadImage = async () => {
     try {
@@ -83,9 +58,114 @@ export const usePosts = () => {
         body: formData,
       })
       return `/images/${filePath}`
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error)
+      toast.add({
+        title: 'Failed to upload image',
+        description:
+          error.data?.message || 'An error occurred while uploading the image',
+        color: 'error',
+      })
       throw createError('Failed to upload image')
     }
+  }
+
+  const createPost = async (post: Partial<InsertPost>) => {
+    try {
+      const { data, error } = await useFetch<Post>(
+        `/api/teams/${currentTeam.value?.id}/posts`,
+        {
+          method: 'POST',
+          body: post,
+        },
+      )
+
+      if (error.value) {
+        throw error.value
+      }
+
+      return data.value
+    } catch (error: any) {
+      toast.add({
+        title: 'Failed to create post',
+        description:
+          error.data?.message || 'An error occurred while creating the post',
+        color: 'error',
+      })
+      throw error
+    }
+  }
+
+  const updatePost = async (id: string, post: Partial<Post>) => {
+    try {
+      const updatedPost = await $fetch<Post>(
+        `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+        {
+          method: 'PATCH',
+          body: post,
+        },
+      )
+      return updatedPost
+    } catch (error: any) {
+      toast.add({
+        title: 'Failed to update post',
+        description:
+          error.data?.message || 'An error occurred while updating the post',
+        color: 'error',
+      })
+      throw error
+    }
+  }
+
+  const deletePost = async (id: string) => {
+    try {
+      deletingPostId.value = id
+      return await $fetch<Post>(
+        `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+        {
+          method: 'DELETE',
+        },
+      )
+    } catch (error: any) {
+      toast.add({
+        title: 'Failed to delete post',
+        description:
+          error.data?.message || 'An error occurred while deleting the post',
+        color: 'error',
+      })
+      throw error
+    } finally {
+      deletingPostId.value = null
+    }
+  }
+
+  const resetForm = () => {
+    state.title = undefined
+    state.content = undefined
+    state.image = undefined
+    selectedFile.value = null
+  }
+
+  const openCreateModal = () => {
+    resetForm()
+    postModal.isEdit = false
+    postModal.editId = null
+    postModal.isOpen = true
+  }
+
+  const openEditModal = (post: Post) => {
+    resetForm()
+    state.title = post.title
+    state.content = post.content
+    state.image = post.image || undefined
+    postModal.isEdit = true
+    postModal.editId = post.id
+    postModal.isOpen = true
+  }
+
+  const confirmDelete = (postId: string) => {
+    deleteModal.postId = postId
+    deleteModal.isOpen = true
   }
 
   const handleFileSelected = (file: File | null) => {
@@ -95,106 +175,80 @@ export const usePosts = () => {
     }
   }
 
-  const resetPostModal = () => {
-    postModal.isEdit = false
-    postModal.currentPost = null
-    state.title = undefined
-    state.content = undefined
-    state.image = undefined
-    selectedFile.value = null
-  }
-
-  const editPost = (post: Post) => {
-    postModal.isEdit = true
-    postModal.currentPost = post
-    state.title = post.title
-    state.content = post.content
-    state.image = post.image
-    postModal.show = true
-  }
-
-  const confirmDelete = (post: Post) => {
-    confirmModal.post = post
-    confirmModal.show = true
-  }
-
-  const handleDelete = async () => {
-    if (!confirmModal.post) return
-
-    loading.value = true
+  const handleSubmit = async (event: any) => {
     try {
-      await deletePost(confirmModal.post.id)
-      posts.value = posts.value?.filter((p) => p.id !== confirmModal.post?.id)
-      toast.add({ title: 'Success', description: 'Note deleted', color: 'success' })
-    } catch (error) {
-      toast.add({ title: 'Error', description: 'Failed to delete note', color: 'error' })
-    } finally {
-      loading.value = false
-      confirmModal.show = false
-      confirmModal.post = null
-    }
-  }
-
-  const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
-    loading.value = true
-    try {
+      loading.value = true
       let image = state.image
 
       if (selectedFile.value) {
         image = await uploadImage()
       }
 
-      const postData = {
+      const payload = {
         ...event.data,
         image,
       }
 
-      if (postModal.isEdit && postModal.currentPost) {
-        const updatedPost = await updatePost(postModal.currentPost.id, postData)
-        const index = posts.value?.findIndex((p) => p.id === postModal.currentPost?.id) ?? -1
-        if (index !== -1) {
-          posts.value[index] = updatedPost
-        }
-        toast.add({ title: 'Success', description: 'Note updated', color: 'success' })
+      if (postModal.isEdit && postModal.editId) {
+        await updatePost(postModal.editId, payload)
+        toast.add({
+          title: 'Post updated',
+          description: 'Your post has been updated successfully',
+          color: 'success',
+        })
       } else {
-        const newPost = await createPost(postData)
-        posts.value.unshift(newPost)
-        toast.add({ title: 'Success', description: 'Note created', color: 'success' })
+        await createPost(payload)
+        toast.add({
+          title: 'Post created',
+          description: 'Your post has been created successfully',
+          color: 'success',
+        })
       }
-      postModal.show = false
-      resetPostModal()
+      refresh()
+      postModal.isOpen = false
+      resetForm()
     } catch (error) {
-      toast.add({ title: 'Error', description: 'Failed to save note', color: 'error' })
+      console.error('Error submitting post:', error)
     } finally {
       loading.value = false
     }
   }
 
-  // Initialize posts
-  const initializePosts = async () => {
-    const { data } = await getAllPosts()
-    posts.value = data.value || []
-  }
+  const handleDeletePost = async () => {
+    if (!deleteModal.postId) return
 
-  // Watch modal state
-  watch(() => postModal.show, (isOpen) => {
-    if (!isOpen) {
-      resetPostModal()
+    try {
+      loading.value = true
+      await deletePost(deleteModal.postId)
+      refresh()
+      toast.add({
+        title: 'Post deleted',
+        description: 'Your post has been deleted successfully',
+        color: 'success',
+      })
+      deleteModal.isOpen = false
+      deleteModal.postId = null
+    } catch (error) {
+      console.error('Error deleting post:', error)
+    } finally {
+      loading.value = false
     }
-  })
+  }
 
   return {
     posts,
     loading,
+    deletingPostId,
     postModal,
-    confirmModal,
+    deleteModal,
     state,
     schema,
-    editPost,
+    openCreateModal,
+    openEditModal,
     confirmDelete,
-    handleDelete,
-    handleSubmit,
-    initializePosts,
     handleFileSelected,
+    handleSubmit,
+    handleDeletePost,
+    refresh,
   }
 }

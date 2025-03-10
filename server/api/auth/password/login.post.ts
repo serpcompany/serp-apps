@@ -21,8 +21,9 @@ import {
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import type { UserSession } from '#auth-utils'
+import { sendLoginNotification } from '@@/server/utils/auth'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event) => { 
   // 1. Validate body
   const data = await validateBody(event, loginUserSchema)
   // 2. Find user by email
@@ -37,11 +38,19 @@ export default defineEventHandler(async (event) => {
   if (!user.hashedPassword && user.emailVerified) {
     const linkedAccounts = await findLinkedAccountsByUserId(user.id)
     const providers = linkedAccounts.map((account) => account.provider)
+    // Function to capitalize provider names
+    const formatProviderName = (provider: string) => 
+      provider.charAt(0).toUpperCase() + provider.slice(1);
+
+    // Format the list of providers
+    const formattedProviders = providers.map(formatProviderName);
+    const providerList = formattedProviders.length > 1 
+      ? formattedProviders.slice(0, -1).join(', ') + ' and ' + formattedProviders.slice(-1) 
+      : formattedProviders[0];
+
     throw createError({
       statusCode: 400,
-      statusMessage: `Looks like you had signed up with ${providers.join(
-        ', ',
-      )}. Please use ${providers.join(', ')} to login instead.`,
+      statusMessage: `Your account is linked to ${providerList}. Please sign in using ${providers.length > 1 ? 'one of these providers' : 'this provider'} instead of password.`,
     })
   }
   // 4. Verify password
@@ -58,7 +67,6 @@ export default defineEventHandler(async (event) => {
     data.password,
   )
 
-
   if (!isPasswordCorrect) {
     throw createError({
       statusCode: 400,
@@ -71,9 +79,12 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'Email not verified',
+      data: {
+        needsVerification: true,
+        email: user.email
+      }
     })
   }
-
 
   // 6. Check if user is banned
   if (user.banned) {
@@ -86,6 +97,21 @@ export default defineEventHandler(async (event) => {
   // 7. Update last active timestamp
   await updateLastActiveTimestamp(user.id)
 
+  const sanitizedUser = sanitizeUser(user)
+
+  if (!sanitizedUser) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to process user data',
+    })
+  }
   await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
+  
+  // Send login notification
+  await sendLoginNotification({
+    name: user.name,
+    email: user.email,
+  })
+  
   return sendNoContent(event)
 })

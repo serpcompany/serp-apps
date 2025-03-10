@@ -2,7 +2,7 @@ import {
   findOneTimePassword,
   deleteOneTimePassword,
 } from '@@/server/database/queries/auth'
-import { isWithinExpiryDate } from '@@/server/utils/auth'
+import { isWithinExpiryDate, sanitizeUser, sendLoginNotification } from '@@/server/utils/auth'
 import {
   findUserByPhoneNumber,
   updateLastActiveTimestamp,
@@ -41,5 +41,12 @@ export default defineEventHandler(async (event) => {
 
   await updateLastActiveTimestamp(user.id)
   await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
+  
+  // Send login notification
+  await sendLoginNotification({
+    name: user.name,
+    email: user.email,
+  })
+  
   return sanitizeUser(user)
 })

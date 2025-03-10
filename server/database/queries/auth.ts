@@ -1,6 +1,19 @@
-import { eq } from 'drizzle-orm'
+import { eq, count, lt, and } from 'drizzle-orm'
 import type { InsertEmailVerificationCodes, InsertOneTimePasswords } from '@@/types/database'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
+
+export const countEmailVerificationCodes = async (userId: string) => {
+  try {
+    const result = await useDB()
+      .select({ count: count() })
+      .from(tables.emailVerificationCodes)
+      .where(eq(tables.emailVerificationCodes.userId, userId))
+    return result[0].count
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to count verification codes')
+  }
+}
 
 export const saveEmailVerificationCode = async (
   payload: InsertEmailVerificationCodes,
@@ -45,11 +58,30 @@ export const findEmailVerificationCode = async (token: string) => {
   }
 }
 
-export const deleteEmailVerificationCode = async (token: string) => {
+export const deleteExpiredEmailVerificationCodes = async (userId: string) => {
+  try {
+    // Calculate the timestamp for 30 minutes ago
+    const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
+    
+    await useDB()
+      .delete(tables.emailVerificationCodes)
+      .where(
+        and(
+          eq(tables.emailVerificationCodes.userId, userId),
+          lt(tables.emailVerificationCodes.expiresAt, thirtyMinutesAgo)
+        )
+      )
+  } catch (error) {
+    console.error(error)
+    throw new Error('Failed to delete expired verification codes')
+  }
+}
+
+export const deleteEmailVerificationCode = async (userId: string) => {
   try {
     await useDB()
       .delete(tables.emailVerificationCodes)
-      .where(eq(tables.emailVerificationCodes.code, token))
+      .where(eq(tables.emailVerificationCodes.userId, userId))
   } catch (error) {
     console.error(error)
     throw new Error('Failed to delete verification code')

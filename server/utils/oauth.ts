@@ -20,6 +20,7 @@ import {
   updateUser,
   linkOAuthAccount,
 } from '@@/server/database/queries/users'
+import { sendLoginNotification } from '@@/server/utils/auth'
 
 export interface OAuthUserData {
   email: string
@@ -68,7 +69,16 @@ export const handleOAuthSuccess = async (
     })
   }
 
-  // 7. Set user session and redirect to dashboard
-  await setUserSession(event, { user: sanitizeUser(dbUser) } as UserSession)
+  // 7. Sanitize user data
+  const sanitizedUser = sanitizeUser(dbUser)
+
+  // 8. Set user session and redirect to dashboard
+  await setUserSession(event, { user: sanitizedUser } as UserSession)
+
+  // Send login notification
+  await sendLoginNotification({
+    name: sanitizedUser.name,
+    email: sanitizedUser.email,
+  })
   return sendRedirect(event, '/dashboard')
 }

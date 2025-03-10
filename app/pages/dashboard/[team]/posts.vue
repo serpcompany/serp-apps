@@ -1,72 +1,90 @@
 <template>
   <AppContainer title="Posts">
     <template #actions>
-      <UButton label="New Post" @click="postModal.show = true" />
+      <UButton label="New Post" @click="openCreateModal()" />
     </template>
-    <div v-if="!posts?.length">
-      <p>No posts found</p>
-    </div>
-    <div
-      v-else
-      class="w-full columns-1 gap-3 space-y-3 md:columns-2 lg:columns-5"
-    >
+    <div>
       <div
-        v-for="post in posts"
-        :key="post.id"
-        class="break-inside-avoid-column rounded-xl bg-neutral-100 dark:bg-neutral-950"
+        class="w-full columns-1 gap-3 space-y-3 md:columns-2 lg:columns-3 xl:columns-5"
       >
-        <div class="rounded-xl bg-[#fbfaf9] p-1.5 dark:bg-neutral-950">
-          <div
-            class="card-shadow group rounded-md bg-white dark:bg-neutral-900"
-          >
-            <header
-              class="flex min-w-0 items-center gap-2 border-b border-neutral-100 px-4 py-2 dark:border-white/10"
+        <div
+          v-for="post in posts"
+          :key="post.id"
+          class="break-inside-avoid-column rounded-2xl bg-neutral-100 dark:bg-neutral-950"
+        >
+          <div class="rounded-xl bg-[#fbfaf9] p-1.5 dark:bg-neutral-950">
+            <div
+              class="card-shadow group rounded-md bg-white dark:bg-neutral-900"
             >
-              <p
-                class="flex-1 truncate text-sm text-neutral-600 dark:text-neutral-400"
+              <header
+                class="flex min-w-0 items-center gap-2 border-b border-neutral-100 px-4 py-2 dark:border-white/10"
               >
-                {{ post.title }}
-              </p>
-              <div
-                class="flex opacity-10 transition-opacity group-hover:opacity-100"
-              >
-                <UButton
-                  icon="i-lucide-pencil"
-                  color="neutral"
-                  variant="ghost"
-                  size="xs"
-                  @click="editPost(post)"
+                <p
+                  class="flex-1 truncate text-sm text-neutral-600 dark:text-neutral-400"
+                >
+                  {{ post.title }}
+                </p>
+                <div
+                  class="flex opacity-10 transition-opacity group-hover:opacity-100"
+                >
+                  <UButton
+                    icon="i-lucide-pencil"
+                    color="neutral"
+                    variant="ghost"
+                    size="xs"
+                    @click="openEditModal(post)"
+                  />
+                  <UButton
+                    icon="i-lucide-trash"
+                    color="error"
+                    variant="ghost"
+                    size="xs"
+                    @click="confirmDelete(post.id)"
+                    :loading="deletingPostId === post.id"
+                  />
+                </div>
+              </header>
+              <div class="px-4 py-6">
+                <img
+                  v-if="post.image"
+                  :src="post.image"
+                  class="mb-2 min-h-40 w-full rounded-md object-cover"
+                  :alt="post.title"
                 />
-                <UButton
-                  icon="i-lucide-trash"
-                  color="error"
-                  variant="ghost"
-                  size="xs"
-                  @click="confirmDelete(post)"
-                />
+                <p
+                  class="text-sm whitespace-pre-wrap text-neutral-500 dark:text-neutral-400"
+                >
+                  {{ post.content }}
+                </p>
               </div>
-            </header>
-            <div class="p-4">
-              <img
-                v-if="post.image"
-                :src="post.image"
-                class="mb-2 min-h-40 w-full rounded-md object-cover"
-                :alt="post.title"
-              />
-              <p
-                class="text-sm whitespace-pre-wrap text-neutral-600 dark:text-neutral-400"
+              <footer
+                class="flex min-w-0 items-center justify-between gap-2 border-t border-neutral-100 px-4 py-2 dark:border-white/10"
               >
-                {{ post.content }}
-              </p>
+                <div class="flex items-center gap-2">
+                  <UAvatar :src="post.userId.avatarUrl" size="xs" />
+                  <p class="text-xs font-medium text-neutral-500">
+                    {{ post.userId.name }}
+                  </p>
+                </div>
+                <p class="text-xs font-medium text-neutral-500">
+                  {{ useDateFormat(post.createdAt, 'MMM DD hh:mm A') }}
+                </p>
+              </footer>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Post Modal (Create/Edit) -->
     <UModal
-      v-model:open="postModal.show"
-      :title="postModal.isEdit ? 'Edit Note' : 'New Note'"
+      v-model:open="postModal.isOpen"
+      :title="postModal.isEdit ? 'Edit Post' : 'New Post'"
+      :description="
+        postModal.isEdit
+          ? 'Update your post'
+          : 'Create a new post to share with your team'
+      "
     >
       <template #body>
         <UForm
@@ -81,7 +99,6 @@
               @file-selected="handleFileSelected"
             />
           </UFormField>
-
           <UFormField label="Title" name="title">
             <UInput v-model="state.title" class="w-full" size="xl" />
           </UFormField>
@@ -90,31 +107,34 @@
             <UTextarea v-model="state.content" class="w-full" size="xl" />
           </UFormField>
 
-          <UButton label="Submit" type="submit" :loading="loading" />
+          <UButton
+            :label="postModal.isEdit ? 'Update' : 'Submit'"
+            type="submit"
+            :loading="loading"
+          />
         </UForm>
       </template>
     </UModal>
 
-    <UModal v-model:open="confirmModal.show" size="xs" title="Delete Note">
+    <!-- Delete Confirmation Modal -->
+    <UModal v-model:open="deleteModal.isOpen" title="Delete Post">
       <template #body>
-        <p>
-          Are you sure you want to delete this note? This action cannot be
+        <p class="mb-4">
+          Are you sure you want to delete this post? This action cannot be
           undone.
         </p>
-      </template>
-      <template #footer>
-        <div class="flex justify-end space-x-2">
+        <div class="flex justify-end gap-2">
           <UButton
-            color="neutral"
-            variant="ghost"
             label="Cancel"
-            @click="confirmModal.show = false"
+            color="neutral"
+            variant="outline"
+            @click="deleteModal.isOpen = false"
           />
           <UButton
-            color="error"
             label="Delete"
+            color="error"
+            @click="handleDeletePost"
             :loading="loading"
-            @click="handleDelete"
           />
         </div>
       </template>
@@ -122,48 +142,245 @@
   </AppContainer>
 </template>
 
-<script lang="ts" setup>
-import type { Post } from '@@/types/database'
+<script setup lang="ts">
+import { z } from 'zod'
+import type { Post, InsertPost } from '@@/types/database'
+import type { FormSubmitEvent } from '@nuxt/ui'
 
-const {
-  posts,
-  loading,
-  postModal,
-  confirmModal,
-  state,
-  schema,
-  editPost,
-  confirmDelete,
-  handleDelete,
-  handleSubmit,
-  initializePosts,
-  handleFileSelected,
-} = usePosts()
+const { currentTeam } = useTeam()
+const toast = useToast()
+const loading = ref(false)
+const deletingPostId = ref<string | null>(null)
+const selectedFile = ref<File | null>(null)
 
-await initializePosts()
+const postModal = reactive({
+  isOpen: false,
+  isEdit: false,
+  editId: null as string | null,
+})
 
-const options = ref([
+const deleteModal = reactive({
+  isOpen: false,
+  postId: null as string | null,
+})
+
+const state = reactive<Partial<Schema>>({
+  title: undefined,
+  content: undefined,
+  image: undefined,
+})
+
+const schema = z.object({
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
+  content: z
+    .string()
+    .min(1, 'Content is required')
+    .max(1000, 'Content must be less than 1000 characters'),
+  image: z.string().optional(),
+})
+
+type Schema = z.output<typeof schema>
+
+const { data: posts, refresh } = await useFetch<Post[]>(
+  `/api/teams/${currentTeam.value?.id}/posts`,
   {
-    label: 'Edit',
-    onSelect(e: Event) {
-      console.log(e)
-    },
+    watch: [currentTeam],
   },
-  {
-    label: 'Delete',
-    color: 'error',
-    onSelect(e: Event) {
-      console.log(e)
-    },
-  },
-])
-</script>
+)
 
-<style scoped>
-.card-shadow {
-  box-shadow:
-    0 1px 2px #5f4a2e14,
-    0 4px 6px #5f4a2e0a,
-    0 24px 40px -16px #684b2514;
+const uploadImage = async () => {
+  try {
+    if (!selectedFile.value) return ''
+    const formData = new FormData()
+    formData.append('image', selectedFile.value)
+    const filePath = await $fetch('/api/upload-image', {
+      method: 'POST',
+      body: formData,
+    })
+    return `/images/${filePath}`
+  } catch (error: any) {
+    console.log(error)
+    toast.add({
+      title: 'Failed to upload image',
+      description:
+        error.data?.message || 'An error occurred while uploading the image',
+      color: 'error',
+    })
+    throw createError('Failed to upload image')
+  }
 }
-</style>
+
+const createPost = async (post: Partial<InsertPost>) => {
+  try {
+    const { data, error } = await useFetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts`,
+      {
+        method: 'POST',
+        body: post,
+      },
+    )
+
+    if (error.value) {
+      throw error.value
+    }
+
+    return data.value
+  } catch (error: any) {
+    toast.add({
+      title: 'Failed to create post',
+      description:
+        error.data?.message || 'An error occurred while creating the post',
+      color: 'error',
+    })
+    throw error
+  }
+}
+
+const updatePost = async (id: string, post: Partial<Post>) => {
+  try {
+    const updatedPost = await $fetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+      {
+        method: 'PATCH',
+        body: post,
+      },
+    )
+    return updatedPost
+  } catch (error: any) {
+    toast.add({
+      title: 'Failed to update post',
+      description:
+        error.data?.message || 'An error occurred while updating the post',
+      color: 'error',
+    })
+    throw error
+  }
+}
+
+const deletePost = async (id: string) => {
+  try {
+    deletingPostId.value = id
+    return await $fetch<Post>(
+      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+      {
+        method: 'DELETE',
+      },
+    )
+  } catch (error: any) {
+    toast.add({
+      title: 'Failed to delete post',
+      description:
+        error.data?.message || 'An error occurred while deleting the post',
+      color: 'error',
+    })
+    throw error
+  } finally {
+    deletingPostId.value = null
+  }
+}
+
+const resetForm = () => {
+  state.title = undefined
+  state.content = undefined
+  state.image = undefined
+  selectedFile.value = null
+}
+
+const openCreateModal = () => {
+  resetForm()
+  postModal.isEdit = false
+  postModal.editId = null
+  postModal.isOpen = true
+}
+
+const openEditModal = (post: Post) => {
+  resetForm()
+  state.title = post.title
+  state.content = post.content
+  state.image = post.image || undefined
+  postModal.isEdit = true
+  postModal.editId = post.id
+  postModal.isOpen = true
+}
+
+const confirmDelete = (postId: string) => {
+  deleteModal.postId = postId
+  deleteModal.isOpen = true
+}
+
+const handleFileSelected = (file: File | null) => {
+  selectedFile.value = file
+  if (!file) {
+    state.image = undefined
+  }
+}
+
+const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
+  try {
+    loading.value = true
+    let image = state.image
+
+    if (selectedFile.value) {
+      image = await uploadImage()
+    }
+
+    const payload = {
+      ...event.data,
+      image,
+    }
+
+    if (postModal.isEdit && postModal.editId) {
+      await updatePost(postModal.editId, payload)
+      toast.add({
+        title: 'Post updated',
+        description: 'Your post has been updated successfully',
+        color: 'success',
+      })
+    } else {
+      const post = await createPost(payload)
+      // if (posts.value) {
+      //   posts.value.unshift(post)
+      // }
+      toast.add({
+        title: 'Post created',
+        description: 'Your post has been created successfully',
+        color: 'success',
+      })
+    }
+    refresh()
+    postModal.isOpen = false
+    resetForm()
+  } catch (error) {
+    console.error('Error submitting post:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleDeletePost = async () => {
+  if (!deleteModal.postId) return
+
+  try {
+    loading.value = true
+    await deletePost(deleteModal.postId)
+    if (posts.value) {
+      posts.value = posts.value.filter((post) => post.id !== deleteModal.postId)
+    }
+
+    toast.add({
+      title: 'Post deleted',
+      description: 'Your post has been deleted successfully',
+      color: 'success',
+    })
+    deleteModal.isOpen = false
+    deleteModal.postId = null
+  } catch (error) {
+    console.error('Error deleting post:', error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>
