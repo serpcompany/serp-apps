@@ -34,14 +34,14 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "client: chrome",
+      "name": "Chrome Browser",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}"
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "server: nuxt",
+      "name": "Nuxt Dev Server",
       "outputCapture": "std",
       "program": "${workspaceFolder}/node_modules/nuxt/bin/nuxt.mjs",
       "args": [
@@ -51,10 +51,10 @@
   ],
   "compounds": [
     {
-      "name": "fullstack: nuxt",
+      "name": "Next Dev Full Stack",
       "configurations": [
-        "server: nuxt",
-        "client: chrome"
+        "Nuxt Dev Server",
+        "Chrome Browser"
       ]
     }
   ]
