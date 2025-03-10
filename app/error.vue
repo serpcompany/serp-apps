@@ -54,8 +54,29 @@ const message = computed(() => {
   }
 
   // Default messages
-  return props.error.statusCode === 404
-    ? 'The page you are looking for might have been removed or is temporarily unavailable.'
-    : 'Something went wrong. Please try again later.'
+      // Handle specific error status codes
+  switch (props.error.statusCode) {
+    case 401:
+      return 'You are not authenticated. Please sign in to continue.'
+    case 403:
+      return 'You do not have permission to access this resource.'
+    case 404:
+      return 'The page you are looking for might have been removed or is temporarily unavailable.'
+    case 422:
+      return props.error.message || 'The provided data was invalid. Please check your input and try again.'
+    case 429:
+      return 'Too many requests. Please wait a moment before trying again.'
+    case 500:
+      return props.error.statusMessage || 'An unexpected error occurred. Our team has been notified.'
+    case 503:
+      return 'Service temporarily unavailable. Please try again later.'
+    default:
+      // If we have a specific error message, use it
+      if (props.error.message || props.error.statusMessage) {
+        return props.error.message || props.error.statusMessage
+      }
+      // Default fallback message
+      return 'Something went wrong. Please try again later.'
+  }
 })
 </script> 
