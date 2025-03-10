@@ -23,3 +23,15 @@ export function isWithinExpiryDate(expiresAt: number): boolean {
   const currentTime = Date.now()
   return currentTime < expiresAt
 }
+
+export async function sendLoginNotification(user: { name: string; email: string }) {
+  try {
+    await $fetch('/api/auth/login-notification', {
+      method: 'POST',
+      body: { user }
+    })
+  } catch (error) {
+    // Silently fail as this is not critical
+    console.error('Failed to send login notification:', error)
+  }
+}

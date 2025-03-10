@@ -12,6 +12,7 @@
 // Used in:
 // - app/pages/auth/login-passkey.vue
 
+import type { H3Event } from 'h3'
 import {
   storeWebAuthnChallenge,
   findCredentialByUserId,
@@ -23,14 +24,14 @@ import {
   findUserById,
   updateLastActiveTimestamp,
 } from '@@/server/database/queries/users'
-import { sanitizeUser } from '@@/server/utils/auth'
+import { sanitizeUser, sendLoginNotification } from '@@/server/utils/auth'
 
 export default defineWebAuthnAuthenticateEventHandler({
-  async storeChallenge(event, challenge, attemptId) {
+  async storeChallenge(event: H3Event, challenge: string, attemptId: string) {
     await storeWebAuthnChallenge(attemptId, challenge)
   },
 
-  async getChallenge(event, attemptId) {
+  async getChallenge(event: H3Event, attemptId: string) {
     const challenge = await getAndDeleteChallenge(attemptId)
     if (!challenge) {
       throw createError({
@@ -41,7 +42,7 @@ export default defineWebAuthnAuthenticateEventHandler({
     return challenge
   },
 
-  async allowCredentials(event, email) {
+  async allowCredentials(event: H3Event, email: string) {
     const user = await findUserByEmail(email)
     if (!user) {
       throw createError({
@@ -53,7 +54,7 @@ export default defineWebAuthnAuthenticateEventHandler({
     return credentials || []
   },
 
-  async getCredential(event, credentialId) {
+  async getCredential(event: H3Event, credentialId: string) {
     const credential = await findCredentialById(credentialId)
     if (!credential) {
       throw createError({
@@ -65,7 +66,7 @@ export default defineWebAuthnAuthenticateEventHandler({
     return credential
   },
 
-  async onSuccess(event, { credential }) {
+  async onSuccess(event: H3Event, { credential }: { credential: { userId: string } }) {
     const user = await findUserById(credential.userId)
     if (!user) {
       throw createError({
@@ -77,5 +78,11 @@ export default defineWebAuthnAuthenticateEventHandler({
     await updateLastActiveTimestamp(user.id)
     const transformedUser = sanitizeUser(user)
     await setUserSession(event, { user: transformedUser })
+    
+    // Send login notification
+    await sendLoginNotification({
+      name: user.name,
+      email: user.email,
+    })
   },
 })

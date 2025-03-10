@@ -20,6 +20,7 @@ import {
 } from '@@/server/database/queries/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
+import { sendLoginNotification } from '@@/server/utils/auth'
 
 export default defineEventHandler(async (event) => { 
   // 1. Validate body
@@ -104,5 +105,12 @@ export default defineEventHandler(async (event) => {
     })
   }
   await setUserSession(event, { user: sanitizedUser })
+  
+  // Send login notification
+  await sendLoginNotification({
+    name: user.name,
+    email: user.email,
+  })
+  
   return sendNoContent(event)
 })
