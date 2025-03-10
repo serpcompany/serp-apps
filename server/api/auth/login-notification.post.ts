@@ -3,12 +3,8 @@ import { render } from '@vue-email/render'
 import LoginNotification from '@@/emails/login-notification.vue'
 
 export default defineEventHandler(async (event) => {
-  const headers = getRequestHeaders(event)
-  const body = await readBody(event)
-  console.log('body', body)
   // Get user data from the request body
-  const { user } = body
-
+  const { user } = await readBody(event)
   if (!user?.name || !user?.email) {
     throw createError({
       statusCode: 400,
@@ -17,8 +13,8 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get location information from Cloudflare headers if available
-  const city = headers['cf-ipcity']
-  const country = headers['cf-ipcountry']
+  const city = event.context['cf-ipcity']
+  const country = event.context['cf-ipcountry']
 
   // Only send email if we have location information
   try {
