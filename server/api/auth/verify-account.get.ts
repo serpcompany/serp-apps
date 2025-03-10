@@ -27,27 +27,33 @@ import {
 export default defineEventHandler(async (event) => {
   const { token } = getQuery(event)
   if (!token) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing token' })
+    return sendRedirect(
+      event, 
+      `/auth/verification-error?message=${encodeURIComponent('Missing verification token')}`
+    )
   }
 
   const storedToken = await findEmailVerificationCode(token as string)
   if (!storedToken) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid verification code',
-    })
-  }
-
-  if (!isWithinExpiryDate(storedToken.expiresAt.getTime())) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Verification code has expired',
-    })
+    return sendRedirect(
+      event, 
+      `/auth/verification-error?message=${encodeURIComponent('Invalid verification code')}`
+    )
   }
 
   const user = await findUserById(storedToken.userId)
   if (!user) {
-    throw createError({ statusCode: 400, statusMessage: 'User not found' })
+    return sendRedirect(
+      event, 
+      `/auth/verification-error?message=${encodeURIComponent('User not found')}`
+    )
+  }
+
+  if (!isWithinExpiryDate(storedToken.expiresAt.getTime())) {
+    return sendRedirect(
+      event, 
+      `/auth/verification-error?message=${encodeURIComponent('Verification code has expired. Please check your inbox or request a new verification email.')}&email=${encodeURIComponent(user.email)}`
+    )
   }
 
   if (!user.emailVerified) {
@@ -55,15 +61,15 @@ export default defineEventHandler(async (event) => {
   }
 
   if (user.banned) {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'Your account has been banned',
-    })
+    return sendRedirect(
+      event, 
+      `/auth/verification-error?message=${encodeURIComponent('Your account has been banned')}`
+    )
   }
 
   await updateLastActiveTimestamp(user.id)
   const transformedUser = sanitizeUser(user)
   await setUserSession(event, { user: transformedUser })
-  await deleteEmailVerificationCode(token as string)
+  await deleteEmailVerificationCode(user.id as string)
   return sendRedirect(event, '/dashboard')
 })

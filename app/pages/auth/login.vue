@@ -28,7 +28,7 @@
         @submit="onSubmit"
       >
         <UFormField label="Email" name="email">
-          <UInput v-model="state.email" class="w-full" size="lg" />
+          <UInput v-model="state.email" class="w-full" size="lg" tabindex="1" />
         </UFormField>
 
         <UFormField label="Password" name="password">
@@ -37,6 +37,7 @@
             type="password"
             class="w-full"
             size="lg"
+            tabindex="2"
           />
           <template #hint>
             <UButton
@@ -46,6 +47,7 @@
               size="xs"
               color="neutral"
               class="text-neutral-500"
+              tabindex="3"
             />
           </template>
         </UFormField>
