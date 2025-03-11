@@ -15,7 +15,7 @@ export const users = sqliteTable('users', {
   emailVerified: integer('emailVerified', { mode: 'boolean' })
     .notNull()
     .default(false),
-  phoneNumber: text('phoneNumber').unique(),
+  phoneNumber: text('phoneNumber'),
   bannedUntil: integer('bannedUntil', { mode: 'timestamp' }),
   onboarded: integer('onboarded', { mode: 'boolean' }).notNull().default(false),
   proAccount: integer('proAccount', { mode: 'boolean' }).notNull().default(false),

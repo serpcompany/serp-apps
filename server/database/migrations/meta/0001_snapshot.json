@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "df4ae98a-6444-4b88-8720-9846632df0cb",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "6482a0f8-522b-453a-8e0b-39c6d9fb5af4",
+  "prevId": "df4ae98a-6444-4b88-8720-9846632df0cb",
   "tables": {
     "feedback": {
       "name": "feedback",
@@ -1071,13 +1071,6 @@
           "name": "users_email_unique",
           "columns": [
             "email"
-          ],
-          "isUnique": true
-        },
-        "users_phoneNumber_unique": {
-          "name": "users_phoneNumber_unique",
-          "columns": [
-            "phoneNumber"
           ],
           "isUnique": true
         }
