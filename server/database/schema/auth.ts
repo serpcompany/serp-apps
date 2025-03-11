@@ -19,10 +19,6 @@ export const oauthAccounts = sqliteTable('oauth_accounts', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-}, (table) => {
-  return {
-    providerUserIdIdx: primaryKey({ columns: [table.provider, table.providerUserId] }),
-  }
 })
 
 export const emailVerificationCodes = sqliteTable('email_verification_codes', {
