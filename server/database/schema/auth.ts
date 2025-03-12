@@ -3,6 +3,7 @@ import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
 import { OneTimePasswordTypes } from '../../../constants'
 import { users } from './users'
 import type { WebAuthnCredential } from '#auth-utils'
+import { relations } from 'drizzle-orm'
 
 export const oauthAccounts = sqliteTable('oauth_accounts', {
   id: text('id')
@@ -77,3 +78,10 @@ export const webAuthnChallenges = sqliteTable('webauthn_challenges', {
   challenge: text('challenge').notNull(),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 })
+
+export const oauthAccountsRelations = relations(oauthAccounts, ({ one }) => ({
+  user: one(users, {
+    fields: [oauthAccounts.userId],
+    references: [users.id],
+  }),
+}))

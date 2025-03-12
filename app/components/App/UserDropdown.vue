@@ -1,6 +1,6 @@
 <template>
   <UDropdownMenu
-    :items="items"
+    :items="items as DropdownMenuItem[]"
     :ui="{
       content: 'w-[240px]',
     }"
@@ -47,8 +47,11 @@
 </template>
 
 <script setup lang="ts">
+import type { DropdownMenuItem } from '@nuxt/ui'
 const { user, clear } = useUserSession()
 const mobileMenu = useState('mobileMenu')
+const isSuperAdmin = computed(() => user.value?.superAdmin)
+
 async function signOut() {
   await clear()
   await navigateTo('/')
@@ -124,6 +127,15 @@ const items = ref([
       icon: 'i-lucide-cloud',
     },
   ],
+  ...(isSuperAdmin.value ? [
+    [
+      {
+        label: 'Super Admin',
+        icon: 'i-lucide-shield',
+        to: '/dashboard/super-admin',
+      },
+    ]
+  ] : []),
   [
     {
       label: 'Logout',

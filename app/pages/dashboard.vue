@@ -15,7 +15,6 @@ import type { Team } from '@@/types/database'
 const { data: memberships } = await useFetch<Team[]>('/api/me/memberships')
 useState('teams', () => memberships.value)
 
-// Only run redirect logic for the dashboard root path
 if (useRoute().path === '/dashboard' || useRoute().path === '/dashboard/') {
   const { handleTeamRedirect } = useTeamRedirect()
   await handleTeamRedirect()

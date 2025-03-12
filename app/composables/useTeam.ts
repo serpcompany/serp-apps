@@ -15,17 +15,40 @@ export const useTeam = () => {
         'Only lowercase letters, numbers, and single hyphens between characters allowed',
       ),
   })
-  const teamSlug = useRoute().params.team as string
+  const route = useRoute()
+  const teamSlug = route.params.team as string
   const loading = ref(false)
   const teams = useState<Team[]>('teams')
 
+  // Check if the current route requires a team
+  const requiresTeam = computed(() => {
+    // Routes that don't require a team
+    const nonTeamRoutes = [
+      '/dashboard/super-admin',
+      '/dashboard/account-security',
+      '/dashboard/onboard',
+      // Add other routes that don't require a team here
+    ]
+    
+    // Check if the current path starts with any of the non-team routes
+    return !nonTeamRoutes.some(routePath => 
+      route.path === routePath || route.path.startsWith(routePath)
+    )
+  })
+
   const currentTeam = computed(() => {
-    const team = teams.value.find((team) => team.slug === teamSlug)
+    // If the route doesn't require a team, return null without throwing an error
+    if (!requiresTeam.value || !teamSlug) {
+      return null
+    }
+    
+    const team = teams.value?.find((team) => team.slug === teamSlug)
     if (!team) {
       throw createError('Team not found')
     }
     return team
   })
+  
   const isTeamOwner = computed(
     () => currentTeam.value?.ownerId === user.value?.id,
   )
@@ -201,5 +224,6 @@ export const useTeam = () => {
     currentTeam,
     teams,
     removeTeamMember,
+    requiresTeam,
   }
 }

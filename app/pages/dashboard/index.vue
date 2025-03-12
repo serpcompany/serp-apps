@@ -4,7 +4,6 @@
   </main>
 </template>
 
-
 <script setup lang="ts">
 import type { Team } from '@@/types/database'
 

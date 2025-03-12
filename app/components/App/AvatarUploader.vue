@@ -2,8 +2,8 @@
   <div class="flex items-center gap-2">
     <UAvatar
       :src="model || undefined"
+      :size="avatarSize"
       icon="i-lucide-upload"
-      size="3xl"
       :ui="{ icon: 'text-lg' }"
       class="ring-1 ring-neutral-200 dark:ring-neutral-800"
     />
@@ -29,6 +29,15 @@
 
 <script setup lang="ts">
 import { useFileDialog, useObjectUrl } from '@vueuse/core'
+
+withDefaults(
+  defineProps<{
+    avatarSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+  }>(),
+  {
+    avatarSize: '3xl',
+  },
+)
 
 const model = defineModel<string | undefined>()
 

@@ -1,6 +1,6 @@
 <template>
   <UDropdownMenu
-    :items="items"
+    :items="items as DropdownMenuItem[]"
     :ui="{
       content: 'w-[240px]',
       item: 'cursor-pointer',
@@ -32,7 +32,7 @@
 
 <script lang="ts" setup>
 import type { Team } from '@@/types/database'
-
+import type { DropdownMenuItem } from '@nuxt/ui'
 const newTeamModal = ref(false)
 const teams = useState<Team[]>('teams')
 const teamSlug = useRoute().params.team as string
