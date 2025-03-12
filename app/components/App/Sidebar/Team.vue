@@ -14,36 +14,39 @@
 </template>
 
 <script lang="ts" setup>
-const { isTeamOwner } = useTeam()
-const teamSlug = useRoute().params.team as string
-const links = [
+import { computed } from 'vue'
+import { useTeam } from '@/composables/useTeam'
+
+const { isTeamOwner, currentTeam } = useTeam()
+
+const links = computed(() => [
   {
     label: 'Home',
     icon: 'i-lucide-home',
-    to: `/dashboard/${teamSlug}`,
+    to: `/dashboard/${currentTeam.value?.slug}`,
   },
   {
     label: 'Posts',
     icon: 'i-lucide-file-text',
-    to: `/dashboard/${teamSlug}/posts`,
+    to: `/dashboard/${currentTeam.value?.slug}/posts`,
   },
-]
+])
 
-const settings = [
+const settings = computed(() => [
   {
     label: 'Workspace Settings',
     icon: 'i-lucide-settings',
-    to: `/dashboard/${teamSlug}/settings`,
+    to: `/dashboard/${currentTeam.value?.slug}/settings`,
   },
   {
     label: 'Workspace Members',
     icon: 'i-lucide-users',
-    to: `/dashboard/${teamSlug}/settings/members`,
+    to: `/dashboard/${currentTeam.value?.slug}/settings/members`,
   },
   {
     label: 'Billing',
     icon: 'i-lucide-credit-card',
-    to: `/dashboard/${teamSlug}/settings/billing`,
+    to: `/dashboard/${currentTeam.value?.slug}/settings/billing`,
   },
-]
+])
 </script>
