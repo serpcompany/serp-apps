@@ -15,8 +15,12 @@ export const useTeam = () => {
         'Only lowercase letters, numbers, and single hyphens between characters allowed',
       ),
   })
-  const route = useRoute()
-  const teamSlug = route.params.team as string
+  
+  // Update to use reactive route approach
+  const router = useRouter()
+  const currentRoute = computed(() => router.currentRoute.value)
+  const teamSlug = computed(() => currentRoute.value.params.team as string)
+  
   const loading = ref(false)
   const teams = useState<Team[]>('teams')
 
@@ -32,17 +36,17 @@ export const useTeam = () => {
     
     // Check if the current path starts with any of the non-team routes
     return !nonTeamRoutes.some(routePath => 
-      route.path === routePath || route.path.startsWith(routePath)
+      currentRoute.value.path === routePath || currentRoute.value.path.startsWith(routePath)
     )
   })
 
   const currentTeam = computed(() => {
     // If the route doesn't require a team, return null without throwing an error
-    if (!requiresTeam.value || !teamSlug) {
+    if (!requiresTeam.value || !teamSlug.value) {
       return null
     }
     
-    const team = teams.value?.find((team) => team.slug === teamSlug)
+    const team = teams.value?.find((team) => team.slug === teamSlug.value)
     if (!team) {
       throw createError('Team not found')
     }

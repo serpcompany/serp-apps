@@ -1,6 +1,6 @@
 <template>
   <UDropdownMenu
-    :items="items as DropdownMenuItem[]"
+    :items="items"
     :ui="{
       content: 'w-[240px]',
       item: 'cursor-pointer',
@@ -32,13 +32,15 @@
 
 <script lang="ts" setup>
 import type { Team } from '@@/types/database'
-import type { DropdownMenuItem } from '@nuxt/ui'
+
 const newTeamModal = ref(false)
 const teams = useState<Team[]>('teams')
-const teamSlug = useRoute().params.team as string
+const router = useRouter()
+const currentRoute = computed(() => router.currentRoute.value)
+const teamSlug = computed(() => currentRoute.value.params.team as string)
 const { setLastUsedTeam } = useTeamPreferences()
 const activeTeam = computed(() =>
-  teams.value?.find((team) => team.slug === teamSlug),
+  teams.value?.find((team) => team.slug === teamSlug.value),
 )
 
 const getAvatarProps = (team?: Team) => ({
@@ -61,11 +63,11 @@ const items = computed(() => {
       size: '2xs' as const,
     },
     type: 'checkbox' as const,
-    checked: team.slug === teamSlug,
-    onSelect: (e: Event) => {
+    checked: team.slug === teamSlug.value,
+    onSelect: async (e: Event) => {
       e.preventDefault()
       setLastUsedTeam(team.slug)
-      return navigateTo(`/dashboard/${team.slug}`)
+      await navigateTo(`/dashboard/${team.slug}`, { replace: true })
     },
   }))
 
