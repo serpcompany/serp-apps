@@ -1,1 +1,0 @@
-DROP INDEX `users_phoneNumber_unique`;

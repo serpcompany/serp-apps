@@ -182,10 +182,10 @@ export const linkOAuthAccount = async (
       .where(
         and(
           eq(tables.oauthAccounts.provider, provider),
-          eq(tables.oauthAccounts.providerUserId, providerUserId)
-        )
+          eq(tables.oauthAccounts.providerUserId, providerUserId),
+        ),
       )
-    
+
     if (existingAccount) {
       // Update if it exists
       return await useDB()
@@ -231,23 +231,45 @@ export const findUserByPhoneNumber = async (phoneNumber: string) => {
   }
 }
 
-export const getUserPreferences = async (userId: string) => {
+export const unlinkAccount = async (userId: string, providerId: string) => {
   try {
-    const preferences = await useDB()
-      .select({
-        theme: tables.users.theme,
-        emailNotifications: tables.users.emailNotifications,
-        pushNotifications: tables.users.pushNotifications,
-        lastSelectedTeamId: tables.users.lastSelectedTeamId,
+    // Get user to check if they have a password set
+    const user = await findUserById(userId)
+    if (!user) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'User not found',
       })
-      .from(tables.users)
-      .where(eq(tables.users.id, userId))
-    return preferences
-  } catch (error) {
+    }
+
+    // Get all linked accounts for the user
+    const linkedAccounts = await findLinkedAccountsByUserId(userId)
+    
+    // If user has no password and only one linked account, prevent unlinking
+    if (!user.hashedPassword && linkedAccounts.length <= 1) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Cannot unlink the only authentication method. Please set a password first.',
+      })
+    }
+
+    // Proceed with unlinking if checks pass
+    await useDB()
+      .delete(tables.oauthAccounts)
+      .where(
+        and(
+          eq(tables.oauthAccounts.userId, userId),
+          eq(tables.oauthAccounts.id, providerId),
+        ),
+      )
+  } catch (error: any) {
     console.error(error)
+    if (error.statusCode) {
+      throw error
+    }
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to get user preferences',
+      statusMessage: 'Failed to unlink account',
     })
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "df4ae98a-6444-4b88-8720-9846632df0cb",
+  "id": "b731313e-18bc-43be-8731-d42d8577c982",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feedback": {
@@ -1071,13 +1071,6 @@
           "name": "users_email_unique",
           "columns": [
             "email"
-          ],
-          "isUnique": true
-        },
-        "users_phoneNumber_unique": {
-          "name": "users_phoneNumber_unique",
-          "columns": [
-            "phoneNumber"
           ],
           "isUnique": true
         }
