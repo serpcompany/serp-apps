@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD `superAdmin` integer DEFAULT false NOT NULL;

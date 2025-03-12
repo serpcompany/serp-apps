@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "b731313e-18bc-43be-8731-d42d8577c982",
+  "id": "0d54e006-82c8-457c-9b0a-bdb7581b3c12",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feedback": {
@@ -1008,6 +1008,14 @@
         },
         "emailVerified": {
           "name": "emailVerified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "superAdmin": {
+          "name": "superAdmin",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

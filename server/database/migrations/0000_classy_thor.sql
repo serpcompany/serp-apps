@@ -149,6 +149,7 @@ CREATE TABLE `users` (
 	`banned` integer DEFAULT false NOT NULL,
 	`bannedReason` text,
 	`emailVerified` integer DEFAULT false NOT NULL,
+	`superAdmin` integer DEFAULT false NOT NULL,
 	`phoneNumber` text,
 	`bannedUntil` integer,
 	`onboarded` integer DEFAULT false NOT NULL,
