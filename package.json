@@ -18,7 +18,7 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.29",
     "@nuxt/eslint": "^1.2.0",
-    "@nuxt/ui": "3.0.0-alpha.9",
+    "@nuxt/ui": "3.0.0",
     "@nuxthub/core": "^0.8.18",
     "@simplewebauthn/browser": "^13.1.0",
     "@simplewebauthn/server": "^13.1.1",
@@ -51,7 +51,7 @@
     "simple-git-hooks": "^2.11.1",
     "typescript": "^5.8.2",
     "vue-tsc": "^2.2.8",
-    "wrangler": "^3.114.0"
+    "wrangler": "^3.114.1"
   },
   "packageManager": "pnpm@9.12.3",
   "simple-git-hooks": {

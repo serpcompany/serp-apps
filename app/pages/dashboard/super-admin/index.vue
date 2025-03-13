@@ -38,14 +38,13 @@
               <td class="p-2">{{ user.emailVerified ? 'Yes' : 'No' }}</td>
               <td class="p-2">
                 <div v-if="user.banned" class="flex items-center gap-0.5">
-                  Yes
+                  <span class="text-xs text-rose-500"> Yes </span>
                   <UPopover mode="hover">
                     <UButton
                       variant="ghost"
                       size="xs"
-                      color="neutral"
+                      color="error"
                       icon="i-lucide-info"
-                      class="text-neutral-500"
                     />
                     <template #content>
                       <div class="w-64 p-4">
@@ -69,6 +68,8 @@
                           variant="soft"
                           color="neutral"
                           class="mt-4"
+                          :loading="loadingUserId === user.id"
+                          @click="liftBan(user)"
                         />
                       </div>
                     </template>
@@ -153,6 +154,8 @@
                     variant="ghost"
                     color="neutral"
                     class="text-neutral-500"
+                    :loading="loadingUserId === user.id"
+                    @click="selectedUser = user"
                   />
                 </UDropdownMenu>
               </td>
@@ -170,6 +173,18 @@
         <SuperAdminNewUserForm @user-created="handleUserCreated" />
       </template>
     </UModal>
+    <UModal
+      v-model:open="banUserModal"
+      title="Ban User"
+      description="Ban a user from the platform"
+    >
+      <template #body>
+        <SuperAdminBanUserForm
+          :user="selectedUser"
+          @user-banned="handleUserBanned"
+        />
+      </template>
+    </UModal>
   </AppContainer>
 </template>
 
@@ -182,12 +197,12 @@ interface UserWithOAuthAccounts extends User {
 }
 
 const newUserModal = ref(false)
-
+const loadingUserId = ref<string | null>(null)
+const banUserModal = ref(false)
 const { data: users, refresh } = await useFetch<UserWithOAuthAccounts[]>(
   '/api/super-admin/users',
 )
 
-// Function to handle user creation event
 function handleUserCreated() {
   refresh()
   newUserModal.value = false
@@ -239,23 +254,39 @@ const getProviderName = (providerId: string) => {
   return provider?.name || 'Unknown'
 }
 
+const selectedUser = ref<UserWithOAuthAccounts | null>(null)
+
 const actions = ref([
   {
     label: 'Ban User',
+    onSelect: () => {
+      if (selectedUser.value) {
+        banUserModal.value = true
+      }
+    },
   },
   {
     label: 'Delete User',
+    onSelect: () => {
+      if (selectedUser.value) {
+        // Handle delete user logic
+      }
+    },
   },
   {
     label: 'Send Password Reset Email',
-    onSelect: (user: User) => {
-      sendForgotPasswordEmail(user.email)
+    onSelect: () => {
+      if (selectedUser.value) {
+        sendForgotPasswordEmail(selectedUser.value)
+      }
     },
   },
   {
     label: 'Impersonate User',
     onSelect: () => {
-      console.log('impersonate user')
+      if (selectedUser.value) {
+        console.log('impersonate user', selectedUser.value)
+      }
     },
   },
 ])
@@ -266,23 +297,83 @@ const getFormattedDate = (date: string | Date) => {
 }
 const toast = useToast()
 
-const sendForgotPasswordEmail = async (email: string) => {
+const sendForgotPasswordEmail = async (user: User) => {
   try {
+    loadingUserId.value = user.id
     await $fetch('/api/auth/password/forgot', {
       method: 'POST',
-      body: { email },
+      body: { email: user.email },
     })
     toast.add({
       title: 'Password reset email sent',
       description: 'The password reset email has been sent to the user',
       color: 'success',
     })
+    loadingUserId.value = null
   } catch (error) {
     toast.add({
       title: 'Error',
       description: 'Failed to send password reset email',
       color: 'error',
     })
+    loadingUserId.value = null
+  }
+}
+
+const banUser = async (user: User) => {
+  try {
+    loadingUserId.value = user.id
+    await $fetch('/api/super-admin/users/ban', {
+      method: 'POST',
+      body: { userId: user.id },
+    })
+    toast.add({
+      title: 'User banned successfully',
+      description:
+        'The user has been banned until ' +
+        useDateFormat(user.bannedUntil || '', 'MMM D, YYYY').value,
+      color: 'success',
+    })
+    loadingUserId.value = null
+    refresh()
+  } catch (error) {
+    console.error(error)
+    toast.add({
+      title: 'Error',
+      description: 'Failed to ban user',
+      color: 'error',
+    })
+    loadingUserId.value = null
+  }
+}
+
+const handleUserBanned = () => {
+  refresh()
+  banUserModal.value = false
+}
+
+const liftBan = async (user: User) => {
+  try {
+    loadingUserId.value = user.id
+    await $fetch('/api/super-admin/users/ban', {
+      method: 'POST',
+      body: { userId: user.id, banned: false },
+    })
+    toast.add({
+      title: 'User unbanned successfully',
+      description: 'The user has been unbanned',
+      color: 'success',
+    })
+    loadingUserId.value = null
+    refresh()
+  } catch (error) {
+    console.error(error)
+    toast.add({
+      title: 'Error',
+      description: 'Failed to lift ban',
+      color: 'error',
+    })
+    loadingUserId.value = null
   }
 }
 </script>
