@@ -5,10 +5,17 @@ export default defineEventHandler(async (event) => {
   if (!(image instanceof Blob)) {
     throw new Error('Image is not a Blob')
   }
-  ensureBlob(image, {
-    maxSize: '1MB',
-    types: ['image/png', 'image/jpeg', 'image/webp'],
-  })
+  try {
+    ensureBlob(image, {
+      maxSize: '1MB',
+      types: ['image/png', 'image/jpeg', 'image/webp'],
+    })
+  } catch(error: unknown) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: error instanceof Error ? error.message : error as string,
+    })
+  }
 
   const file = await hubBlob().put(image.name, image, {
     addRandomSuffix: true,
