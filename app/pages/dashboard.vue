@@ -2,6 +2,7 @@
   <main class="fixed inset-0 flex overflow-hidden">
     <AppSidebar v-if="!isOnboardRoute" />
     <div class="w-full min-w-0 flex-1 overflow-y-auto">
+      <SuperAdminImpersonationBanner v-if="user?._impersonated" :user="user" />
       <NuxtPage />
     </div>
   </main>
@@ -12,6 +13,8 @@ definePageMeta({
   middleware: ['auth'],
 })
 import type { Team } from '@@/types/database'
+const { user } = useUserSession()
+
 const { data: memberships } = await useFetch<Team[]>('/api/me/memberships')
 useState('teams', () => memberships.value)
 

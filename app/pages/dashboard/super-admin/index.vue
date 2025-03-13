@@ -25,11 +25,7 @@
           >
             <td class="p-2">
               <div class="flex items-center gap-2">
-                <UAvatar
-                  :src="user.avatarUrl"
-                  size="2xs"
-                  :alt="user.name + ' avatar'"
-                />
+                <UAvatar :src="user.avatarUrl" size="2xs" :alt="user.name" />
                 {{ user.name }}
               </div>
             </td>
@@ -148,7 +144,7 @@ interface UserWithOAuthAccounts extends User {
   oauthAccounts: OAuthAccounts[]
   teamMembers?: TeamMember[]
 }
-
+const { fetch: refreshUserSession } = useUserSession()
 const newUserModal = ref(false)
 const banUserModal = ref(false)
 const loadingUserId = ref<string | null>(null)
@@ -185,7 +181,7 @@ const actions = [
     label: 'Impersonate User',
     onSelect: () => {
       if (selectedUser.value) {
-        console.log('impersonate user', selectedUser.value)
+        startImpersonationSession(selectedUser.value)
       }
     },
   },
@@ -208,7 +204,6 @@ const actions = [
   },
 ]
 
-
 const formatDate = (date: string | Date | undefined) => {
   if (!date) return 'NA'
   return useDateFormat(date, 'MMM D, YYYY').value
@@ -219,7 +214,6 @@ const getTeamOwnerName = (ownerId: string) => {
   const owner = users.value?.find((user) => user.id === ownerId)
   return owner?.name || 'Unknown'
 }
-
 
 function handleUserCreated() {
   refresh()
@@ -235,7 +229,6 @@ function handleUserDeleted() {
   showDeleteUserConfirmation.value = false
   refresh()
 }
-
 
 const sendForgotPasswordEmail = async (user: User) => {
   try {
@@ -282,6 +275,17 @@ const liftBan = async (user: User) => {
     })
   } finally {
     loadingUserId.value = null
+  }
+}
+
+const startImpersonationSession = async (user: User) => {
+  const data = await $fetch('/api/super-admin/users/impersonate', {
+    method: 'POST',
+    body: { userId: user.id },
+  })
+  if (data.success) {
+    await refreshUserSession()
+    window.location.href = '/dashboard'
   }
 }
 </script>
