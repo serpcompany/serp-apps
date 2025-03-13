@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm'
 import { oauthAccounts } from './auth'
-
+import { teamMembers } from './teams'
 export const users = sqliteTable('users', {
   id: text('id')
     .primaryKey()
@@ -39,4 +39,5 @@ export const users = sqliteTable('users', {
 
 export const usersRelations = relations(users, ({ many }) => ({
   oauthAccounts: many(oauthAccounts),
+  teamMembers: many(teamMembers),
 }))

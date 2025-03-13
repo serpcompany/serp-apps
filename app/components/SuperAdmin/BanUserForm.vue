@@ -48,8 +48,31 @@ import { z } from 'zod'
 import type { User } from '@@/types/database'
 import { useDateFormat } from '@vueuse/core'
 
+interface TeamMember {
+  id: string
+  teamId: string
+  userId: string
+  role: string
+  createdAt: string
+  updatedAt: string
+  team: {
+    id: string
+    name: string
+    ownerId: string
+    logo: string
+    slug: string
+    createdAt: string
+    updatedAt: string
+  }
+}
+
+interface ExtendedUser extends User {
+  oauthAccounts?: any[]
+  teamMembers?: TeamMember[]
+}
+
 const props = defineProps<{
-  user: User
+  user: ExtendedUser
 }>()
 
 const emit = defineEmits(['user-banned'])

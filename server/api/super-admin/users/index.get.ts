@@ -9,6 +9,11 @@ export default defineEventHandler(async (event) => {
   const users = await useDB().query.users.findMany({
     with: {
       oauthAccounts: true,
+      teamMembers: {
+        with: {
+          team: true,
+        },
+      },
     },
     columns: {
       hashedPassword: false,

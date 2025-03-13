@@ -27,7 +27,7 @@
               <td class="p-2">
                 <div class="flex items-center gap-2">
                   <UAvatar
-                    :src="user.avatarUrl || undefined"
+                    :src="user.avatarUrl"
                     size="2xs"
                     :alt="user.name + ' avatar'"
                   />
@@ -135,6 +135,51 @@
                 </div>
               </td>
               <td class="p-2">
+                <UPopover v-if="user.teamMembers?.length" mode="hover">
+                  <div class="flex cursor-pointer items-center gap-1">
+                    <span>{{ user.teamMembers.length }}</span>
+                    <UIcon name="i-lucide-users" class="text-neutral-500" />
+                  </div>
+                  <template #content>
+                    <div class="w-72 p-4">
+                      <h3 class="mb-2 text-sm font-medium">
+                        Team Affiliations
+                      </h3>
+                      <USeparator class="my-2" />
+                      <div class="mt-2 space-y-4">
+                        <div
+                          v-for="teamMember in user.teamMembers"
+                          :key="teamMember.id"
+                          class="flex items-center gap-3"
+                        >
+                          <UAvatar
+                            :src="teamMember.team.logo || undefined"
+                            size="sm"
+                            :alt="teamMember.team.name + ' logo'"
+                          />
+                          <div>
+                            <p class="text-sm font-medium">
+                              {{ teamMember.team.name }}
+                            </p>
+                            <p class="text-xs text-neutral-500">
+                              <span class="capitalize">{{
+                                teamMember.role
+                              }}</span>
+                              {{
+                                teamMember.role === 'owner'
+                                  ? ''
+                                  : `(Owner: ${getTeamOwnerName(teamMember.team.ownerId)})`
+                              }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </UPopover>
+                <span v-else>-</span>
+              </td>
+              <td class="p-2">
                 {{ getFormattedDate(user.lastActive || '') }}
               </td>
               <td class="p-2">
@@ -180,9 +225,72 @@
     >
       <template #body>
         <SuperAdminBanUserForm
+          v-if="selectedUser"
           :user="selectedUser"
           @user-banned="handleUserBanned"
         />
+      </template>
+    </UModal>
+    <UModal
+      v-model:open="showDeleteUserConfirmation"
+      title="Delete User"
+      description="This action is irreversible"
+    >
+      <template #body>
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <UAvatar :src="selectedUser?.avatarUrl" :alt="selectedUser?.name" size="lg" />
+            <div>
+              <p class="text-smfont-bold">{{ selectedUser?.name }}</p>
+              <p class="text-sm text-gray-500">{{ selectedUser?.email }}</p>
+            </div>
+          </div>
+          <div class="space-y-4 bg-neutral-100 dark:bg-neutral-950 p-4 rounded-md">
+            <p class="text-sm text-neutral-500">
+              This action will delete the user from the platform and all
+              associated data. {{ selectedUser?.name }} is a part of the
+              following teams:
+            </p>
+            <div
+              v-for="teamMember in selectedUser?.teamMembers"
+              :key="teamMember.id"
+              class="flex items-center gap-3"
+            >
+              <UAvatar
+                :src="teamMember.team.logo || undefined"
+                size="sm"
+                :alt="teamMember.team.name + ' logo'"
+              />
+              <div>
+                <p class="text-sm font-medium">{{ teamMember.team.name }}</p>
+                <p class="text-xs text-neutral-500">
+                  <span class="capitalize">{{ teamMember.role }}</span>
+                  {{
+                    teamMember.role === 'owner'
+                      ? ''
+                      : `(Owner: ${getTeamOwnerName(teamMember.team.ownerId)})`
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex w-full justify-end gap-2">
+          <UButton
+            variant="soft"
+            color="neutral"
+            label="Cancel"
+            @click="showDeleteUserConfirmation = false"
+          />
+          <UButton
+            variant="soft"
+            color="error"
+            label="Delete User"
+            @click="deleteUser(selectedUser)"
+          />
+        </div>
       </template>
     </UModal>
   </AppContainer>
@@ -192,8 +300,28 @@
 import { useDateFormat } from '@vueuse/core'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { User, OAuthAccounts } from '@@/types/database'
+
+interface TeamMember {
+  id: string
+  teamId: string
+  userId: string
+  role: string
+  createdAt: string
+  updatedAt: string
+  team: {
+    id: string
+    name: string
+    ownerId: string
+    logo: string
+    slug: string
+    createdAt: string
+    updatedAt: string
+  }
+}
+
 interface UserWithOAuthAccounts extends User {
   oauthAccounts: OAuthAccounts[]
+  teamMembers?: TeamMember[]
 }
 
 const newUserModal = ref(false)
@@ -214,6 +342,7 @@ const columns = [
   'Verified',
   'Banned',
   'Linked Accounts',
+  'Team Affiliations',
   'Last Active',
   'Created',
   '',
@@ -254,25 +383,15 @@ const getProviderName = (providerId: string) => {
   return provider?.name || 'Unknown'
 }
 
+const getTeamOwnerName = (ownerId: string) => {
+  if (!ownerId) return 'Unknown'
+  const owner = users.value?.find((user) => user.id === ownerId)
+  return owner?.name || 'Unknown'
+}
+
 const selectedUser = ref<UserWithOAuthAccounts | null>(null)
 
 const actions = ref([
-  {
-    label: 'Ban User',
-    onSelect: () => {
-      if (selectedUser.value) {
-        banUserModal.value = true
-      }
-    },
-  },
-  {
-    label: 'Delete User',
-    onSelect: () => {
-      if (selectedUser.value) {
-        // Handle delete user logic
-      }
-    },
-  },
   {
     label: 'Send Password Reset Email',
     onSelect: () => {
@@ -286,6 +405,23 @@ const actions = ref([
     onSelect: () => {
       if (selectedUser.value) {
         console.log('impersonate user', selectedUser.value)
+      }
+    },
+  },
+  {
+    label: 'Ban User',
+    onSelect: () => {
+      if (selectedUser.value) {
+        banUserModal.value = true
+      }
+    },
+  },
+  {
+    label: 'Delete User',
+    color: 'error' as const,
+    onSelect: () => {
+      if (selectedUser.value) {
+        showDeleteUserConfirmation.value = true
       }
     },
   },
@@ -320,33 +456,6 @@ const sendForgotPasswordEmail = async (user: User) => {
   }
 }
 
-const banUser = async (user: User) => {
-  try {
-    loadingUserId.value = user.id
-    await $fetch('/api/super-admin/users/ban', {
-      method: 'POST',
-      body: { userId: user.id },
-    })
-    toast.add({
-      title: 'User banned successfully',
-      description:
-        'The user has been banned until ' +
-        useDateFormat(user.bannedUntil || '', 'MMM D, YYYY').value,
-      color: 'success',
-    })
-    loadingUserId.value = null
-    refresh()
-  } catch (error) {
-    console.error(error)
-    toast.add({
-      title: 'Error',
-      description: 'Failed to ban user',
-      color: 'error',
-    })
-    loadingUserId.value = null
-  }
-}
-
 const handleUserBanned = () => {
   refresh()
   banUserModal.value = false
@@ -373,6 +482,35 @@ const liftBan = async (user: User) => {
       description: 'Failed to lift ban',
       color: 'error',
     })
+    loadingUserId.value = null
+  }
+}
+const showDeleteUserConfirmation = ref(false)
+
+const deleteUser = async (user: User | null) => {
+  if (!user) return
+
+  try {
+    loadingUserId.value = user.id
+    await $fetch('/api/super-admin/users', {
+      method: 'DELETE',
+      body: { userId: user.id },
+    })
+    toast.add({
+      title: 'User deleted successfully',
+      description: 'The user has been deleted',
+      color: 'success',
+    })
+    showDeleteUserConfirmation.value = false
+    refresh()
+  } catch (error) {
+    console.error(error)
+    toast.add({
+      title: 'Error',
+      description: 'Failed to delete user',
+      color: 'error',
+    })
+  } finally {
     loadingUserId.value = null
   }
 }
