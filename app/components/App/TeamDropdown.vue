@@ -34,7 +34,7 @@
 import type { Team } from '@@/types/database'
 
 const newTeamModal = ref(false)
-const currentTeam = useTeam().currentTeam
+const { currentTeam } = useTeam()
 const teams = useState<Team[]>('teams')
 const { setLastUsedTeam } = useTeamPreferences()
 
@@ -60,7 +60,6 @@ const items = computed(() => {
     type: 'checkbox' as const,
     checked: team.slug === currentTeam.value?.slug,
     onSelect: async (e: Event) => {
-      e.preventDefault()
       setLastUsedTeam(team.slug)
       await navigateTo(`/dashboard/${team.slug}`, { replace: true })
     },

@@ -16,34 +16,15 @@ export const useTeam = () => {
       ),
   })
   
-  // Update to use reactive route approach
   const router = useRouter()
-  const currentRoute = computed(() => router.currentRoute.value)
-  const teamSlug = computed(() => currentRoute.value.params.team as string)
+  const teamSlug = computed(() => router.currentRoute.value.params.team as string)
   
   const loading = ref(false)
   const teams = useState<Team[]>('teams', () => [])
 
-  // Check if the current route requires a team
-  const requiresTeam = computed(() => {
-    // Routes that don't require a team
-    const nonTeamRoutes = [
-      '/dashboard/super-admin',
-      '/dashboard/account-security',
-      '/dashboard/onboard',
-      // Add other routes that don't require a team here
-    ]
-    
-    // Check if the current path starts with any of the non-team routes
-    return !nonTeamRoutes.some(routePath => 
-      currentRoute.value.path === routePath || currentRoute.value.path.startsWith(routePath)
-    )
-  })
-
   const currentTeam = computed(() => {
-    // If the route doesn't require a team, return null without throwing an error
-    if (!requiresTeam.value || !teamSlug.value) {
-      return null
+    if (!teamSlug.value || !teams.value.length) {
+      return teams.value[0] || {} as Team
     }
     
     const team = teams.value?.find((team) => team.slug === teamSlug.value)
@@ -55,7 +36,9 @@ export const useTeam = () => {
   
   const isTeamOwner = ref(false)
   watch(currentTeam, (team) => {
+    try {
     isTeamOwner.value = team?.ownerId === user.value?.id
+    } catch (error) {}
   }, { immediate: true })
 
   const getMemberships = async () => {
@@ -241,6 +224,5 @@ export const useTeam = () => {
     currentTeam,
     teams,
     removeTeamMember,
-    requiresTeam,
   }
 }
