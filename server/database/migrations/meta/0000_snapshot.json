@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5a0848ff-aacb-4a19-b191-5d5cfc3074dc",
+  "id": "0d54e006-82c8-457c-9b0a-bdb7581b3c12",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feedback": {
@@ -1014,6 +1014,14 @@
           "autoincrement": false,
           "default": false
         },
+        "superAdmin": {
+          "name": "superAdmin",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
         "phoneNumber": {
           "name": "phoneNumber",
           "type": "text",
@@ -1071,13 +1079,6 @@
           "name": "users_email_unique",
           "columns": [
             "email"
-          ],
-          "isUnique": true
-        },
-        "users_phoneNumber_unique": {
-          "name": "users_phoneNumber_unique",
-          "columns": [
-            "phoneNumber"
           ],
           "isUnique": true
         }

@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (user.banned) {
+  if (user.banned && user.bannedUntil && user.bannedUntil > new Date()) {
     throw createError({
       statusCode: 403,
       statusMessage: 'You account has been banned',

@@ -1,14 +1,11 @@
 import { sendEmail } from '@@/server/services/email'
 import { render } from '@vue-email/render'
 import LoginNotification from '@@/emails/login-notification.vue'
+import { env } from '@@/env'
 
 export default defineEventHandler(async (event) => {
-  const headers = getRequestHeaders(event)
-  const body = await readBody(event)
-  console.log('body', body)
   // Get user data from the request body
-  const { user } = body
-
+  const { user } = await readBody(event)
   if (!user?.name || !user?.email) {
     throw createError({
       statusCode: 400,
@@ -17,8 +14,8 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get location information from Cloudflare headers if available
-  const city = headers['cf-ipcity']
-  const country = headers['cf-ipcountry']
+  const city = event.context['cf-ipcity']
+  const country = event.context['cf-ipcountry']
 
   // Only send email if we have location information
   try {
@@ -28,12 +25,13 @@ export default defineEventHandler(async (event) => {
       country,
     })
 
-    await sendEmail({
-      to: user.email,
-      subject: 'Login from a new location',
-      html: htmlTemplate,
-    })
-
+    if (!env.MOCK_EMAIL) {
+      await sendEmail({
+        to: user.email,
+        subject: 'Login from a new location',
+        html: htmlTemplate,
+      })
+    }
     return { success: true }
   } catch (error) {
     console.error('Failed to send login notification email:', error)

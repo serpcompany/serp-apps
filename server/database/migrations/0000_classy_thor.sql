@@ -149,6 +149,7 @@ CREATE TABLE `users` (
 	`banned` integer DEFAULT false NOT NULL,
 	`bannedReason` text,
 	`emailVerified` integer DEFAULT false NOT NULL,
+	`superAdmin` integer DEFAULT false NOT NULL,
 	`phoneNumber` text,
 	`bannedUntil` integer,
 	`onboarded` integer DEFAULT false NOT NULL,
@@ -159,7 +160,6 @@ CREATE TABLE `users` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_phoneNumber_unique` ON `users` (`phoneNumber`);--> statement-breakpoint
 CREATE TABLE `products` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,

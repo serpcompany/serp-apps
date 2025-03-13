@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
     await verifyUser(user.id)
   }
 
-  if (user.banned) {
+  if (user.banned && user.bannedUntil && user.bannedUntil > new Date()) {
     return sendRedirect(
       event, 
       `/auth/verification-error?message=${encodeURIComponent('Your account has been banned')}`

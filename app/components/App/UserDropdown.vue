@@ -51,6 +51,8 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 const { user } = useUserSession()
 const { logout } = useAuth()
 const mobileMenu = useState('mobileMenu')
+const isSuperAdmin = computed(() => user.value?.superAdmin)
+
 async function signOut() {
   await logout()
   await navigateTo('/')
@@ -126,6 +128,15 @@ const items = ref([
       icon: 'i-lucide-cloud',
     },
   ],
+  ...(isSuperAdmin.value ? [
+    [
+      {
+        label: 'Super Admin',
+        icon: 'i-lucide-shield',
+        to: '/dashboard/super-admin',
+      },
+    ]
+  ] : []),
   [
     {
       label: 'Logout',

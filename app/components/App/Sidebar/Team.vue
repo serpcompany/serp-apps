@@ -14,18 +14,20 @@
 </template>
 
 <script lang="ts" setup>
-const { isTeamOwner } = useTeam()
-const teamSlug = useState('teamSlug')
+import { useTeam } from '@/composables/useTeam'
+
+const { isTeamOwner, currentTeam } = useTeam()
+
 const links = computed(() => [
   {
     label: 'Home',
     icon: 'i-lucide-home',
-    to: `/dashboard/${teamSlug.value}`,
+    to: `/dashboard/${currentTeam.value?.slug}`,
   },
   {
     label: 'Posts',
     icon: 'i-lucide-file-text',
-    to: `/dashboard/${teamSlug.value}/posts`,
+    to: `/dashboard/${currentTeam.value?.slug}/posts`,
   },
 ])
 
@@ -33,17 +35,17 @@ const settings = computed(() => [
   {
     label: 'Workspace Settings',
     icon: 'i-lucide-settings',
-    to: `/dashboard/${teamSlug.value}/settings`,
+    to: `/dashboard/${currentTeam.value?.slug}/settings`,
   },
   {
     label: 'Workspace Members',
     icon: 'i-lucide-users',
-    to: `/dashboard/${teamSlug.value}/settings/members`,
+    to: `/dashboard/${currentTeam.value?.slug}/settings/members`,
   },
   {
     label: 'Billing',
     icon: 'i-lucide-credit-card',
-    to: `/dashboard/${teamSlug.value}/settings/billing`,
+    to: `/dashboard/${currentTeam.value?.slug}/settings/billing`,
   },
 ])
 </script>

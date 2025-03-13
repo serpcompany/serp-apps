@@ -13,6 +13,9 @@
         <div v-if="isTeamRoute" key="team">
           <AppSidebarTeam />
         </div>
+        <div v-else-if="isSuperAdminRoute" key="super-admin">
+          <AppSidebarSuperAdmin />
+        </div>
         <div v-else key="account">
           <AppSidebarAccount />
         </div>
@@ -31,7 +34,12 @@ const mobileMenu = useState('mobileMenu', () => false)
 const isTeamRoute = computed(() => {
   return (
     route.path.startsWith('/dashboard/') &&
-    !route.path.startsWith('/dashboard/account')
+    !route.path.startsWith('/dashboard/account') &&
+    !route.path.startsWith('/dashboard/super-admin')
   )
+})
+
+const isSuperAdminRoute = computed(() => {
+  return route.path.startsWith('/dashboard/super-admin')
 })
 </script>

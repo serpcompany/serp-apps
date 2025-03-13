@@ -13,7 +13,6 @@
 // - app/pages/auth/login-passkey.vue
 
 import type { H3Event } from 'h3'
-import type { UserSession } from '#auth-utils'
 import {
   storeWebAuthnChallenge,
   findCredentialByUserId,
@@ -67,7 +66,10 @@ export default defineWebAuthnAuthenticateEventHandler({
     return credential
   },
 
-  async onSuccess(event: H3Event, { credential }: { credential: { userId: string } }) {
+  async onSuccess(
+    event: H3Event,
+    { credential }: { credential: { userId: string } },
+  ) {
     const user = await findUserById(credential.userId)
     if (!user) {
       throw createError({
@@ -76,9 +78,16 @@ export default defineWebAuthnAuthenticateEventHandler({
       })
     }
 
+    if (user.banned && user.bannedUntil && user.bannedUntil > new Date()) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: 'You account has been banned',
+      })
+    }
+
     await updateLastActiveTimestamp(user.id)
-    await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
-    
+    const transformedUser = sanitizeUser(user)
+    await setUserSession(event, { user: transformedUser })
     // Send login notification
     await sendLoginNotification({
       name: user.name,

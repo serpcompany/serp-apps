@@ -59,9 +59,10 @@ const items = computed(() => {
     },
     type: 'checkbox' as const,
     checked: team.slug === currentTeam.value?.slug,
-    onSelect: (e: Event) => {
+    onSelect: async (e: Event) => {
+      e.preventDefault()
       setLastUsedTeam(team.slug)
-      return navigateTo(`/dashboard/${team.slug}`)
+      await navigateTo(`/dashboard/${team.slug}`, { replace: true })
     },
   }))
 

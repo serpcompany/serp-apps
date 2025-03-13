@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
 
   await deleteOneTimePassword(data.code)
 
-  if (user.banned) {
+  if (user.banned && user.bannedUntil && user.bannedUntil > new Date()) {
     throw createError({
       statusCode: 403,
       statusMessage: 'Your account has been banned',
