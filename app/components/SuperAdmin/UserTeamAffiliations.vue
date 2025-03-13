@@ -5,10 +5,8 @@
       <UIcon name="i-lucide-users" class="text-neutral-500" />
     </div>
     <template #content>
-      <div class="w-72 p-4">
-        <h3 class="mb-2 text-sm font-medium">Team Affiliations</h3>
-        <USeparator class="my-2" />
-        <div class="mt-2 space-y-4">
+      <div class="w-72 px-4 py-2">
+        <div class="space-y-4">
           <div
             v-for="teamMember in teamMembers"
             :key="teamMember.id"

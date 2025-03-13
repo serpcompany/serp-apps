@@ -25,6 +25,8 @@ export type Image = typeof tables.images.$inferSelect
 export type InsertImage = typeof tables.images.$inferInsert
 export type Team = typeof tables.teams.$inferSelect
 export type InsertTeam = typeof tables.teams.$inferInsert
+export type TeamMember = typeof tables.teamMembers.$inferSelect
+export type InsertTeamMember = typeof tables.teamMembers.$inferInsert
 export type Passkey = typeof tables.webAuthnCredentials.$inferSelect
 export type InsertPasskey = typeof tables.webAuthnCredentials.$inferInsert
 export type WebAuthnChallenge = typeof tables.webAuthnChallenges.$inferSelect
@@ -116,3 +118,6 @@ export const selectCustomerSchema = createSelectSchema(tables.customers)
 
 export const insertSubscriptionSchema = createInsertSchema(tables.subscriptions)
 export const selectSubscriptionSchema = createSelectSchema(tables.subscriptions)
+
+export const insertTeamMemberSchema = createInsertSchema(tables.teamMembers)
+export const selectTeamMemberSchema = createSelectSchema(tables.teamMembers)
