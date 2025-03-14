@@ -1,18 +1,6 @@
 // Used in:
 // - /auth/login.vue
 
-// flow
-// 1. Validate body (email, name, password)
-// 2. Check if user exists (@method findUserByEmail)
-// 3. Hash the password (uses the hashPassword util provided by nuxt-auth-utils)
-// 4. Create user (@method createUserWithPassword)
-// 5. Create verification code (@method generateAndSaveVerificationCode)
-// 6. Create One Time Password code (@method generateAndSaveOneTimePassword)
-// 7. Render email template (@method render)
-// 8. Send verification email (@method sendEmail)
-// 9. Sanitize user data (@method sanitizeUser)
-// 10. Return sanitized user object
-
 import {
   findUserByEmail,
   findLinkedAccountsByUserId,

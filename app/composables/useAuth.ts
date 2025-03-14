@@ -1,4 +1,7 @@
+import { z } from 'zod'
 import { FetchError } from 'ofetch'
+import { registerUserSchema } from '@@/shared/validations/auth'
+type RegisterUserSchema = z.output<typeof registerUserSchema>
 
 interface AuthError {
   message: string
@@ -9,6 +12,7 @@ interface AuthError {
 interface AuthResponse {
   error?: AuthError
   success?: boolean
+  emailVerified?: boolean
 }
 
 export const useAuth = () => {
@@ -79,17 +83,13 @@ export const useAuth = () => {
     useState('teams').value = []
   }
 
-  const register = async (userData: {
-    email: string
-    password: string
-    name: string
-  }): Promise<AuthResponse> => {
+  const register = async (userData: RegisterUserSchema): Promise<AuthResponse> => {
     try {
-      await $fetch('/api/auth/password/register', {
+      const user = await $fetch('/api/auth/password/register', {
         method: 'POST',
         body: userData,
       })
-      return { success: true }
+      return { success: true, emailVerified: user?.emailVerified }
     } catch (error: FetchError | any) {
       return handleAuthError(error)
     }

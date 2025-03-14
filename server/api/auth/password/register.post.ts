@@ -3,11 +3,9 @@
 // 2. Check if user exists (@method findUserByEmail)
 // 3. Hash the password (uses the hashPassword util provided by nuxt-auth-utils)
 // 4. Create user (@method createUserWithPassword)
-// 5. Create verification code (@method generateAndSaveVerificationCode)
-// 6. Render email template (@method render)
-// 7. Send verification email (@method sendEmail)
-// 8. Sanitize user data (@method sanitizeUser)
-// 9. Return user (email, name)
+// 5. Automatically verify email if a valid invite code is present
+// 6. Log in user if email verified
+// 7. Generate verification code and send email for verification
 
 // Used in:
 // - app/pages/auth/register.vue
@@ -18,6 +16,8 @@ import { env } from '@@/env'
 import {
   findUserByEmail,
   createUserWithPassword,
+  verifyUser,
+  updateLastActiveTimestamp,
 } from '@@/server/database/queries/users'
 import { saveEmailVerificationCode } from '@@/server/database/queries/auth'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
@@ -25,6 +25,12 @@ import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
 import { sanitizeUser } from '@@/server/utils/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
+import {
+  getInvite,
+  updateInviteStatus,
+  acceptTeamInvite,
+} from '@@/server/database/queries/teams'
+import { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
@@ -56,37 +62,68 @@ export default defineEventHandler(async (event) => {
   const hashedPassword = await hashPassword(data.password)
 
   // 4. Create user
-
   const user = await createUserWithPassword({
     email: data.email,
     name: data.name,
     hashedPassword,
   })
-  const emailVerificationCode = generateAlphaNumericCode(32)
+  const sanitizedUser = sanitizeUser(user)
 
-  await saveEmailVerificationCode({
-    userId: user.id,
-    code: emailVerificationCode,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
-  })
+  // 5. Automatically verify email if a valid invite code is present
+  if (data.inviteToken) {
+    try {
+      const invite = await getInvite(data.inviteToken) // Verify invitation code to prevent verification bypass
+      await verifyUser(user.id)
+      sanitizedUser.emailVerified = true
+      await acceptTeamInvite(invite, user.id)
+      await updateInviteStatus(invite.id, 'accepted')
+      deleteCookie(event, 'invite-token')
+      deleteCookie(event, 'invite-email')
+    } catch (error) {
+      console.log(`Error verifying token on registration: ${error instanceof Error ? error.message : error}`)
+    }
+  }
 
-  const htmlTemplate = await render(EmailVerification, {
-    verificationCode: emailVerificationCode,
-  })
-
-  if (env.MOCK_EMAIL) {
-    console.table({
-      email: data.email,
-      name: data.name,
-      verificationLink: `${env.BASE_URL}/api/auth/verify-account?token=${emailVerificationCode}`,
-    })
-  } else {
-    await sendEmail({
-      subject: `Welcome to the ${env.APP_NAME}`,
-      to: data.email,
-      html: htmlTemplate,
+  // 6. Log in user if email verified
+  if (sanitizedUser.emailVerified) {
+    await updateLastActiveTimestamp(user.id)
+    await setUserSession(event, { user: sanitizedUser } as UserSession)
+    
+    // Send login notification
+    await sendLoginNotification({
+      name: user.name,
+      email: user.email,
     })
   }
+  // 7. Generate verification code and send email for verification
+  else {
+    const emailVerificationCode = generateAlphaNumericCode(32)
+  
+    await saveEmailVerificationCode({
+      userId: user.id,
+      code: emailVerificationCode,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
+    })
+  
+    const htmlTemplate = await render(EmailVerification, {
+      verificationCode: emailVerificationCode,
+    })
+  
+    if (env.MOCK_EMAIL) {
+      console.table({
+        email: data.email,
+        name: data.name,
+        verificationLink: `${env.BASE_URL}/api/auth/verify-account?token=${emailVerificationCode}`,
+      })
+    } else {
+      await sendEmail({
+        subject: `Welcome to the ${env.APP_NAME}`,
+        to: data.email,
+        html: htmlTemplate,
+      })
+    }
+  }
+
   setResponseStatus(event, 201)
-  return sanitizeUser(user)
+  return sanitizedUser
 })

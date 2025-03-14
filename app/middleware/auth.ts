@@ -1,4 +1,5 @@
 import type { Team } from '@@/types/database'
+import { getInvite } from '~~/server/database/queries/teams'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const paramSlug = (Array.isArray(to.params.team) ? to.params.team[0] : to.params.team) || ''
   const toast = useToast()
@@ -33,12 +34,22 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo('/auth/login')
   }
 
-  // Check for invite token if requested
+  // Check for invite token, this means the user was not logged in or did not have an account when they clicked the verification link,
+  // but now has successfully logged in or created an account and can verify the invite
   const inviteToken = useCookie('invite-token')
   if (inviteToken.value) {
-    const url = `/api/teams/verify-invite?token=${inviteToken.value}`
+    // Clear the cookies
+    const inviteTokenStr = inviteToken.value
     inviteToken.value = null
-    return navigateTo(url)
+    const inviteEmailCookie = useCookie('invite-email')
+    if (inviteEmailCookie.value) inviteEmailCookie.value = null
+    // Redirect if token still valid
+    try {
+      await getInvite(inviteTokenStr)
+      return navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
+    } catch(error) {
+      // Invalid token means user already verified it upon submitting registration
+    }
   }
 
   // If teams aren't loaded yet, fetch them
