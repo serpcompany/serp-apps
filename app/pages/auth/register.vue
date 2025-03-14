@@ -132,10 +132,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     const { error, emailVerified } = await register({ ...event.data, inviteToken: inviteToken.value})
     if (emailVerified && !error) {
-      // Ensure client has session data and navigate the the dashboard
+      // Ensure client has session data and navigate to the dashboard
       await nextTick()
-      const { user, fetch } = useUserSession()
-      await fetch()
+      await useUserSession().fetch()
       await navigateTo('/dashboard')
     } else {
       if (!error) {

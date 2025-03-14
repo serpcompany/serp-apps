@@ -88,6 +88,7 @@ export default defineWebAuthnAuthenticateEventHandler({
     await updateLastActiveTimestamp(user.id)
     const transformedUser = sanitizeUser(user)
     await setUserSession(event, { user: transformedUser })
+
     // Send login notification
     await sendLoginNotification({
       name: user.name,
