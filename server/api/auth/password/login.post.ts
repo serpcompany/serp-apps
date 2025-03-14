@@ -1,18 +1,6 @@
 // Used in:
 // - /auth/login.vue
 
-// flow
-// 1. Validate body (email, name, password)
-// 2. Check if user exists (@method findUserByEmail)
-// 3. Hash the password (uses the hashPassword util provided by nuxt-auth-utils)
-// 4. Create user (@method createUserWithPassword)
-// 5. Create verification code (@method generateAndSaveVerificationCode)
-// 6. Create One Time Password code (@method generateAndSaveOneTimePassword)
-// 7. Render email template (@method render)
-// 8. Send verification email (@method sendEmail)
-// 9. Sanitize user data (@method sanitizeUser)
-// 10. Return sanitized user object
-
 import {
   findUserByEmail,
   findLinkedAccountsByUserId,
@@ -96,15 +84,8 @@ export default defineEventHandler(async (event) => {
   // 7. Update last active timestamp
   await updateLastActiveTimestamp(user.id)
 
-  const sanitizedUser = sanitizeUser(user)
-
-  if (!sanitizedUser) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to process user data',
-    })
-  }
-  await setUserSession(event, { user: sanitizedUser })
+  // 8. Set user session
+  await setUserSession(event, { user: sanitizeUser(user) })
   
   // Send login notification
   await sendLoginNotification({

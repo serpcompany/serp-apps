@@ -14,7 +14,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { useTeam } from '@/composables/useTeam'
 
 const { isTeamOwner, currentTeam } = useTeam()

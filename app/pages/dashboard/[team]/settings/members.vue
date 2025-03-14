@@ -10,6 +10,7 @@
     <UModal
       size="xl"
       v-model:open="newMemberModal"
+      prevent-close
       :title="`Invite a new member to ${currentTeam?.name}`"
       description="We will email them a link to join your team. Invitations are valid for 7 days."
     >
@@ -26,6 +27,16 @@
               placeholder="john@doe.com"
               class="w-full"
               size="lg"
+            />
+          </UFormField>
+          <UFormField required label="Role" name="role">
+            <USelectMenu
+              v-model="state.role"
+              :items="roleOptions"
+              value-key="id"
+              class="w-full"
+              size="lg"
+              :search-input="false"
             />
           </UFormField>
           <UButton
@@ -49,6 +60,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types'
 import { z } from 'zod'
+import { inviteTeamMemberSchema } from '@@/shared/validations/team'
+import { UserRole } from '@@/constants'
 const { currentTeam, inviteMember, loading } = useTeam()
 const toast = useToast()
 
@@ -56,20 +69,23 @@ const { user } = useUserSession()
 const newMemberModal = ref(false)
 const state = reactive({
   email: '',
-})
-const schema = z.object({
-  email: z
-    .string()
-    .email()
-    .refine((email) => email !== user.value?.email, {
-      message: 'You cannot invite yourself',
-    }),
+  role: UserRole.MEMBER,
 })
 
-const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
+const roleOptions = [
+  { label: 'Member', id: UserRole.MEMBER },
+  { label: 'Admin', id: UserRole.ADMIN },
+  { label: 'Owner', id: UserRole.OWNER },
+]
+
+const schema = inviteTeamMemberSchema.refine((data) => data.email !== user.value?.email, {
+  message: 'You cannot invite yourself',
+})
+
+const onSubmit = async (event: FormSubmitEvent<z.infer<typeof schema>>) => {
   loading.value = true
   try {
-    await inviteMember(event.data.email)
+    await inviteMember(event.data.email, event.data.role)
     toast.add({
       title: 'Member invited successfully',
       description: `We have sent an invitation to ${event.data.email}`,
@@ -78,7 +94,6 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
     newMemberModal.value = false
     await refreshNuxtData('team-invites')
   } catch (error) {
-    console.error(error)
     toast.add({
       title: 'Error inviting member',
       description: (error as any).data.message,

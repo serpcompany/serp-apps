@@ -48,12 +48,13 @@
 
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
-const { user, clear } = useUserSession()
+const { user } = useUserSession()
+const { logout } = useAuth()
 const mobileMenu = useState('mobileMenu')
 const isSuperAdmin = computed(() => user.value?.superAdmin)
 
 async function signOut() {
-  await clear()
+  await logout()
   await navigateTo('/')
 }
 const items = ref([

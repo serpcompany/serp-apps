@@ -8,8 +8,8 @@
     }"
   >
     <UButton
-      :label="activeTeam?.name"
-      :avatar="getAvatarProps(activeTeam)"
+      :label="currentTeam?.name"
+      :avatar="getAvatarProps(currentTeam)"
       color="neutral"
       variant="ghost"
       class="w-full hover:bg-neutral-200/80 dark:hover:bg-white/10"
@@ -34,14 +34,9 @@
 import type { Team } from '@@/types/database'
 
 const newTeamModal = ref(false)
+const { currentTeam } = useTeam()
 const teams = useState<Team[]>('teams')
-const router = useRouter()
-const currentRoute = computed(() => router.currentRoute.value)
-const teamSlug = computed(() => currentRoute.value.params.team as string)
 const { setLastUsedTeam } = useTeamPreferences()
-const activeTeam = computed(() =>
-  teams.value?.find((team) => team.slug === teamSlug.value),
-)
 
 const getAvatarProps = (team?: Team) => ({
   src: team?.logo as string,
@@ -63,9 +58,8 @@ const items = computed(() => {
       size: '2xs' as const,
     },
     type: 'checkbox' as const,
-    checked: team.slug === teamSlug.value,
+    checked: team.slug === currentTeam.value?.slug,
     onSelect: async (e: Event) => {
-      e.preventDefault()
       setLastUsedTeam(team.slug)
       await navigateTo(`/dashboard/${team.slug}`, { replace: true })
     },

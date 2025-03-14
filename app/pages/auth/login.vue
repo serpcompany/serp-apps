@@ -81,6 +81,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: ['invite-email'],
+})
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { loginUserSchema } from '@@/shared/validations/auth'
@@ -89,9 +92,10 @@ type Schema = z.output<typeof loginUserSchema>
 const loading = ref(false)
 const { login } = useAuth()
 const router = useRouter()
+const inviteEmail = useState<string>('inviteEmail')
 
 const state = reactive<Partial<Schema>>({
-  email: undefined,
+  email: inviteEmail.value,
   password: undefined,
 })
 
@@ -99,7 +103,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   const { error } = await login(event.data)
   if (!error) {
-    await router.push('/dashboard')
+    await navigateTo('/dashboard')
   }
   loading.value = false
 }

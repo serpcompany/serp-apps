@@ -6,6 +6,10 @@ import type {
   TeamInvite,
 } from '@@/types/database'
 
+// Define invite status types for better type safety
+type InviteStatus = (typeof INVALID_STATUSES)[number]
+const INVALID_STATUSES = ['accepted', 'rejected', 'cancelled'] as const
+
 export const findUserTeams = async (userId: string) => {
   try {
     const teams = await useDB()
@@ -153,14 +157,38 @@ export const cancelInvite = async (inviteId: string) => {
     .where(eq(tables.teamInvites.id, inviteId))
 }
 
+/**
+ * @throws {H3Error}
+ */
 export const getInvite = async (
   token: string,
-): Promise<TeamInvite | undefined> => {
+): Promise<TeamInvite> => {
   const invite = await useDB()
     .select()
     .from(tables.teamInvites)
     .where(eq(tables.teamInvites.token, token))
     .get()
+
+  if (!invite) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Invite not found or invalid',
+    })
+  }
+  
+  if (invite.expiresAt < new Date()) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invite expired',
+    })
+  }
+  
+  if (INVALID_STATUSES.includes(invite.status as InviteStatus)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Invite already ${invite.status}`,
+    })
+  }
   return invite
 }
 
@@ -171,11 +199,11 @@ export const updateInviteStatus = async (inviteId: string, status: string) => {
     .where(eq(tables.teamInvites.id, inviteId))
 }
 
-export const addUserToTeam = async (teamId: string, userId: string) => {
+export const acceptTeamInvite = async (invite: TeamInvite, userId: string) => {
   try {
     await useDB()
       .insert(tables.teamMembers)
-      .values({ teamId, userId, role: 'member' })
+      .values({ teamId: invite.teamId, userId, role: invite.role })
   } catch (error) {
     console.error(error)
     throw createError({

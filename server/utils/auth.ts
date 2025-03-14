@@ -1,16 +1,28 @@
-import { InsertUser } from '@@/types/database'
+import type { InsertUser } from '@@/types/database'
+
+export interface SanitizedUser extends Omit<
+  InsertUser,
+  | 'hashedPassword'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'lastActive'
+  | 'phoneNumber'
+> {}
 
 export const sanitizeUser = (
   user: InsertUser,
   showBannedData: boolean = false,
 ) => {
-  if (!user) return null
   if (!showBannedData) {
     delete user.banned
     delete user.bannedReason
   }
   delete user.hashedPassword
-  return user
+  delete user.createdAt
+  delete user.updatedAt
+  delete user.lastActive
+  delete user.phoneNumber
+  return user as SanitizedUser
 }
 
 /**

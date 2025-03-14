@@ -55,6 +55,7 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import type { Team } from '@@/types/database'
+import { FetchError } from 'ofetch'
 
 const toast = useToast()
 const teams = useState<Team[]>('teams')
@@ -91,11 +92,12 @@ const state = reactive({
 
 const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   loading.value = true
+  const data = schema.parse(event.data)
   try {
     const filePath = selectedFile.value
       ? await uploadLogo()
-      : `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
-    const teamData = { ...event.data, logo: filePath }
+      : `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(data.name)}`
+    const teamData = { ...data, logo: filePath }
     const newTeam = await $fetch<Team>('/api/teams', {
       method: 'POST',
       body: teamData,
@@ -110,7 +112,7 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   } catch (error) {
     toast.add({
       title: `Failed to create team`,
-      description: (error as any).statusMessage || 'Please try again',
+      description: (error as any).message || (error as any).statusMessage || 'Please try again',
       color: 'error',
     })
   } finally {
@@ -129,7 +131,11 @@ const uploadLogo = async () => {
     })
     return `/images/${filePath}`
   } catch (error) {
-    throw new Error('Failed to upload logo')
+    if (error instanceof FetchError) {
+      throw new Error(`Failed to upload logo: ${error.message || error}`, { cause: error })
+    } else {
+      throw new Error('Failed to upload logo', { cause: error })
+    }
   }
 }
 

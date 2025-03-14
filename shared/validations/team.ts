@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { insertTeamSchema } from '@@/types/database'
+import { UserRole } from '@@/constants'
 
 export const createTeamSchema = insertTeamSchema.pick({
   name: true,
@@ -9,5 +10,5 @@ export const createTeamSchema = insertTeamSchema.pick({
 
 export const inviteTeamMemberSchema = z.object({
   email: z.string().email(),
-  role: z.enum(['owner', 'admin', 'member']).default('member'),
+  role: z.enum([UserRole.MEMBER, UserRole.ADMIN, UserRole.OWNER]).default(UserRole.MEMBER),
 })

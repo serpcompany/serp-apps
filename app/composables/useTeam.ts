@@ -16,34 +16,15 @@ export const useTeam = () => {
       ),
   })
   
-  // Update to use reactive route approach
   const router = useRouter()
-  const currentRoute = computed(() => router.currentRoute.value)
-  const teamSlug = computed(() => currentRoute.value.params.team as string)
+  const teamSlug = computed(() => router.currentRoute.value.params.team as string)
   
   const loading = ref(false)
-  const teams = useState<Team[]>('teams')
-
-  // Check if the current route requires a team
-  const requiresTeam = computed(() => {
-    // Routes that don't require a team
-    const nonTeamRoutes = [
-      '/dashboard/super-admin',
-      '/dashboard/account-security',
-      '/dashboard/onboard',
-      // Add other routes that don't require a team here
-    ]
-    
-    // Check if the current path starts with any of the non-team routes
-    return !nonTeamRoutes.some(routePath => 
-      currentRoute.value.path === routePath || currentRoute.value.path.startsWith(routePath)
-    )
-  })
+  const teams = useState<Team[]>('teams', () => [])
 
   const currentTeam = computed(() => {
-    // If the route doesn't require a team, return null without throwing an error
-    if (!requiresTeam.value || !teamSlug.value) {
-      return null
+    if (!teamSlug.value || !teams.value.length) {
+      return teams.value[0] || {} as Team
     }
     
     const team = teams.value?.find((team) => team.slug === teamSlug.value)
@@ -53,9 +34,23 @@ export const useTeam = () => {
     return team
   })
   
-  const isTeamOwner = computed(
-    () => currentTeam.value?.ownerId === user.value?.id,
-  )
+  const isTeamOwner = ref(false)
+  watch(currentTeam, (team) => {
+    try {
+    isTeamOwner.value = team?.ownerId === user.value?.id
+    } catch (error) {}
+  }, { immediate: true })
+
+  const getMemberships = async () => {
+    loading.value = true
+    try {
+      const { data: memberships } = await useFetch<Team[]>('/api/me/memberships')
+      return memberships.value as Team[]
+    }
+    finally {
+      loading.value = false
+    }
+  }
 
   const createTeam = async (teamData: z.infer<typeof teamSchema>) => {
     loading.value = true
@@ -132,12 +127,12 @@ export const useTeam = () => {
     }
   }
 
-  const inviteMember = async (email: string) => {
+  const inviteMember = async (email: string, role: string = 'member') => {
     loading.value = true
     try {
       await $fetch(`/api/teams/${currentTeam?.value?.id}/members`, {
         method: 'POST',
-        body: { email },
+        body: { email, role },
       })
     } catch (error) {
       toast.add({
@@ -217,6 +212,7 @@ export const useTeam = () => {
 
   return {
     loading,
+    getMemberships,
     createTeam,
     updateTeam,
     deleteTeam,
@@ -228,6 +224,5 @@ export const useTeam = () => {
     currentTeam,
     teams,
     removeTeamMember,
-    requiresTeam,
   }
 }

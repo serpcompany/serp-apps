@@ -90,8 +90,8 @@ interface BillingPlan {
   name: string
   description: string
   status?: string
-  currentPeriodEnd?: string
-  currentPeriodStart?: string
+  currentPeriodEnd?: Date
+  currentPeriodStart?: Date
   amount: number
   interval: string
   priceId: string
@@ -106,7 +106,7 @@ const currentPlan = computed<BillingPlan>(() => {
       amount: 0,
       interval: '',
       priceId: '',
-    }
+    } as BillingPlan
   }
 
   const plan = plans.value.find(
@@ -127,7 +127,7 @@ const currentPlan = computed<BillingPlan>(() => {
     amount: plan.unitAmount,
     interval: plan.interval,
     priceId: plan.id,
-  }
+  } as BillingPlan
 })
 
 const handleSubscribe = async (priceId: string) => {

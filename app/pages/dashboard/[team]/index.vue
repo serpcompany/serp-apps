@@ -1,5 +1,5 @@
 <template>
-  <AppContainer title="Home (Demo Page)">
+  <AppContainer :title="`${currentTeam?.name} Home (Demo Page)`">
     <div class="space-y-6">
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
         <AppDemoKpi title="Followers" value="8551" up="19%" />
@@ -12,3 +12,6 @@
     </div>
   </AppContainer>
 </template>
+<script lang="ts" setup>
+const { currentTeam } = useTeam()
+</script>

@@ -80,11 +80,18 @@
           />
         </div>
       </template>
-      <UCard v-else>
+      <UCard v-else-if="sentemail">
         <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
         <p class="mt-4 text-lg font-bold">Check your email</p>
         <p class="mt-1 text-sm text-neutral-500">
           We've sent you an email to verify your account.
+        </p>
+      </UCard>
+      <UCard v-else>
+        <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
+        <p class="mt-4 text-lg font-bold">Email verified</p>
+        <p class="mt-1 text-sm text-neutral-500">
+          Your email was verified. Logging in...
         </p>
       </UCard>
     </div>
@@ -97,6 +104,11 @@
 </template>
 
 <script setup lang="ts">
+import middleware from '@@/app/middleware/invite-email'
+definePageMeta({
+  middleware: [middleware],
+})
+
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { registerUserSchema } from '@@/shared/validations/auth'
@@ -104,20 +116,37 @@ type Schema = z.output<typeof registerUserSchema>
 
 const registered = ref(false)
 const loading = ref(false)
+const sentemail = ref(false)
 const { register } = useAuth()
+const inviteEmail = useState<string>('inviteEmail')
+const inviteToken = useState<string>('inviteToken')
+const router = useRouter()
 
 const state = reactive<Partial<Schema>>({
-  email: undefined,
+  email: inviteEmail.value || '',
   password: undefined,
   name: undefined,
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
-  const { error } = await register(event.data)
-  if (!error) {
-    registered.value = true
+  try {
+    const { error, emailVerified } = await register({ ...event.data, inviteToken: inviteToken.value})
+    if (emailVerified && !error) {
+      // Ensure client has session data and navigate to the dashboard
+      // See https://github.com/atinux/nuxt-auth-utils/issues/357
+      await nextTick()
+      await useUserSession().fetch()
+      await navigateTo('/dashboard')
+    } else {
+      if (!error) {
+        registered.value = true
+      } else {
+        sentemail.value = true
+      }
+    }
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 </script>

@@ -2,22 +2,19 @@ import type { Team } from '@@/types/database'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const toast = useToast()
   const { loggedIn } = useUserSession()
-  const teams = useState<Team[]>('teams')
+  const teams = useState<Team[]>('teams', () => [])
+  const teamSlug = useState<string>('teamSlug')
+  const { isTeamOwner } = useTeam()
 
   // Is user logged in?
   if (!loggedIn.value) {
+    if (teamSlug.value) teamSlug.value = ''
+    if (teams.value.length) teams.value = []
     return navigateTo('/auth/login')
   }
 
-  // If teams aren't loaded yet, fetch them
-  if (!teams.value) {
-    const { data: memberships } = await useFetch<Team[]>('/api/me/memberships')
-    teams.value = memberships.value || []
-  }
-
   // Get team slug from route parameter
-  const teamSlug = to.params.team as string
-  const currentTeam = teams.value?.find((team) => team.slug === teamSlug)
+  const currentTeam = teams.value?.find((team) => team.slug === to.params.team as string)
 
   if (!currentTeam) {
     toast.add({
@@ -27,7 +24,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     return navigateTo('/dashboard')
   }
 
-  const { isTeamOwner } = useTeam()
   if (!isTeamOwner.value) {
     toast.add({
       title: 'Unauthorized Access',
