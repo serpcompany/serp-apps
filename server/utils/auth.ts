@@ -16,12 +16,14 @@ export const sanitizeUser = (
   if (!showBannedData) {
     delete user.banned
     delete user.bannedReason
+    delete user.bannedUntil
   }
   delete user.hashedPassword
   delete user.createdAt
   delete user.updatedAt
   delete user.lastActive
   delete user.phoneNumber
+  delete user.superAdmin
   return user as SanitizedUser
 }
 
