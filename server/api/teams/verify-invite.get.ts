@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   try {
     invite = await getInvite(token)
   } catch (error) {
-    return sendRedirect(event, `/auth/verification-error?message=${encodeURIComponent(error instanceof Error ? error.message : error as string)}`)
+    return sendRedirect(event, `/auth/verification-error?message=${encodeURIComponent((error as Error).message)}`)
   }
 
   // 3. Validate user session and permissions

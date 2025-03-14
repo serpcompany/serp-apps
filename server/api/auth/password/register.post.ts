@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
       deleteCookie(event, 'invite-token')
       deleteCookie(event, 'invite-email')
     } catch (error) {
-      console.log(`Error verifying token on registration: ${error instanceof Error ? error.message : error}`)
+      console.log(`Error verifying token on registration: ${(error as Error).message}`)
     }
   }
 

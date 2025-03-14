@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   } catch(error: unknown) {
     throw createError({
       statusCode: 400,
-      statusMessage: error instanceof Error ? error.message : error as string,
+      statusMessage: (error as Error).message,
     })
   }
 
