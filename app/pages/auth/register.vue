@@ -80,18 +80,11 @@
           />
         </div>
       </template>
-      <UCard v-else-if="sentemail">
+      <UCard v-else>
         <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
         <p class="mt-4 text-lg font-bold">Check your email</p>
         <p class="mt-1 text-sm text-neutral-500">
           We've sent you an email to verify your account.
-        </p>
-      </UCard>
-      <UCard v-else>
-        <UIcon name="i-lucide-mail-check" class="h-5 w-5" />
-        <p class="mt-4 text-lg font-bold">Email verified</p>
-        <p class="mt-1 text-sm text-neutral-500">
-          Your email was verified. Logging in...
         </p>
       </UCard>
     </div>
@@ -120,7 +113,6 @@ const sentemail = ref(false)
 const { register } = useAuth()
 const inviteEmail = useState<string>('inviteEmail')
 const inviteToken = useState<string>('inviteToken')
-const router = useRouter()
 
 const state = reactive<Partial<Schema>>({
   email: inviteEmail.value || '',

@@ -14,6 +14,11 @@
 <script lang="ts" setup>
 const links = [
   {
+    label: 'Back to Dashboard',
+    icon: 'i-lucide-chevron-left',
+    to: `/dashboard`,
+  },
+  {
     label: 'Users',
     icon: 'i-lucide-users',
     to: `/dashboard/super-admin`,
