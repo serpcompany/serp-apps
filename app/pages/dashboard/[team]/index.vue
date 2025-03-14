@@ -1,5 +1,5 @@
 <template>
-  <AppContainer :title="`Home (${currentTeam?.name})`">
+  <AppContainer :title="`${currentTeam?.name} Home (Demo Page)`">
     <div class="space-y-6">
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
         <AppDemoKpi title="Followers" value="8551" up="19%" />
