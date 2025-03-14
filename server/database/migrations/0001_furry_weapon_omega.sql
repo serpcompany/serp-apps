@@ -1,2 +1,0 @@
-ALTER TABLE "oauth_accounts" DROP CONSTRAINT "oauth_accounts_provider_providerUserId_pk";--> statement-breakpoint
-ALTER TABLE "oauth_accounts" ALTER COLUMN "id" SET DEFAULT '78e32c2a-75aa-4d7e-82a7-70b0c36d84c2';
