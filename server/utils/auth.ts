@@ -23,7 +23,6 @@ export const sanitizeUser = (
   delete user.updatedAt
   delete user.lastActive
   delete user.phoneNumber
-  delete user.superAdmin
   return user as SanitizedUser
 }
 
