@@ -2,7 +2,6 @@ import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
 import { OneTimePasswordTypes } from '../../../constants'
 import { users } from './users'
-import type { WebAuthnCredential } from '#auth-utils'
 import { relations } from 'drizzle-orm'
 
 export const oauthAccounts = sqliteTable('oauth_accounts', {

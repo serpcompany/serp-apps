@@ -92,11 +92,12 @@ const state = reactive({
 
 const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   loading.value = true
+  const data = schema.parse(event.data)
   try {
     const filePath = selectedFile.value
       ? await uploadLogo()
-      : `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
-    const teamData = { ...event.data, logo: filePath }
+      : `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(data.name)}`
+    const teamData = { ...data, logo: filePath }
     const newTeam = await $fetch<Team>('/api/teams', {
       method: 'POST',
       body: teamData,

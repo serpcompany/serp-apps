@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <div class="flex items-center gap-2">
       <UAvatar
-        :src="user.avatarUrl"
+        :src="user.avatarUrl || undefined"
         :alt="user.name"
         size="lg"
       />
@@ -63,6 +63,7 @@
 
 <script lang="ts" setup>
 import type { User } from '@@/types/database'
+import type { SanitizedUser } from '@@/server/utils/auth'
 
 interface TeamMember {
   id: string
@@ -99,7 +100,7 @@ const toast = useToast()
 const deleteUser = async () => {
   loading.value = true
   try {
-    await $fetch('/api/super-admin/users', {
+    const users = await $fetch<SanitizedUser>('/api/super-admin/users', {
       method: 'DELETE',
       body: { userId: props.user.id },
     })

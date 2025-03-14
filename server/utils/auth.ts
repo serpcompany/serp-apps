@@ -1,5 +1,13 @@
-import type { User } from '#auth-utils'
-import { InsertUser } from '@@/types/database'
+import type { InsertUser } from '@@/types/database'
+
+export interface SanitizedUser extends Omit<
+  InsertUser,
+  | 'hashedPassword'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'lastActive'
+  | 'phoneNumber'
+> {}
 
 export const sanitizeUser = (
   user: InsertUser,
@@ -14,7 +22,7 @@ export const sanitizeUser = (
   delete user.updatedAt
   delete user.lastActive
   delete user.phoneNumber
-  return user as User
+  return user as SanitizedUser
 }
 
 /**

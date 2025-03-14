@@ -30,7 +30,6 @@ import {
   updateInviteStatus,
   acceptTeamInvite,
 } from '@@/server/database/queries/teams'
-import { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
@@ -87,7 +86,7 @@ export default defineEventHandler(async (event) => {
   // 6. Log in user if email verified
   if (sanitizedUser.emailVerified) {
     await updateLastActiveTimestamp(user.id)
-    await setUserSession(event, { user: sanitizedUser } as UserSession)
+    await setUserSession(event, { user: sanitizedUser })
     
     // Send login notification
     await sendLoginNotification({

@@ -8,7 +8,6 @@ import {
 } from '@@/server/database/queries/users'
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
-import type { UserSession } from '#auth-utils'
 import { sendLoginNotification } from '@@/server/utils/auth'
 
 export default defineEventHandler(async (event) => { 
@@ -93,7 +92,7 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Failed to process user data',
     })
   }
-  await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
+  await setUserSession(event, { user: sanitizeUser(user) })
   
   // Send login notification
   await sendLoginNotification({

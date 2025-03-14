@@ -1,4 +1,3 @@
-import type { UserSession } from '#auth-utils'
 import { updateUser } from '@@/server/database/queries/users'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { updateUserSchema } from '@@/shared/validations/user'
@@ -11,6 +10,6 @@ export default defineEventHandler(async (event) => {
     avatarUrl: body.avatarUrl,
   })
   const sanitizedUser = sanitizeUser(updatedUser)
-  await setUserSession(event, { user: sanitizedUser } as UserSession)
+  await setUserSession(event, { user: sanitizedUser })
   return sanitizedUser
 })

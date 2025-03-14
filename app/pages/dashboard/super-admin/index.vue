@@ -25,7 +25,7 @@
           >
             <td class="p-2">
               <div class="flex items-center gap-2">
-                <UAvatar :src="user.avatarUrl" size="2xs" :alt="user.name" />
+                <UAvatar :src="user.avatarUrl ?? undefined" size="2xs" :alt="user.name" />
                 {{ user.name }}
               </div>
             </td>

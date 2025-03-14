@@ -97,7 +97,7 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
     if (selectedFile.value) {
       filePath = await uploadAvatar()
     } else if (state.avatarUrl) {
-      filePath = user.value?.avatarUrl
+      filePath = state.avatarUrl
     } else {
       filePath = `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
     }

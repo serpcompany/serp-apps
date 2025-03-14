@@ -104,8 +104,9 @@
 </template>
 
 <script setup lang="ts">
+import middleware from '@@/app/middleware/invite-email'
 definePageMeta({
-  middleware: ['invite-email'],
+  middleware: [middleware],
 })
 
 import { z } from 'zod'
@@ -133,6 +134,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     const { error, emailVerified } = await register({ ...event.data, inviteToken: inviteToken.value})
     if (emailVerified && !error) {
       // Ensure client has session data and navigate to the dashboard
+      // See https://github.com/atinux/nuxt-auth-utils/issues/357
       await nextTick()
       await useUserSession().fetch()
       await navigateTo('/dashboard')

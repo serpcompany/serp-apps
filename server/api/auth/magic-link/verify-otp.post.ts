@@ -21,7 +21,6 @@ import {
   findUserById,
   updateLastActiveTimestamp,
 } from '@@/server/database/queries/users'
-import type { UserSession } from '#auth-utils'
 
 export default defineEventHandler(async (event) => {
   const data = await validateBody(event, otpLoginSchema)
@@ -53,7 +52,7 @@ export default defineEventHandler(async (event) => {
   }
 
   await updateLastActiveTimestamp(user.id)
-  await setUserSession(event, { user: sanitizeUser(user) } as UserSession)
+  await setUserSession(event, { user: sanitizeUser(user) })
   
   // Send login notification
   await sendLoginNotification({

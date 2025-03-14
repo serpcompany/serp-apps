@@ -12,5 +12,6 @@
   "nuxtr.vueFiles.style.alwaysScoped": true,
   "nuxtr.openItemsAfterCreation": true,
   "nuxtr.defaultPackageManager": "pnpm",
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
