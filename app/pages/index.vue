@@ -1,7 +1,8 @@
+<!-- Everything in a single page on purpose. So you can just delete it if you don't need it. -->
 <template>
-  <main>
-    <header class="border-b border-neutral-200 dark:border-white/10">
-      <UContainer class="flex w-full items-center justify-between py-3">
+  <main class="px-4">
+    <header>
+      <WebsiteSection class="flex w-full items-center justify-between">
         <NuxtLink to="/" class="flex items-center gap-2">
           <img src="/logo.png" alt="logo" class="h-6 w-auto md:h-7" />
           <p class="font-bold">Supersaas V3</p>
@@ -51,50 +52,110 @@
           </AuthState>
           <ThemeToggle />
         </div>
-      </UContainer>
+      </WebsiteSection>
     </header>
-    <UContainer class="relative space-y-12">
-      <div class="pt-12 pb-12 sm:pt-32 sm:pb-16">
-        <div class="mx-auto max-w-4xl space-y-6 text-center sm:space-y-8">
-          <p class="text-4xl font-bold tracking-tight text-balance sm:text-6xl">
-            Ship 🏴‍☠️ a fullstack SaaS app faster than ever.
-          </p>
-          <p class="text-base text-balance text-neutral-500 sm:text-xl">
-            Teams, Typescript, Drizzle ORM, NuxtHub, Postgres, Turso,
-            TailwindCSS V4, Nuxt UI V3. All in one package. This is a mock
-            title.
-          </p>
+    <div>
+      <WebsiteSection>
+        <div class="px-4 py-12 sm:py-16">
+          <div>
+            <div class="mx-auto max-w-2xl space-y-6 text-center">
+              <p
+                class="text-4xl font-bold tracking-tight text-balance sm:text-6xl"
+              >
+                Ship 🏴‍☠️ a fullstack SaaS app faster than ever.
+              </p>
+              <p class="text-base text-balance text-neutral-500 sm:text-xl">
+                Teams, Typescript, Drizzle ORM, NuxtHub, Postgres, Turso,
+                TailwindCSS V4, Nuxt UI V3. All in one package. This is a mock
+                title.
+              </p>
 
-          <div class="flex items-center justify-center gap-3">
-            <UButton
-              label="Get Started"
-              color="primary"
-              size="xl"
-              class="rounded-2xl"
-              trailing-icon="i-lucide-arrow-right"
-              :ui="{
-                trailingIcon: 'size-5',
-              }"
-              :to="loggedIn ? '/dashboard' : '/auth/register'"
-            />
-            <UButton
-              label="Get a demo"
-              color="neutral"
-              variant="ghost"
-              size="xl"
-              class="rounded-2xl"
-            />
+              <div class="flex items-center justify-center gap-3">
+                <UButton
+                  label="Get Started"
+                  color="primary"
+                  size="xl"
+                  class="rounded-2xl"
+                  trailing-icon="i-lucide-arrow-right"
+                  :ui="{
+                    trailingIcon: 'size-5',
+                  }"
+                  :to="loggedIn ? '/dashboard' : '/auth/register'"
+                />
+                <UButton
+                  label="Get a demo"
+                  color="neutral"
+                  variant="ghost"
+                  size="xl"
+                  class="rounded-2xl"
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </WebsiteSection>
+      <WebsiteSection class="!p-2 md:!p-4">
+        <div
+          class="rounded-xl border border-neutral-200 bg-neutral-100 p-2 md:rounded-3xl dark:border-white/10 dark:bg-neutral-950"
+        >
+          <img
+            src="/mock-image-light.jpg"
+            alt="Dashboard"
+            class="w-full rounded-md border border-neutral-200 md:rounded-2xl dark:hidden dark:border-white/10"
+          />
+          <img
+            src="/mock-image-dark.jpg"
+            alt="Dashboard"
+            class="hidden w-full rounded-2xl border border-neutral-200 dark:block dark:border-white/10"
+          />
+        </div>
+      </WebsiteSection>
+    </div>
+    <WebsiteSection class="!p-0">
       <div
-        class="relative aspect-video rounded-3xl bg-neutral-200 dark:bg-neutral-800"
-      ></div>
-    </UContainer>
+        class="grid grid-cols-2 divide-x divide-neutral-100 md:grid-cols-5 dark:divide-white/10"
+      >
+        <div
+          class="col-span-full border-b border-neutral-100 px-8 py-8 md:py-24 md:col-span-1 md:border-b-0 dark:border-white/10"
+        >
+          <p class="text-center text-sm md:text-left">
+            Trusted by fast-growing companies around the world
+          </p>
+        </div>
+        <div
+          class="flex items-center justify-center border-b border-neutral-100 px-8 py-8 md:border-b-0 md:py-24 dark:border-white/10"
+        >
+          <UIcon name="i-logos-eventbrite" class="text-4xl" />
+        </div>
+        <div
+          class="flex items-center justify-center border-b border-neutral-100 px-8 py-8 md:py-24 not-first:md:border-b-0 dark:border-white/10"
+        >
+          <UIcon name="i-logos-flickr" class="text-4xl" />
+        </div>
+        <div class="flex items-center justify-center px-8 py-8 md:py-24">
+          <UIcon name="i-logos-angular" class="text-4xl" />
+        </div>
+        <div class="flex items-center justify-center px-8 py-8 md:py-24">
+          <UIcon name="i-logos-datocms" class="text-4xl" />
+        </div>
+      </div>
+    </WebsiteSection>
+    <WebsiteSection class="py-24">
+      <div class="mx-auto max-w-2xl">
+        <h2 class="text-center text-2xl font-bold">
+          The best way to build a fullstack SaaS
+        </h2>
+        <p class="mt-3 text-center text-sm text-neutral-500">
+          Effortlessly build a fullstack SaaS app with Nuxt, Drizzle and
+          TailwindCSS.
+        </p>
+      </div>
+    </WebsiteSection>
   </main>
 </template>
 
 <script setup lang="ts">
+const { loggedIn } = useUserSession()
 const authOptions = ref([
   {
     label: 'Login (Email/Password)',
