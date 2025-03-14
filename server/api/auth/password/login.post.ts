@@ -84,14 +84,7 @@ export default defineEventHandler(async (event) => {
   // 7. Update last active timestamp
   await updateLastActiveTimestamp(user.id)
 
-  const sanitizedUser = sanitizeUser(user)
-
-  if (!sanitizedUser) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to process user data',
-    })
-  }
+  // 8. Set user session
   await setUserSession(event, { user: sanitizeUser(user) })
   
   // Send login notification
