@@ -1,7 +1,11 @@
 # Supersaas V3
 
 > [!WARNING]  
-> Supersaas V3 is still in progress. The code is not production ready but quite usable.
+> Supersaas V3 is still in beta. Expect minor bugs, I am working really fast to get these fixed.
+
+
+> [!NOTE]  
+> I suggest using this verion over the V2 - Its already quite stable and functional. I am still writing the docs. I will release it very soon (DM me in case if you need any help)
 
 There are two versions of the repo
 
