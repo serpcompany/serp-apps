@@ -135,6 +135,11 @@ export const createUserWithOAuth = async (payload: InsertUser) => {
 
 export const updateUser = async (userId: string, payload: Partial<User>) => {
   try {
+    // Super admin cannot be updated - Makes sure no super admin can be created
+    // Only way to create a super admin is either through the CLI or directly in the database
+    if (payload.superAdmin) {
+      delete payload.superAdmin
+    }
     const record = await useDB()
       .update(tables.users)
       .set(payload)
@@ -244,12 +249,13 @@ export const unlinkAccount = async (userId: string, providerId: string) => {
 
     // Get all linked accounts for the user
     const linkedAccounts = await findLinkedAccountsByUserId(userId)
-    
+
     // If user has no password and only one linked account, prevent unlinking
     if (!user.hashedPassword && linkedAccounts.length <= 1) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Cannot unlink the only authentication method. Please set a password first.',
+        statusMessage:
+          'Cannot unlink the only authentication method. Please set a password first.',
       })
     }
 
