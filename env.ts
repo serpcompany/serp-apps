@@ -27,6 +27,7 @@ export const env = createEnv({
       'sendgrid',
       'postmark',
       'plunk',
+      'zeptomail',
     ]),
     PAYMENT_PROVIDER: z.enum(['stripe', 'lemonsqueezy']),
     TWILIO_ACCOUNT_SID: z.string().min(1),
