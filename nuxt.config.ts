@@ -2,7 +2,13 @@ import './env'
 import vue from '@vitejs/plugin-vue'
 
 export default defineNuxtConfig({
-  modules: ['@nuxthub/core', '@nuxt/ui', '@vueuse/nuxt', 'nuxt-auth-utils'],
+  modules: [
+    '@nuxthub/core',
+    '@nuxt/ui',
+    '@vueuse/nuxt',
+    'nuxt-auth-utils',
+    'nuxthub-ratelimit',
+  ],
   colorMode: {
     preference: 'system',
   },
@@ -29,6 +35,14 @@ export default defineNuxtConfig({
     rollupConfig: {
       // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
       plugins: [vue()],
+    },
+  },
+  nuxtHubRateLimit: {
+    routes: {
+      '/api/**': {
+        maxRequests: 10,
+        intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
+      },
     },
   },
   hub: {
