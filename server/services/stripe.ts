@@ -79,4 +79,18 @@ export const stripeService = {
       })
     }
   },
+
+  async createBillingPortalSession(customerId: string) {
+    try {
+      const session = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+      })
+      return session
+    } catch (error) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Failed to create billing portal session',
+      })
+    }
+  },
 }

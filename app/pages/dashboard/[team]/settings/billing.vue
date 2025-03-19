@@ -4,7 +4,6 @@
     description="Manage your billing information and subscription plans."
   >
     <div
-      v-if="activeSubscription"
       class="flex h-full flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-6 dark:border-neutral-800 dark:bg-neutral-900"
     >
       <div class="flex flex-col space-y-4">
@@ -12,33 +11,52 @@
           class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div class="space-y-2">
-            <h3 class="text-lg font-medium">
-              You are on
-              <span class="font-bold">{{ currentPlan.name }}</span> plan
-            </h3>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="flex items-center gap-2">
-                <span class="text-xl font-semibold">{{
-                  formatPrice(currentPlan.amount)
-                }}</span>
-                <span class="text-neutral-500"
-                  >every {{ currentPlan.interval }}</span
-                >
+            <template v-if="activeSubscription">
+              <h3 class="text-lg font-medium">
+                You are on
+                <span class="font-bold">{{ currentPlan.name }}</span> plan
+              </h3>
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-semibold">{{
+                    formatPrice(currentPlan.amount)
+                  }}</span>
+                  <span class="text-neutral-500"
+                    >every {{ currentPlan.interval }}</span
+                  >
+                </div>
+                <UBadge
+                  :label="currentPlan.status"
+                  color="success"
+                  variant="subtle"
+                  class="capitalize"
+                />
+                <span class="text-sm text-neutral-500">
+                  Renews on
+                  {{
+                    useDateFormat(currentPlan.currentPeriodEnd, 'MMM DD, YYYY')
+                  }}
+                </span>
               </div>
-              <UBadge
-                :label="currentPlan.status"
-                color="success"
-                variant="subtle"
-                class="capitalize"
-              />
-              <span class="text-sm text-neutral-500">
-                Renews on
-                {{
-                  useDateFormat(currentPlan.currentPeriodEnd, 'MMM DD, YYYY')
-                }}
-              </span>
-            </div>
+            </template>
+            <template v-else>
+              <h3 class="text-lg font-medium">
+                You are on the <span class="font-bold">Free</span> plan
+              </h3>
+              <p class="text-sm text-neutral-500">
+                Upgrade to a paid plan to unlock more features and higher usage limits.
+              </p>
+            </template>
           </div>
+          <UButton
+            v-if="activeSubscription"
+            color="neutral"
+            variant="outline"
+            label="Manage Subscription"
+            :loading="loadingPortal"
+            :disabled="loadingPortal"
+            @click="handleManageSubscription"
+          />
         </div>
       </div>
     </div>
@@ -84,6 +102,7 @@ const loadingPriceId = ref<string | null>(null)
 const disabled = ref(false)
 const route = useRoute()
 const { fetch: refreshSession } = useUserSession()
+const loadingPortal = ref(false)
 
 interface BillingPlan {
   id: string
@@ -164,6 +183,38 @@ const handleSubscribe = async (priceId: string) => {
   } finally {
     loadingPriceId.value = null
     disabled.value = false
+  }
+}
+
+const handleManageSubscription = async () => {
+  try {
+    loadingPortal.value = true
+    
+    if (!currentTeam.value?.id) {
+      throw new Error('Team information is missing')
+    }
+
+    const portalUrl = await $fetch('/api/stripe/portal', {
+      method: 'POST',
+      body: {
+        teamId: currentTeam.value.id,
+      },
+    })
+
+    if (!portalUrl) {
+      throw new Error('No portal URL returned from the server')
+    }
+
+    window.location.href = portalUrl
+  } catch (error) {
+    toast.add({
+      title: 'Failed to access billing portal',
+      description: error instanceof Error ? error.message : 'An unexpected error occurred',
+      color: 'error',
+    })
+    console.error('Billing portal error:', error)
+  } finally {
+    loadingPortal.value = false
   }
 }
 

@@ -20,6 +20,7 @@
       :label="active ? 'Manage plan' : 'Subscribe'"
       :loading="loading"
       :disabled="loading"
+      size="lg"
       @click="$emit('subscribe', priceId)"
     />
     <ul class="mt-4 space-y-1">
@@ -28,7 +29,7 @@
         :key="feature.name"
         class="flex items-center gap-3 text-[var(--ui-text-muted)]"
       >
-        <UIcon name="i-lucide-circle-check" class="h-4 w-4 text-neutral-400" />
+        <UIcon name="i-lucide-circle-check" class="h-4 w-4 text-primary-500" />
         <span class="text-sm">{{ feature.name }}</span>
       </li>
     </ul>
