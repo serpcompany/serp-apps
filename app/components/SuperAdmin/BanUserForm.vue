@@ -5,7 +5,7 @@
         <UAvatar :src="user.avatarUrl" size="lg" />
         <div>
           <p class="text-smfont-bold">{{ user.name }}</p>
-          <p class="text-sm text-gray-500">{{ user.email }}</p>
+          <p class="text-sm text-neutral-500">{{ user.email }}</p>
         </div>
       </div>
       <UFormField label="Reason" name="reason" required>

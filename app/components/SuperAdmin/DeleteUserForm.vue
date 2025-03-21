@@ -8,7 +8,7 @@
       />
       <div>
         <p class="text-sm font-bold">{{ user.name }}</p>
-        <p class="text-sm text-gray-500">{{ user.email }}</p>
+        <p class="text-sm text-neutral-500">{{ user.email }}</p>
       </div>
     </div>
     <div

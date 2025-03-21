@@ -1,20 +1,24 @@
 CREATE TABLE `feedback` (
 	`id` text PRIMARY KEY NOT NULL,
-	`userId` text NOT NULL,
-	`feedback` text NOT NULL,
+	`user` text NOT NULL,
+	`message` text NOT NULL,
+	`status` text DEFAULT 'pending' NOT NULL,
+	`reply` text,
+	`meta` text,
 	`created_at` integer,
-	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`user`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `waitlist` (
+CREATE TABLE `subscribers` (
 	`id` text PRIMARY KEY NOT NULL,
 	`email` text NOT NULL,
 	`referrer` text,
+	`meta` text,
 	`created_at` integer,
 	`updated_at` integer
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `waitlist_email_unique` ON `waitlist` (`email`);--> statement-breakpoint
+CREATE UNIQUE INDEX `subscribers_email_unique` ON `subscribers` (`email`);--> statement-breakpoint
 CREATE TABLE `email_verification_codes` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`userId` text NOT NULL,
