@@ -5,6 +5,7 @@ declare module '#auth-utils' {
   interface SessionUser extends SanitizedUser {
     id: string // Required for sessions
     _impersonated?: boolean
+    superAdmin: boolean
   }
 
   interface UserSession {
@@ -23,6 +24,7 @@ declare module '#auth-utils' {
     /**
      * Extra session data, available on client and server
      */
+    superAdmin?: boolean
     [key: string]: unknown
   }
 

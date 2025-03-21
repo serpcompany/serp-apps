@@ -4,8 +4,8 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 export type User = typeof tables.users.$inferSelect
 export type InsertUser = typeof tables.users.$inferInsert
 
-export type Waitlist = typeof tables.waitlist.$inferSelect
-export type InsertWaitlist = typeof tables.waitlist.$inferInsert
+export type Subscriber = typeof tables.subscribers.$inferSelect
+export type InsertSubscriber = typeof tables.subscribers.$inferInsert
 export type OAuthAccounts = typeof tables.oauthAccounts.$inferSelect
 export type InsertOAuthAccounts = typeof tables.oauthAccounts.$inferInsert
 export type Post = typeof tables.posts.$inferSelect
@@ -47,8 +47,8 @@ export type InsertSubscription = typeof tables.subscriptions.$inferInsert
 export const insertUserSchema = createInsertSchema(tables.users)
 export const selectUserSchema = createSelectSchema(tables.users)
 
-export const insertWaitlistSchema = createInsertSchema(tables.waitlist)
-export const selectWaitlistSchema = createSelectSchema(tables.waitlist)
+export const insertSubscriberSchema = createInsertSchema(tables.subscribers)
+export const selectSubscriberSchema = createSelectSchema(tables.subscribers)
 
 export const insertOAuthAccountsSchema = createInsertSchema(
   tables.oauthAccounts,
