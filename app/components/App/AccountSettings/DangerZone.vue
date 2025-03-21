@@ -1,0 +1,96 @@
+<template>
+  <div class="rounded-lg border border-rose-200 bg-rose-50 p-4">
+    <h3 class="font-medium text-rose-950">Danger Zone</h3>
+    <p class="mt-1 text-sm text-neutral-500">
+      Delete your account. This action is irreversible and cannot be undone. All
+      data associated including images will be deleted.
+    </p>
+    <UButton
+      class="mt-4"
+      color="error"
+      label="Proceed"
+      @click="deleteAccountModal = true"
+    />
+  </div>
+  <UModal
+    v-model:open="deleteAccountModal"
+    title="Delete Account"
+    description="Please confirm your intent to delete your account."
+  >
+    <template #body>
+      <UForm :schema="schema" :state="state" class="mb-4" @submit="onSubmit">
+        <UFormField label="Please type 'delete' to confirm" name="confirmation">
+          <UInput
+            v-model="state.confirmation"
+            class="w-full"
+            size="lg"
+            variant="subtle"
+          />
+        </UFormField>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <UButton
+            @click="deleteAccountModal = false"
+            label="Cancel"
+            variant="ghost"
+            color="neutral"
+            :loading="isDeleting"
+          />
+          <UButton
+            type="submit"
+            label="Proceed"
+            color="error"
+            :loading="isDeleting"
+          />
+        </div>
+      </UForm>
+    </template>
+  </UModal>
+</template>
+
+<script setup lang="ts">
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
+const { logout } = useAuth()
+const deleteAccountModal = ref(false)
+const isDeleting = ref(false)
+const toast = useToast()
+
+const schema = z.object({
+  confirmation: z.string().refine((val) => val === 'delete', {
+    message: "Please type 'delete' to confirm",
+  }),
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  confirmation: undefined,
+})
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  try {
+    isDeleting.value = true
+    await $fetch('/api/me/delete-account', {
+      method: 'DELETE',
+    })
+    toast.add({
+      title: 'Account Deleted',
+      description: 'Your account has been successfully deleted.',
+      color: 'success',
+    })
+    await logout()
+    await navigateTo('/')
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: 'Failed to delete account. Please try again.',
+      color: 'error',
+    })
+  } finally {
+    isDeleting.value = false
+    deleteAccountModal.value = false
+  }
+}
+</script>

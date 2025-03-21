@@ -4,6 +4,7 @@
       <AppAccountSettingsGeneral />
       <AppAccountSettingsPhoneNumber />
       <AppAccountSettingsLinkedAccounts />
+      <AppAccountSettingsDangerZone />
     </div>
   </AppContainer>
 </template>
