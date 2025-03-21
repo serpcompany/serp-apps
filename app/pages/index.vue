@@ -96,7 +96,7 @@
       </WebsiteSection>
       <WebsiteSection class="!p-2 md:!p-4">
         <div
-          class="rounded-xl border border-neutral-200 bg-neutral-100 p-2 md:rounded-3xl dark:border-white/10 dark:bg-neutral-950"
+          class="rounded-xl border border-neutral-200 bg-neutral-100 p-2 md:rounded-3xl dark:border-white/10 dark:bg-neutral-950 aspect-video"
         >
           <img
             src="/mock-image-light.jpg"
@@ -116,7 +116,7 @@
         class="grid grid-cols-2 divide-x divide-neutral-100 md:grid-cols-5 dark:divide-white/10"
       >
         <div
-          class="col-span-full border-b border-neutral-100 px-8 py-8 md:py-24 md:col-span-1 md:border-b-0 dark:border-white/10"
+          class="col-span-full border-b border-neutral-100 px-8 py-8 md:col-span-1 md:border-b-0 md:py-24 dark:border-white/10"
         >
           <p class="text-center text-sm md:text-left">
             Trusted by fast-growing companies around the world
@@ -140,21 +140,47 @@
         </div>
       </div>
     </WebsiteSection>
-    <WebsiteSection class="py-24">
+    <WebsiteSection class="py-12">
       <div class="mx-auto max-w-2xl">
-        <h2 class="text-center text-2xl font-bold">
-          The best way to build a fullstack SaaS
+        <h2
+          class="mx-auto max-w-3xl text-center text-4xl font-bold tracking-tight sm:text-5xl"
+        >
+          Get Notified When We Launch
         </h2>
-        <p class="mt-3 text-center text-sm text-neutral-500">
+        <p class="mx-auto mt-6 max-w-xl text-center text-base text-neutral-500">
           Effortlessly build a fullstack SaaS app with Nuxt, Drizzle and
           TailwindCSS.
         </p>
       </div>
+      <UForm
+        :schema="schema"
+        :state="state"
+        class="mx-auto mt-6 flex max-w-md gap-x-4"
+        @submit="onSubmit"
+      >
+        <UInput
+          v-model="state.email"
+          placeholder="Enter your email"
+          size="xl"
+          class="w-full"
+          variant="subtle"
+        />
+        <UButton
+          type="submit"
+          :loading="isSubmitting"
+          label="Subscribe"
+          color="neutral"
+          size="xl"
+        />
+      </UForm>
     </WebsiteSection>
   </main>
 </template>
 
 <script setup lang="ts">
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
 const { loggedIn } = useUserSession()
 const authOptions = ref([
   {
@@ -188,4 +214,45 @@ const authOptions = ref([
     icon: 'i-lucide-user-plus',
   },
 ])
+
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  email: undefined,
+})
+const isSubmitting = ref(false)
+const toast = useToast()
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  try {
+    isSubmitting.value = true
+    await $fetch('/api/subscribe', {
+      method: 'POST',
+      body: {
+        email: event.data.email,
+      },
+    })
+    toast.add({
+      title: 'Success',
+      description: 'The form has been submitted.',
+      color: 'success',
+    })
+  } catch (error) {
+    const msg = (error as any).data.message.includes(
+      'D1_ERROR: UNIQUE constraint failed: subscribers.email: SQLITE_CONSTRAINT',
+    )
+      ? 'You are already subscribed to our newsletter.'
+      : 'An unexpected error occurred'
+    toast.add({
+      title: 'Error',
+      description: msg,
+      color: 'error',
+    })
+  } finally {
+    isSubmitting.value = false
+  }
+}
 </script>

@@ -1,13 +1,15 @@
 import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { users } from './users'
+import { relations } from 'drizzle-orm'
 
-export const waitlist = sqliteTable('waitlist', {
+export const subscribers = sqliteTable('subscribers', {
   id: text('id')
     .primaryKey()
     .$default(() => nanoid()),
   email: text('email').notNull().unique(),
   referrer: text('referrer'),
+  meta: text('meta', { mode: 'json' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),
@@ -20,11 +22,21 @@ export const feedback = sqliteTable('feedback', {
   id: text('id')
     .primaryKey()
     .$default(() => nanoid()),
-  userId: text('userId')
+  user: text('user')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  feedback: text('feedback').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('pending'),
+  reply: text('reply'),
+  meta: text('meta', { mode: 'json' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),
 })
+
+export const feedbackRelations = relations(feedback, ({ one }) => ({
+  user: one(users, {
+    fields: [feedback.user],
+    references: [users.id],
+  }),
+}))

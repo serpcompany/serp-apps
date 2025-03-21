@@ -279,3 +279,7 @@ export const unlinkAccount = async (userId: string, providerId: string) => {
     })
   }
 }
+
+export const deleteUser = async (userId: string) => {
+  await useDB().delete(tables.users).where(eq(tables.users.id, userId))
+}

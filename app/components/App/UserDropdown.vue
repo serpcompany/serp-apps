@@ -49,7 +49,9 @@
     title="Need help?"
     description="Have a question or need assistance? We're here to help!"
   >
-    <AppFeedbackForm @close="feedbackModal = false" />
+    <template #body>
+      <AppFeedbackForm @close="feedbackModal = false" />
+    </template>
   </UModal>
 </template>
 
@@ -129,6 +131,10 @@ const items = ref([
     {
       label: 'Support',
       icon: 'i-lucide-life-buoy',
+      onSelect: () => {
+        feedbackModal.value = true
+        mobileMenu.value = false
+      },
     },
     {
       label: 'Docs',
