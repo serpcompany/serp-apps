@@ -48,10 +48,10 @@
     "nuxthub-ratelimit": "^1.0.4",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "simple-git-hooks": "^2.11.1",
+    "simple-git-hooks": "^2.12.1",
     "typescript": "^5.8.2",
     "vue-tsc": "3.0.0-alpha.2",
-    "wrangler": "^4.2.0"
+    "wrangler": "^4.3.0"
   },
   "packageManager": "pnpm@9.12.3",
   "simple-git-hooks": {

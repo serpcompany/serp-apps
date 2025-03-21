@@ -45,7 +45,9 @@
                   color="neutral"
                   variant="soft"
                   icon="i-lucide-chevron-down"
-                  class="border-l border-neutral-200/50 dark:border-white/10"
+                  :ui="{
+                    leadingIcon: 'size-4',
+                  }"
                 />
               </UDropdownMenu>
             </UButtonGroup>
@@ -64,7 +66,7 @@
               >
                 Ship 🏴‍☠️ a fullstack SaaS app faster than ever.
               </p>
-              <p class="text-base text-balance text-neutral-500 sm:text-xl">
+              <p class="text-sm text-balance text-neutral-500 sm:text-xl">
                 Teams, Typescript, Drizzle ORM, NuxtHub, Postgres, Turso,
                 TailwindCSS V4, Nuxt UI V3. All in one package. This is a mock
                 title.
@@ -96,17 +98,17 @@
       </WebsiteSection>
       <WebsiteSection class="!p-2 md:!p-4">
         <div
-          class="rounded-xl border border-neutral-200 bg-neutral-100 p-2 md:rounded-3xl dark:border-white/10 dark:bg-neutral-950 aspect-video"
+          class="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 p-1 md:rounded-3xl md:p-2 dark:border-white/10 dark:bg-neutral-950"
         >
           <img
             src="/mock-image-light.jpg"
             alt="Dashboard"
-            class="w-full rounded-md border border-neutral-200 md:rounded-2xl dark:hidden dark:border-white/10"
+            class="aspect-video w-full rounded-md border border-neutral-200 md:rounded-2xl dark:hidden dark:border-white/10"
           />
           <img
             src="/mock-image-dark.jpg"
             alt="Dashboard"
-            class="hidden w-full rounded-2xl border border-neutral-200 dark:block dark:border-white/10"
+            class="hidden aspect-video w-full rounded-2xl border border-neutral-200 dark:block dark:border-white/10"
           />
         </div>
       </WebsiteSection>
