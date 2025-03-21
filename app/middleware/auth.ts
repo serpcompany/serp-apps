@@ -1,7 +1,8 @@
 import type { Team } from '@@/types/database'
 import { getInvite } from '~~/server/database/queries/teams'
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const paramSlug = (Array.isArray(to.params.team) ? to.params.team[0] : to.params.team) || ''
+  const paramSlug =
+    (Array.isArray(to.params.team) ? to.params.team[0] : to.params.team) || ''
   const toast = useToast()
   const { loggedIn } = useUserSession()
   const teams = useState<Team[]>('teams', () => [])
@@ -16,8 +17,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return navigateTo('/dashboard/onboard')
     }
     const lastTeamSlug = getLastUsedTeam()
-    const targetTeam = memberships.find((team) => team.slug === lastTeamSlug) || firstTeam
-  
+    const targetTeam =
+      memberships.find((team) => team.slug === lastTeamSlug) || firstTeam
+
     // Update last used team and redirect
     setLastUsedTeam(targetTeam.slug)
     return navigateTo(`/dashboard/${targetTeam.slug}`)
@@ -47,7 +49,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     try {
       await getInvite(inviteTokenStr)
       return navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
-    } catch(error) {
+    } catch (error) {
       // Invalid token means user already verified it upon submitting registration
     }
   }
@@ -61,14 +63,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Redirect to onboarding or first available team
-  if (to.fullPath === '/dashboard' || to.fullPath === '/dashboard/'
-    || (teams.value.length && to.fullPath === '/dashboard/onboard')
+  if (
+    to.fullPath === '/dashboard' ||
+    to.fullPath === '/dashboard/' ||
+    (teams.value.length && to.fullPath === '/dashboard/onboard')
   ) {
     return handleTeamRedirect()
   }
 
   // Validate that the team in the slug belongs to the user
-  if (paramSlug && ! teams.value.find((team) => team.slug === paramSlug)) {
+  if (paramSlug && !teams.value.find((team) => team.slug === paramSlug)) {
     return handleTeamRedirect()
   } else if (paramSlug) {
     teamSlug.value = paramSlug

@@ -4,11 +4,11 @@
       <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
       <div class="text-center">
         <p class="text-lg font-bold">Email Verification Error</p>
-        <p class="text-sm text-neutral-500 mt-2">
+        <p class="mt-2 text-sm text-neutral-500">
           {{ errorMessage }}
         </p>
       </div>
-      
+
       <div v-if="hasEmail" class="mt-8">
         <UButton
           block
@@ -21,7 +21,7 @@
           Resend Verification Email
         </UButton>
       </div>
-      
+
       <div class="mt-4 text-center">
         <UButton
           padding="none"
@@ -43,9 +43,11 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const errorMessage = ref(route.query.message || 'An error occurred during email verification.')
+const errorMessage = ref(
+  route.query.message || 'An error occurred during email verification.',
+)
 const hasEmail = computed(() => !!route.query.email)
-const email = ref(route.query.email as string || '')
+const email = ref((route.query.email as string) || '')
 const toast = useToast()
 const { resendVerification } = useAuth()
 

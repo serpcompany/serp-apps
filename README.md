@@ -3,7 +3,6 @@
 > [!WARNING]  
 > Supersaas V3 is still in beta. Expect minor bugs, I am working really fast to get these fixed.
 
-
 > [!NOTE]  
 > I suggest using this verion over the V2 - Its already quite stable and functional. I am still writing the docs. I will release it very soon (DM me in case if you need any help)
 
@@ -108,7 +107,7 @@ pnpm db:generate
 pnpm db:migrate
 ```
 
-  3. Push Migrations. - Push and Apply the migrations to the database directly
+3. Push Migrations. - Push and Apply the migrations to the database directly
 
 ```bash
 pnpm db:push

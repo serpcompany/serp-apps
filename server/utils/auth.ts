@@ -1,13 +1,10 @@
 import type { InsertUser } from '@@/types/database'
 
-export interface SanitizedUser extends Omit<
-  InsertUser,
-  | 'hashedPassword'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'lastActive'
-  | 'phoneNumber'
-> {}
+export interface SanitizedUser
+  extends Omit<
+    InsertUser,
+    'hashedPassword' | 'createdAt' | 'updatedAt' | 'lastActive' | 'phoneNumber'
+  > {}
 
 export const sanitizeUser = (
   user: InsertUser,
@@ -37,11 +34,14 @@ export function isWithinExpiryDate(expiresAt: number): boolean {
   return currentTime < expiresAt
 }
 
-export async function sendLoginNotification(user: { name: string; email: string }) {
+export async function sendLoginNotification(user: {
+  name: string
+  email: string
+}) {
   try {
     await $fetch('/api/auth/login-notification', {
       method: 'POST',
-      body: { user }
+      body: { user },
     })
   } catch (error) {
     // Silently fail as this is not critical

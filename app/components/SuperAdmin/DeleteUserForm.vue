@@ -1,23 +1,16 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center gap-2">
-      <UAvatar
-        :src="user.avatarUrl || undefined"
-        :alt="user.name"
-        size="lg"
-      />
+      <UAvatar :src="user.avatarUrl || undefined" :alt="user.name" size="lg" />
       <div>
         <p class="text-sm font-bold">{{ user.name }}</p>
         <p class="text-sm text-neutral-500">{{ user.email }}</p>
       </div>
     </div>
-    <div
-      class="space-y-4 rounded-md bg-neutral-100 p-4 dark:bg-neutral-950"
-    >
+    <div class="space-y-4 rounded-md bg-neutral-100 p-4 dark:bg-neutral-950">
       <p class="text-sm text-neutral-500">
-        This action will delete the user from the platform and all
-        associated data. {{ user.name }} is a part of the
-        following teams:
+        This action will delete the user from the platform and all associated
+        data. {{ user.name }} is a part of the following teams:
       </p>
       <div
         v-for="teamMember in user.teamMembers"
@@ -42,7 +35,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="flex w-full justify-end gap-2">
       <UButton
         variant="soft"
@@ -121,4 +114,4 @@ const deleteUser = async () => {
     loading.value = false
   }
 }
-</script> 
+</script>

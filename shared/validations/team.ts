@@ -10,5 +10,7 @@ export const createTeamSchema = insertTeamSchema.pick({
 
 export const inviteTeamMemberSchema = z.object({
   email: z.string().email(),
-  role: z.enum([UserRole.MEMBER, UserRole.ADMIN, UserRole.OWNER]).default(UserRole.MEMBER),
+  role: z
+    .enum([UserRole.MEMBER, UserRole.ADMIN, UserRole.OWNER])
+    .default(UserRole.MEMBER),
 })

@@ -32,11 +32,11 @@
           </template>
         </UInput>
       </UFormField>
-      <UButton 
-        type="submit" 
-        label="Ban User" 
-        color="neutral" 
-        :loading="loading" 
+      <UButton
+        type="submit"
+        label="Ban User"
+        color="neutral"
+        :loading="loading"
       />
     </UForm>
   </div>
@@ -103,19 +103,19 @@ const onSubmit = async () => {
       banned: true,
       bannedUntil: state.bannedUntil.toDate(getLocalTimeZone()).toISOString(),
     }
-    
+
     await $fetch('/api/super-admin/users/ban', {
       method: 'POST',
       body: formData,
     })
-    
+
     toast.add({
       title: 'User Banned Successfully',
       description: `${props.user.name} has been banned until ${useDateFormat(formData.bannedUntil, 'MMM D, YYYY').value}.`,
       color: 'success',
       duration: 5000,
     })
-    
+
     emit('user-banned', props.user)
   } catch (error: any) {
     const errorMessage = error?.data?.message || 'Failed to ban user'

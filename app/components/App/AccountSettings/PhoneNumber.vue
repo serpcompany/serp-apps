@@ -8,7 +8,10 @@
     </template>
 
     <div v-if="mode === 'input'" class="max-w-md space-y-4">
-      <UFormField label="Phone Number" help="Enter your phone number in E.164 format (e.g. +12125551234)">
+      <UFormField
+        label="Phone Number"
+        help="Enter your phone number in E.164 format (e.g. +12125551234)"
+      >
         <UInput
           v-model="phoneNumber"
           placeholder="+1234567890"

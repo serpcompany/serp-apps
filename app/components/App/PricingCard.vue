@@ -29,7 +29,7 @@
         :key="feature.name"
         class="flex items-center gap-3 text-[var(--ui-text-muted)]"
       >
-        <UIcon name="i-lucide-circle-check" class="h-4 w-4 text-primary-500" />
+        <UIcon name="i-lucide-circle-check" class="text-primary-500 h-4 w-4" />
         <span class="text-sm">{{ feature.name }}</span>
       </li>
     </ul>

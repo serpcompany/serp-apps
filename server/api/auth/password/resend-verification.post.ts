@@ -7,10 +7,12 @@
 import { z } from 'zod'
 import { sendEmail } from '@@/server/services/email'
 import { env } from '@@/env'
+import { findUserByEmail } from '@@/server/database/queries/users'
 import {
-  findUserByEmail,
-} from '@@/server/database/queries/users'
-import { saveEmailVerificationCode, countEmailVerificationCodes, deleteExpiredEmailVerificationCodes } from '@@/server/database/queries/auth'
+  saveEmailVerificationCode,
+  countEmailVerificationCodes,
+  deleteExpiredEmailVerificationCodes,
+} from '@@/server/database/queries/auth'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
@@ -27,7 +29,8 @@ export default defineEventHandler(async (event) => {
   if (!user || user.emailVerified) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'No account found with this email or it has already been verified.',
+      statusMessage:
+        'No account found with this email or it has already been verified.',
     })
   }
 
@@ -37,7 +40,8 @@ export default defineEventHandler(async (event) => {
   if (codeCount >= 3) {
     throw createError({
       statusCode: 429,
-      statusMessage: 'Too many emails have been sent recently. Please try again later.',
+      statusMessage:
+        'Too many emails have been sent recently. Please try again later.',
     })
   }
 

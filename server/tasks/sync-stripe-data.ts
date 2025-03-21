@@ -52,7 +52,9 @@ export default defineTask({
         })
       }
 
-      return { result: { success: true, message: 'Stripe data synced successfully' } }
+      return {
+        result: { success: true, message: 'Stripe data synced successfully' },
+      }
     } catch (error) {
       consola.error('Error syncing products:', error)
       throw createError({

@@ -8,9 +8,7 @@
       "name": "Attach to Nuxt",
       "port": 9229,
       "request": "attach",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "type": "node"
     },
     {
@@ -44,19 +42,13 @@
       "name": "Nuxt Dev Server",
       "outputCapture": "std",
       "program": "${workspaceFolder}/node_modules/nuxt/bin/nuxt.mjs",
-      "args": [
-        "dev"
-      ],
+      "args": ["dev"]
     }
   ],
   "compounds": [
     {
       "name": "Next Dev Full Stack",
-      "configurations": [
-        "Nuxt Dev Server",
-        "Chrome Browser"
-      ]
+      "configurations": ["Nuxt Dev Server", "Chrome Browser"]
     }
   ]
 }
-

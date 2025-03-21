@@ -2,7 +2,10 @@ import { render } from '@vue-email/render'
 import TeamInvitation from '@@/emails/member-invite.vue'
 import { sendEmail } from '@@/server/services/email'
 import { env } from '@@/env'
-import { findTeamInvite, updateTeamInvite } from '@@/server/database/queries/teams'
+import {
+  findTeamInvite,
+  updateTeamInvite,
+} from '@@/server/database/queries/teams'
 
 export default defineEventHandler(async (event) => {
   const teamId = getRouterParam(event, 'id')

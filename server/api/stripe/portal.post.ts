@@ -32,4 +32,4 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Failed to create billing portal session',
     })
   }
-}) 
+})

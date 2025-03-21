@@ -1,5 +1,7 @@
 <template>
-  <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-950 dark:bg-red-950/20 p-4">
+  <div
+    class="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-950 dark:bg-red-950/20"
+  >
     <h3 class="font-medium text-red-950 dark:text-red-50">Danger Zone</h3>
     <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
       Delete your account. This action is irreversible and cannot be undone. All
@@ -28,7 +30,7 @@
           />
         </UFormField>
 
-        <div class="flex justify-end gap-2 mt-6">
+        <div class="mt-6 flex justify-end gap-2">
           <UButton
             @click="deleteAccountModal = false"
             label="Cancel"

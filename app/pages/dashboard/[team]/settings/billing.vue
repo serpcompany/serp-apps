@@ -44,7 +44,8 @@
                 You are on the <span class="font-bold">Free</span> plan
               </h3>
               <p class="text-sm text-neutral-500">
-                Upgrade to a paid plan to unlock more features and higher usage limits.
+                Upgrade to a paid plan to unlock more features and higher usage
+                limits.
               </p>
             </template>
           </div>
@@ -189,7 +190,7 @@ const handleSubscribe = async (priceId: string) => {
 const handleManageSubscription = async () => {
   try {
     loadingPortal.value = true
-    
+
     if (!currentTeam.value?.id) {
       throw new Error('Team information is missing')
     }
@@ -209,7 +210,8 @@ const handleManageSubscription = async () => {
   } catch (error) {
     toast.add({
       title: 'Failed to access billing portal',
-      description: error instanceof Error ? error.message : 'An unexpected error occurred',
+      description:
+        error instanceof Error ? error.message : 'An unexpected error occurred',
       color: 'error',
     })
     console.error('Billing portal error:', error)

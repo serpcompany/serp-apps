@@ -83,7 +83,9 @@ export const useAuth = () => {
     useState('teams').value = []
   }
 
-  const register = async (userData: RegisterUserSchema): Promise<AuthResponse> => {
+  const register = async (
+    userData: RegisterUserSchema,
+  ): Promise<AuthResponse> => {
     try {
       const user = await $fetch('/api/auth/password/register', {
         method: 'POST',

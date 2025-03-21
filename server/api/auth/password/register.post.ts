@@ -43,13 +43,13 @@ export default defineEventHandler(async (event) => {
       throw createError({
         statusCode: 400,
         statusMessage: 'Email not verified',
-        data: { 
-          email: data.email, 
-          needsVerification: true 
-        }
+        data: {
+          email: data.email,
+          needsVerification: true,
+        },
       })
     }
-    
+
     // If user exists and email is verified, return error
     throw createError({
       statusCode: 400,
@@ -79,7 +79,9 @@ export default defineEventHandler(async (event) => {
       deleteCookie(event, 'invite-token')
       deleteCookie(event, 'invite-email')
     } catch (error) {
-      console.log(`Error verifying token on registration: ${(error as Error).message || error}`)
+      console.log(
+        `Error verifying token on registration: ${(error as Error).message || error}`,
+      )
     }
   }
 
@@ -87,7 +89,7 @@ export default defineEventHandler(async (event) => {
   if (sanitizedUser.emailVerified) {
     await updateLastActiveTimestamp(user.id)
     await setUserSession(event, { user: sanitizedUser })
-    
+
     // Send login notification
     await sendLoginNotification({
       name: user.name,
@@ -97,17 +99,17 @@ export default defineEventHandler(async (event) => {
   // 7. Generate verification code and send email for verification
   else {
     const emailVerificationCode = generateAlphaNumericCode(32)
-  
+
     await saveEmailVerificationCode({
       userId: user.id,
       code: emailVerificationCode,
       expiresAt: new Date(Date.now() + 1000 * 60 * 30), // 30 minutes
     })
-  
+
     const htmlTemplate = await render(EmailVerification, {
       verificationCode: emailVerificationCode,
     })
-  
+
     if (env.MOCK_EMAIL) {
       console.table({
         email: data.email,

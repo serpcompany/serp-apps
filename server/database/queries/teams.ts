@@ -160,9 +160,7 @@ export const cancelInvite = async (inviteId: string) => {
 /**
  * @throws {H3Error}
  */
-export const getInvite = async (
-  token: string,
-): Promise<TeamInvite> => {
+export const getInvite = async (token: string): Promise<TeamInvite> => {
   const invite = await useDB()
     .select()
     .from(tables.teamInvites)
@@ -175,14 +173,14 @@ export const getInvite = async (
       statusMessage: 'Invite not found or invalid',
     })
   }
-  
+
   if (invite.expiresAt < new Date()) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Invite expired',
     })
   }
-  
+
   if (INVALID_STATUSES.includes(invite.status as InviteStatus)) {
     throw createError({
       statusCode: 400,
@@ -272,4 +270,3 @@ export const deleteTeamMember = async (teamId: string, memberId: string) => {
     })
   }
 }
-

@@ -9,7 +9,7 @@ const schema = z.object({
     .object({
       browser: z.string().optional(),
       screenResolution: z.string().optional(),
-      language: z.string().optional(), 
+      language: z.string().optional(),
       platform: z.string().optional(),
       colorScheme: z.string().optional(),
       timezone: z.string().optional(),

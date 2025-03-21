@@ -20,12 +20,15 @@ export default defineEventHandler(async (event) => {
   try {
     invite = await getInvite(token)
   } catch (error) {
-    return sendRedirect(event, `/auth/verification-error?message=${encodeURIComponent((error as Error).message)}`)
+    return sendRedirect(
+      event,
+      `/auth/verification-error?message=${encodeURIComponent((error as Error).message)}`,
+    )
   }
 
   // 3. Validate user session and permissions
   const session = await getUserSession(event)
-  if (!session?.user || ! await findUserById(session.user.id)) {
+  if (!session?.user || !(await findUserById(session.user.id))) {
     setCookie(event, 'invite-token', token, {
       maxAge: 60 * 60 * 24, // discard cookie after 1 day
       path: '/',
@@ -44,10 +47,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // 4. Check if user is already a team member
-  const isAlreadyMember = await isTeamMember(
-    invite.teamId,
-    session.user.id,
-  )
+  const isAlreadyMember = await isTeamMember(invite.teamId, session.user.id)
   if (isAlreadyMember) {
     throw createError({
       statusCode: 400,

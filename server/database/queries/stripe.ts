@@ -1,9 +1,7 @@
 import { eq } from 'drizzle-orm'
 import type { InsertProduct, InsertPrice } from '@@/types/database'
 
-export const createOrUpdateStripeProduct = async (
-  payload: InsertProduct,
-) => {
+export const createOrUpdateStripeProduct = async (payload: InsertProduct) => {
   const product = await useDB()
     .insert(tables.products)
     .values(payload)

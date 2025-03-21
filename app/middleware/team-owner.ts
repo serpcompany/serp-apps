@@ -14,7 +14,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Get team slug from route parameter
-  const currentTeam = teams.value?.find((team) => team.slug === to.params.team as string)
+  const currentTeam = teams.value?.find(
+    (team) => team.slug === (to.params.team as string),
+  )
 
   if (!currentTeam) {
     toast.add({

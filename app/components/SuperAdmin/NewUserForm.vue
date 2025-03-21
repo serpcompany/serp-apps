@@ -113,10 +113,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       color: 'success',
       duration: 5000,
     })
-    
+
     // Reset form after successful submission
     resetForm()
-    
+
     // Emit event to notify parent component
     emit('user-created', response)
   } catch (error: any) {

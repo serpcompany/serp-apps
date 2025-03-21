@@ -60,7 +60,10 @@ declare module '#auth-utils' {
     /**
      * Open the OAuth route in a popup that auto-closes when successful.
      */
-    openInPopup: (route: string, size?: { width?: number, height?: number }) => void
+    openInPopup: (
+      route: string,
+      size?: { width?: number; height?: number },
+    ) => void
   }
 
   interface WebAuthnCredential {

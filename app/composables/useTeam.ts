@@ -15,39 +15,46 @@ export const useTeam = () => {
         'Only lowercase letters, numbers, and single hyphens between characters allowed',
       ),
   })
-  
+
   const router = useRouter()
-  const teamSlug = computed(() => router.currentRoute.value.params.team as string)
-  
+  const teamSlug = computed(
+    () => router.currentRoute.value.params.team as string,
+  )
+
   const loading = ref(false)
   const teams = useState<Team[]>('teams', () => [])
 
   const currentTeam = computed(() => {
     if (!teamSlug.value || !teams.value.length) {
-      return teams.value[0] || {} as Team
+      return teams.value[0] || ({} as Team)
     }
-    
+
     const team = teams.value?.find((team) => team.slug === teamSlug.value)
     if (!team) {
       throw createError('Team not found')
     }
     return team
   })
-  
+
   const isTeamOwner = ref(false)
-  watch(currentTeam, (team) => {
-    try {
-    isTeamOwner.value = team?.ownerId === user.value?.id
-    } catch (error) {}
-  }, { immediate: true })
+  watch(
+    currentTeam,
+    (team) => {
+      try {
+        isTeamOwner.value = team?.ownerId === user.value?.id
+      } catch (error) {}
+    },
+    { immediate: true },
+  )
 
   const getMemberships = async () => {
     loading.value = true
     try {
-      const { data: memberships } = await useFetch<Team[]>('/api/me/memberships')
+      const { data: memberships } = await useFetch<Team[]>(
+        '/api/me/memberships',
+      )
       return memberships.value as Team[]
-    }
-    finally {
+    } finally {
       loading.value = false
     }
   }

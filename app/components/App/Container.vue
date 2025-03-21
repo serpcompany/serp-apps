@@ -1,5 +1,7 @@
 <template>
-  <header class="sticky top-0 flex h-12 items-center gap-2 px-4 bg-white dark:bg-neutral-900 z-40">
+  <header
+    class="sticky top-0 z-40 flex h-12 items-center gap-2 bg-white px-4 dark:bg-neutral-900"
+  >
     <UButton
       icon="i-lucide-panel-left"
       color="neutral"

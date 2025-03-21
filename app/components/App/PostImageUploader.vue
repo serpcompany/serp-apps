@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 relative">
+  <div class="relative flex flex-col gap-2">
     <div class="absolute -top-2 -right-2 z-30">
       <UButton
         v-if="model"
@@ -12,44 +12,44 @@
     </div>
     <button
       type="button"
-      class="h-40 w-full relative z-20 bg-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg dark:bg-neutral-800 flex items-center justify-center flex-col gap-2 overflow-hidden cursor-pointer"
+      class="relative z-20 flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-lg bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-900"
       @click="open()"
     >
       <UIcon
         v-if="!model"
         name="i-lucide-image-plus"
-        class="w-5 h-4 text-neutral-400"
+        class="h-4 w-5 text-neutral-400"
       />
-      <img v-else :src="model" class="w-full h-full object-cover" />
+      <img v-else :src="model" class="h-full w-full object-cover" />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useFileDialog, useObjectUrl } from '@vueuse/core';
+import { useFileDialog, useObjectUrl } from '@vueuse/core'
 
-const model = defineModel<string | undefined>();
+const model = defineModel<string | undefined>()
 
 const { files, open, onChange } = useFileDialog({
   accept: 'image/*',
   multiple: false,
-});
+})
 
 const emit = defineEmits<{
-  'file-selected': [file: File | null];
-}>();
+  'file-selected': [file: File | null]
+}>()
 
 onChange(() => {
-  const file = files.value?.[0];
+  const file = files.value?.[0]
   if (file) {
-    const objectUrl = useObjectUrl(file);
-    model.value = objectUrl.value;
-    emit('file-selected', file);
+    const objectUrl = useObjectUrl(file)
+    model.value = objectUrl.value
+    emit('file-selected', file)
   }
-});
+})
 
 const removeImage = () => {
-  model.value = undefined;
-  emit('file-selected', null);
-};
+  model.value = undefined
+  emit('file-selected', null)
+}
 </script>

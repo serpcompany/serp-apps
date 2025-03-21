@@ -136,6 +136,6 @@ const columns: TableColumn<Invoice>[] = [
   <UTable
     :data="data"
     :columns="columns"
-    class="flex-1 rounded-lg border border-neutral-200 mt-2 dark:border-white/10"
+    class="mt-2 flex-1 rounded-lg border border-neutral-200 dark:border-white/10"
   />
 </template>

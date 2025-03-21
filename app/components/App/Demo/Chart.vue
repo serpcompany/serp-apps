@@ -1,15 +1,15 @@
 <template>
   <AppDemoCard :title="title" :description="description">
     <div class="overflow-x-auto">
-      <div class="flex items-end h-64 gap-2 min-w-[600px] px-1">
+      <div class="flex h-64 min-w-[600px] items-end gap-2 px-1">
         <div
           v-for="item in impressionsChartData"
           :key="item.date"
-          class="flex flex-col items-center flex-1"
+          class="flex flex-1 flex-col items-center"
         >
           <UTooltip :delay-duration="0" :text="item.value.toString()">
             <div
-              class="w-full min-w-6 bg-neutral-200 dark:bg-neutral-800 ring-1 ring-neutral-300 dark:ring-white/10 rounded transition-all duration-300 cursor-pointer hover:-translate-y-1"
+              class="w-full min-w-6 cursor-pointer rounded bg-neutral-200 ring-1 ring-neutral-300 transition-all duration-300 hover:-translate-y-1 dark:bg-neutral-800 dark:ring-white/10"
               :style="{
                 height: `${Math.max((item.value / maxValue) * 200, 1)}px`,
               }"
@@ -26,9 +26,9 @@
 
 <script lang="ts" setup>
 defineProps<{
-  title: string;
-  description?: string;
-}>();
+  title: string
+  description?: string
+}>()
 
 const impressionsChartData = [
   { date: '2024-01-01', value: 2100 },
@@ -61,13 +61,13 @@ const impressionsChartData = [
   { date: '2024-01-28', value: 3100 },
   { date: '2024-01-29', value: 4700 },
   { date: '2024-01-30', value: 3800 },
-];
+]
 
 // Calculate the maximum value for scaling the bars
-const maxValue = Math.max(...impressionsChartData.map((item) => item.value));
+const maxValue = Math.max(...impressionsChartData.map((item) => item.value))
 
 // Format date to show only the day
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', { day: 'numeric' });
-};
+  return new Date(dateString).toLocaleDateString('en-US', { day: 'numeric' })
+}
 </script>

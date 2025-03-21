@@ -10,7 +10,7 @@ import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { sendLoginNotification } from '@@/server/utils/auth'
 
-export default defineEventHandler(async (event) => { 
+export default defineEventHandler(async (event) => {
   // 1. Validate body
   const data = await validateBody(event, loginUserSchema)
   // 2. Find user by email
@@ -26,14 +26,17 @@ export default defineEventHandler(async (event) => {
     const linkedAccounts = await findLinkedAccountsByUserId(user.id)
     const providers = linkedAccounts.map((account) => account.provider)
     // Function to capitalize provider names
-    const formatProviderName = (provider: string) => 
-      provider.charAt(0).toUpperCase() + provider.slice(1);
+    const formatProviderName = (provider: string) =>
+      provider.charAt(0).toUpperCase() + provider.slice(1)
 
     // Format the list of providers
-    const formattedProviders = providers.map(formatProviderName);
-    const providerList = formattedProviders.length > 1 
-      ? formattedProviders.slice(0, -1).join(', ') + ' and ' + formattedProviders.slice(-1) 
-      : formattedProviders[0];
+    const formattedProviders = providers.map(formatProviderName)
+    const providerList =
+      formattedProviders.length > 1
+        ? formattedProviders.slice(0, -1).join(', ') +
+          ' and ' +
+          formattedProviders.slice(-1)
+        : formattedProviders[0]
 
     throw createError({
       statusCode: 400,
@@ -68,8 +71,8 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Email not verified',
       data: {
         needsVerification: true,
-        email: user.email
-      }
+        email: user.email,
+      },
     })
   }
 
@@ -86,12 +89,12 @@ export default defineEventHandler(async (event) => {
 
   // 8. Set user session
   await setUserSession(event, { user: sanitizeUser(user) })
-  
+
   // Send login notification
   await sendLoginNotification({
     name: user.name,
     email: user.email,
   })
-  
+
   return sendNoContent(event)
 })

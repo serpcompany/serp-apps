@@ -112,7 +112,10 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   } catch (error) {
     toast.add({
       title: `Failed to create team`,
-      description: (error as any).message || (error as any).statusMessage || 'Please try again',
+      description:
+        (error as any).message ||
+        (error as any).statusMessage ||
+        'Please try again',
       color: 'error',
     })
   } finally {
@@ -132,7 +135,9 @@ const uploadLogo = async () => {
     return `/images/${filePath}`
   } catch (error) {
     if (error instanceof FetchError) {
-      throw new Error(`Failed to upload logo: ${error.message || error}`, { cause: error })
+      throw new Error(`Failed to upload logo: ${error.message || error}`, {
+        cause: error,
+      })
     } else {
       throw new Error('Failed to upload logo', { cause: error })
     }

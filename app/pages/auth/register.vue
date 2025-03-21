@@ -123,7 +123,10 @@ const state = reactive<Partial<Schema>>({
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   try {
-    const { error, emailVerified } = await register({ ...event.data, inviteToken: inviteToken.value})
+    const { error, emailVerified } = await register({
+      ...event.data,
+      inviteToken: inviteToken.value,
+    })
     if (emailVerified && !error) {
       // Ensure client has session data and navigate to the dashboard
       // See https://github.com/atinux/nuxt-auth-utils/issues/357

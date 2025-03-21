@@ -9,7 +9,7 @@
     <UForm
       :schema="schema"
       :state="state"
-      class="space-y-4 max-w-md"
+      class="max-w-md space-y-4"
       @submit="onSubmit as any"
     >
       <UFormField label="Avatar" name="avatar">

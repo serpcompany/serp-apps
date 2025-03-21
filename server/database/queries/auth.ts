@@ -1,5 +1,8 @@
 import { eq, count, lt, and } from 'drizzle-orm'
-import type { InsertEmailVerificationCodes, InsertOneTimePasswords } from '@@/types/database'
+import type {
+  InsertEmailVerificationCodes,
+  InsertOneTimePasswords,
+} from '@@/types/database'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 
 export const countEmailVerificationCodes = async (userId: string) => {
@@ -61,15 +64,15 @@ export const findEmailVerificationCode = async (token: string) => {
 export const deleteExpiredEmailVerificationCodes = async (userId: string) => {
   try {
     // Calculate the timestamp for 30 minutes ago
-    const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
-    
+    const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30)
+
     await useDB()
       .delete(tables.emailVerificationCodes)
       .where(
         and(
           eq(tables.emailVerificationCodes.userId, userId),
-          lt(tables.emailVerificationCodes.expiresAt, thirtyMinutesAgo)
-        )
+          lt(tables.emailVerificationCodes.expiresAt, thirtyMinutesAgo),
+        ),
       )
   } catch (error) {
     console.error(error)

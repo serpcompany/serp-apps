@@ -78,9 +78,12 @@ const roleOptions = [
   { label: 'Owner', id: UserRole.OWNER },
 ]
 
-const schema = inviteTeamMemberSchema.refine((data) => data.email !== user.value?.email, {
-  message: 'You cannot invite yourself',
-})
+const schema = inviteTeamMemberSchema.refine(
+  (data) => data.email !== user.value?.email,
+  {
+    message: 'You cannot invite yourself',
+  },
+)
 
 const onSubmit = async (event: FormSubmitEvent<z.infer<typeof schema>>) => {
   loading.value = true

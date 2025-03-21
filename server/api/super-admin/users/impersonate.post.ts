@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
       _impersonated: true,
     },
     secure: {
-      originalAdminSession: adminSession
+      originalAdminSession: adminSession,
     },
   })
 

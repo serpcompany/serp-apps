@@ -1,5 +1,8 @@
 import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
-import { deleteTeamMember, getActiveTeamMembers } from '@@/server/database/queries/teams'
+import {
+  deleteTeamMember,
+  getActiveTeamMembers,
+} from '@@/server/database/queries/teams'
 
 export default defineEventHandler(async (event) => {
   await requireUserSession(event)
@@ -18,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
   // Get member details to check role
   const members = await getActiveTeamMembers(teamId)
-  const memberToDelete = members.find(member => member.id === memberId)
+  const memberToDelete = members.find((member) => member.id === memberId)
 
   if (!memberToDelete) {
     throw createError({

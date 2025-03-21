@@ -1,6 +1,9 @@
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { z } from 'zod'
-import { createUserWithPassword, findUserByEmail } from '@@/server/database/queries/users'
+import {
+  createUserWithPassword,
+  findUserByEmail,
+} from '@@/server/database/queries/users'
 import { saveEmailVerificationCode } from '@@/server/database/queries/auth'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { render } from '@vue-email/render'
@@ -36,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
   // Validate the request body
   const data = await validateBody(event, schema)
-  
+
   // Check if user already exists
   const existingUser = await findUserByEmail(data.email)
   if (existingUser) {
@@ -62,7 +65,7 @@ export default defineEventHandler(async (event) => {
   // If email verification is not auto-enabled, send verification email
   if (!data.emailVerified) {
     const emailVerificationCode = generateAlphaNumericCode(32)
-    
+
     await saveEmailVerificationCode({
       userId: newUser.id,
       code: emailVerificationCode,

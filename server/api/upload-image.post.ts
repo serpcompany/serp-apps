@@ -10,10 +10,10 @@ export default defineEventHandler(async (event) => {
       maxSize: '1MB',
       types: ['image/png', 'image/jpeg', 'image/webp'],
     })
-  } catch(error: unknown) {
+  } catch (error: unknown) {
     throw createError({
       statusCode: 400,
-      statusMessage: (error as Error).message || error as string,
+      statusMessage: (error as Error).message || (error as string),
     })
   }
 

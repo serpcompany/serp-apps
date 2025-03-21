@@ -10,7 +10,7 @@
           <div
             v-for="member in members"
             :key="member.id"
-            class="flex items-center gap-2 text-sm py-2 first:pt-0 last:pb-0"
+            class="flex items-center gap-2 py-2 text-sm first:pt-0 last:pb-0"
           >
             <UAvatar
               :src="member.user.avatarUrl"
