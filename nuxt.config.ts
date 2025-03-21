@@ -36,11 +36,18 @@ export default defineNuxtConfig({
       // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
       plugins: [vue()],
     },
+    experimental: {
+      tasks: true,
+    },
   },
   nuxtHubRateLimit: {
     routes: {
+      '/api/auth/*': {
+        maxRequests: 15,
+        intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
+      },
       '/api/**': {
-        maxRequests: 10,
+        maxRequests: 150,
         intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
       },
     },
