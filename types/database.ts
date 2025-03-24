@@ -42,6 +42,10 @@ export type Customer = typeof tables.customers.$inferSelect
 export type InsertCustomer = typeof tables.customers.$inferInsert
 export type Subscription = typeof tables.subscriptions.$inferSelect
 export type InsertSubscription = typeof tables.subscriptions.$inferInsert
+export type Conversation = typeof tables.conversations.$inferSelect
+export type InsertConversation = typeof tables.conversations.$inferInsert
+export type Message = typeof tables.messages.$inferSelect
+export type InsertMessage = typeof tables.messages.$inferInsert
 
 // Zod schemas
 export const insertUserSchema = createInsertSchema(tables.users)
@@ -121,3 +125,9 @@ export const selectSubscriptionSchema = createSelectSchema(tables.subscriptions)
 
 export const insertTeamMemberSchema = createInsertSchema(tables.teamMembers)
 export const selectTeamMemberSchema = createSelectSchema(tables.teamMembers)
+
+export const insertConversationSchema = createInsertSchema(tables.conversations)
+export const selectConversationSchema = createSelectSchema(tables.conversations)
+
+export const insertMessageSchema = createInsertSchema(tables.messages)
+export const selectMessageSchema = createSelectSchema(tables.messages)

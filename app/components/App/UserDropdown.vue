@@ -3,6 +3,8 @@
     :items="items as DropdownMenuItem[]"
     :ui="{
       content: 'w-[240px]',
+      itemLeadingIcon: 'size-4',
+      itemTrailingIcon: 'size-4',
     }"
     :content="{
       align: 'start',

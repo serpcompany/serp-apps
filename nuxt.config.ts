@@ -8,6 +8,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-auth-utils',
     'nuxthub-ratelimit',
+    '@formkit/auto-animate/nuxt',
+    '@nuxtjs/mdc',
   ],
   colorMode: {
     preference: 'system',
@@ -40,16 +42,32 @@ export default defineNuxtConfig({
       tasks: true,
     },
   },
-  nuxtHubRateLimit: {
-    routes: {
-      '/api/auth/*': {
-        maxRequests: 15,
-        intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
-      },
-      '/api/**': {
-        maxRequests: 150,
-        intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
-      },
+  // Used by the AI Chat to highlight code
+  mdc: {
+    headings: {
+      anchorLinks: false,
+    },
+    highlight: {
+      langs: [
+        'ts',
+        'js',
+        'html',
+        'css',
+        'json',
+        'md',
+        'yaml',
+        'bash',
+        'css',
+        'py',
+        'tsx',
+        'jsx',
+        'go',
+        'rust',
+        'java',
+        'kotlin',
+        'swift',
+        'csharp',
+      ],
     },
   },
   hub: {

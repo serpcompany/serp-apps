@@ -1,9 +1,24 @@
+import type { User as DrizzleUser } from './database'
 import type { SanitizedUser } from '~~/server/utils/auth'
 import type { AuthenticatorTransportFuture } from '@simplewebauthn/types'
 
 declare module '#auth-utils' {
   interface SessionUser extends SanitizedUser {
     id: string // Required for sessions
+    _impersonated?: boolean
+    superAdmin: boolean
+  }
+
+  interface User extends Omit<
+    DrizzleUser,
+    | 'hashedPassword'
+    | 'banned'
+    | 'bannedReason'
+    | 'bannedUntil'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'lastActive'
+  > {
     _impersonated?: boolean
     superAdmin: boolean
   }

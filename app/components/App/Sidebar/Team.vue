@@ -29,6 +29,11 @@ const links = computed(() => [
     icon: 'i-lucide-file-text',
     to: `/dashboard/${currentTeam.value?.slug}/posts`,
   },
+  {
+    label: 'AI Chat',
+    icon: 'i-lucide-message-square',
+    to: `/dashboard/${currentTeam.value?.slug}/ai-chat`,
+  },
 ])
 
 const settings = computed(() => [
