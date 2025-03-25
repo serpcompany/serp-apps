@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { type UIMessage } from '@ai-sdk/vue'
 import {
   ScrollAreaRoot,
   ScrollAreaScrollbar,
@@ -42,7 +43,7 @@ interface Message {
 }
 
 const props = defineProps<{
-  messages: Message[]
+  messages: UIMessage[]
   preview?: boolean
   loading?: boolean
 }>()

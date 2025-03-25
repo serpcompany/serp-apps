@@ -6,8 +6,12 @@
           <h1 class="text-2xl font-bold">{{ greeting }}, {{ user?.name }}</h1>
           <p class="text-2xl">How can I help?</p>
         </div>
-        <AppAiChatInputBox :loading="loading" @submit="startChat" />
-        <div class="mt-12">
+        <AppAiChatInputBox
+          :loading="loading"
+          @submit="startChat"
+          ref="inputBoxRef"
+        />
+        <div class="mt-8">
           <AppAiChatStarterMessages @on-select="handleStarterMessageSelect" />
         </div>
       </div>
@@ -17,10 +21,15 @@
 
 <script setup lang="ts">
 const { user } = useUserSession()
-const {
-  startChat,
-  handleStarterMessageSelect,
-  greeting,
-  loading,
-} = useAiChat()
+const { startChat, greeting, loading } = useAiChat()
+
+interface InputBoxExpose {
+  setMessage: (message: string) => void
+}
+
+const inputBoxRef = ref<InputBoxExpose | null>(null)
+const handleStarterMessageSelect = (message: string) => {
+  inputBoxRef.value?.setMessage(message)
+}
 </script>
+ 

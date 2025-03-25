@@ -63,14 +63,10 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 const { copy, copied } = useClipboard()
-interface Message {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-}
+import { type UIMessage } from '@ai-sdk/vue'
 
 defineProps<{
-  message: Message
+  message: UIMessage
   preview?: boolean
 }>()
 

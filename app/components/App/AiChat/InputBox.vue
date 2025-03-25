@@ -52,14 +52,15 @@
         }"
       />
       <UButton
-        type="submit"
+        type="button"
         color="neutral"
         variant="solid"
         size="sm"
-        icon="i-lucide-arrow-up"
+        :icon="loading ? 'i-heroicons-stop-16-solid' : 'i-lucide-arrow-up'"
         class="rounded-full transition-opacity"
-        :disabled="!inputValue"
+        :disabled="!inputValue && !loading"
         :ui="{ base: 'disabled:opacity-20' }"
+        @click="loading ? $emit('stop') : handleSubmit()"
       />
     </div>
   </form>
@@ -72,6 +73,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: 'submit', value: { message: string; model: string }): void
+  (e: 'stop'): void
 }>()
 
 const {
@@ -87,6 +89,11 @@ const handleSubmit = () => {
     message: inputValue.value,
     model: selectedModel.value,
   })
+  inputValue.value = ''
+}
+
+const setMessage = (message: string) => {
+  inputValue.value = message
 }
 
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -96,4 +103,9 @@ const handleKeyDown = (e: KeyboardEvent) => {
   }
   handleSubmit()
 }
+
+// Expose the setMessage method to parent components
+defineExpose({
+  setMessage,
+})
 </script>

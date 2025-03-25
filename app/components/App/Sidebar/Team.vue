@@ -34,6 +34,21 @@ const links = computed(() => [
     icon: 'i-lucide-message-square',
     to: `/dashboard/${currentTeam.value?.slug}/ai-chat`,
   },
+  {
+    label: 'AI Image Generator (Fal.ai)',
+    icon: 'i-lucide-image-plus',
+    to: `/dashboard/${currentTeam.value?.slug}/ai-image-generator`,
+  },
+  {
+    label: 'URL Shortener',
+    icon: 'i-lucide-link',
+    to: `/dashboard/${currentTeam.value?.slug}/url-shortener`,
+  },
+  {
+    label: 'File Storage',
+    icon: 'i-lucide-files',
+    to: `/dashboard/${currentTeam.value?.slug}/file-storage`,
+  },
 ])
 
 const settings = computed(() => [

@@ -30,11 +30,12 @@
         </div>
       </template>
     </AppAiChatHeader>
-    <AppAiChatMessagesList :messages="messages" :loading="isLoading" />
+    <AppAiChatMessagesList :messages="messages as UIMessage[]" :loading="isLoading" />
     <div class="h-4" />
     <div class="mx-auto flex w-full gap-2 px-4 pb-4 md:max-w-3xl md:pb-4">
       <AppAiChatInputBox
         :loading="isLoading"
+        @stop="stop"
         @submit="
           ({ message, model }) => {
             input = message
@@ -48,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useChat } from '@ai-sdk/vue'
+import { useChat, type UIMessage } from '@ai-sdk/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, computed } from 'vue'
 
@@ -62,7 +63,7 @@ const body = computed(() => ({
   model: selectedModel.value,
 }))
 
-const { messages, input, handleSubmit, isLoading } = useChat({
+const { messages, input, handleSubmit, error, reload, stop, isLoading } = useChat({
   api: `/api/teams/${currentTeam.value.id}/ai-chat/chat`,
   body,
 })

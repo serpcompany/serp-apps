@@ -2,31 +2,26 @@ import { streamText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { createMistral } from '@ai-sdk/mistral'
+import { isTeamMember } from '@@/server/database/queries/teams'
 
 export default defineLazyEventHandler(async () => {
-  // Get API keys from runtime config
   const config = useRuntimeConfig()
   const openaiApiKey = config.openaiApiKey
   const googleApiKey = config.googleApiKey
   const mistralApiKey = config.mistralApiKey
-  // Validate API keys
 
   if (!openaiApiKey) throw new Error('Missing OpenAI API key')
 
-  // Create provider instances with their respective API keys
   const openai = createOpenAI({
     apiKey: openaiApiKey,
   })
 
-  // Only create Google provider if API key is available
-  console.log(googleApiKey, 'googleApiKey')
   const google = googleApiKey
     ? createGoogleGenerativeAI({
         apiKey: googleApiKey,
       })
     : null
 
-  // Only create Mistral provider if API key is available
   const mistral = mistralApiKey
     ? createMistral({
         apiKey: mistralApiKey,
@@ -35,10 +30,31 @@ export default defineLazyEventHandler(async () => {
 
   return defineEventHandler(async (event) => {
     const { messages, model } = await readBody(event)
+    const { user } = await requireUserSession(event)
+    const teamId = getRouterParam(event, 'id')
+    if (!teamId) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Team ID is required',
+      })
+    }
+    const hasAccess = await isTeamMember(teamId, user.id)
+    if (!hasAccess) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: 'Unauthorized Access',
+      })
+    }
+
+    if (!teamId) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Team ID is required',
+      })
+    }
 
     type SupportedModel = 'gemini-2.0-flash' | 'mistral-small-latest' | string
 
-    // Map model names to their provider functions
     const modelProviders: Record<string, (() => any) | null> = {
       'gemini-2.0-flash': google ? () => google(model) : null,
       'mistral-small-latest': mistral ? () => mistral(model) : null,
@@ -46,7 +62,6 @@ export default defineLazyEventHandler(async () => {
 
     let selectedModel
 
-    // Select the appropriate model based on the model name
     if (Object.prototype.hasOwnProperty.call(modelProviders, model)) {
       if (!modelProviders[model]) {
         const providerName = model.includes('gemini') ? 'Google' : 'Mistral'
@@ -63,7 +78,6 @@ export default defineLazyEventHandler(async () => {
     }
 
     try {
-      // Stream the response
       const result = streamText({
         model: selectedModel,
         messages,

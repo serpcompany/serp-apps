@@ -1,50 +1,56 @@
 <template>
-  <ul class="divide-y divide-neutral-100 dark:divide-white/10">
-    <li v-for="message in starterMessages" :key="message.id">
+  <TransitionGroup
+    name="message"
+    tag="ul"
+    class="space-y-1 divide-y divide-neutral-100 dark:divide-white/10"
+  >
+    <li
+      v-for="(message, index) in data"
+      :key="index"
+      :style="{ animationDelay: `${index * 100}ms` }"
+      class="animate-in"
+    >
       <UButton
-        :label="message.title"
+        :label="message"
         class="my-1 w-full py-3 font-normal"
         color="neutral"
         variant="ghost"
-        @click="handleSelect(message.title)"
+        @click="handleSelect(message)"
       />
     </li>
-  </ul>
+  </TransitionGroup>
 </template>
 
 <script lang="ts" setup>
 const emit = defineEmits<{
-  (e: 'onSelect', message: string): void
+  (e: 'on-select', message: string): void
 }>()
 
 const handleSelect = (message: string) => {
-  emit('onSelect', message)
+  emit('on-select', message)
 }
 
-const starterMessages = [
-  {
-    id: 'prompt-1',
-    title: 'Give me a list of 10 saas app ideas to build and make money',
-  },
-  {
-    id: 'prompt-3',
-    title: 'Create a 30-day learning plan for React and Typescript',
-  },
-  {
-    id: 'prompt-4',
-    title: 'Explain a complex technical concept in simple terms',
-  },
-  {
-    id: 'prompt-5',
-    title: 'Help me debug a performance issue in my application',
-  },
-  {
-    id: 'prompt-6',
-    title: 'Write a simple js function to convert SVG to PNG in browser',
-  },
-  {
-    id: 'prompt-7',
-    title: 'Compare different state management solutions for Vue',
-  },
-]
+const { data } = await useFetch('/api/teams/1/ai-chat/starters', {
+  server: false,
+  lazy: true,
+})
 </script>
+
+<style scoped>
+.animate-in {
+  animation: fadeSlideIn 0.4s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
