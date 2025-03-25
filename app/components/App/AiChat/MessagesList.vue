@@ -37,8 +37,8 @@ interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 const props = defineProps<{

@@ -39,7 +39,7 @@ export const useAiChat = () => {
       ?.icon
   })
 
-  const startChat = async () => {
+  const startChat = async ({ message, model }: { message: string; model: string }) => {
     try {
       loading.value = true
       const newChat = await $fetch<Conversation>(
@@ -47,12 +47,12 @@ export const useAiChat = () => {
         {
           method: 'POST',
           body: {
-            model: selectedModel.value,
+            model,
           },
         },
       )
       navigateTo(
-        `/dashboard/${currentTeam.value.slug}/ai-chat/${newChat.id}?firstMessage=${messageText.value}&model=${selectedModel.value}`,
+        `/dashboard/${currentTeam.value.slug}/ai-chat/${newChat.id}?firstMessage=${message}&model=${model}`,
       )
     } catch (error) {
       toast.add({
@@ -63,16 +63,6 @@ export const useAiChat = () => {
       console.error(error)
       loading.value = false
     }
-  }
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    // Allow new lines with Shift+Enter
-    if (e.shiftKey) {
-      return
-    }
-
-    // Submit on Enter
-    startChat()
   }
 
   const greeting = computed(() => {
@@ -99,7 +89,6 @@ export const useAiChat = () => {
     greeting,
     loading,
     startChat,
-    handleKeyDown,
     handleStarterMessageSelect,
   }
 }

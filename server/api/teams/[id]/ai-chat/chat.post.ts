@@ -10,7 +10,7 @@ export default defineLazyEventHandler(async () => {
   const googleApiKey = config.googleApiKey
   const mistralApiKey = config.mistralApiKey
   // Validate API keys
-  
+
   if (!openaiApiKey) throw new Error('Missing OpenAI API key')
 
   // Create provider instances with their respective API keys
@@ -35,22 +35,24 @@ export default defineLazyEventHandler(async () => {
 
   return defineEventHandler(async (event) => {
     const { messages, model } = await readBody(event)
-    
-    type SupportedModel = 'gemini-2.0-flash' | 'mistral-small-latest' | string;
-    
+
+    type SupportedModel = 'gemini-2.0-flash' | 'mistral-small-latest' | string
+
     // Map model names to their provider functions
     const modelProviders: Record<string, (() => any) | null> = {
       'gemini-2.0-flash': google ? () => google(model) : null,
       'mistral-small-latest': mistral ? () => mistral(model) : null,
     }
-    
-    let selectedModel;
-    
+
+    let selectedModel
+
     // Select the appropriate model based on the model name
     if (Object.prototype.hasOwnProperty.call(modelProviders, model)) {
       if (!modelProviders[model]) {
         const providerName = model.includes('gemini') ? 'Google' : 'Mistral'
-        return new Response(`${providerName} API key not configured`, { status: 400 })
+        return new Response(`${providerName} API key not configured`, {
+          status: 400,
+        })
       }
       console.log(`Using ${model}`)
       selectedModel = modelProviders[model]!()
@@ -73,13 +75,11 @@ export default defineLazyEventHandler(async () => {
       return result.toDataStreamResponse()
     } catch (error) {
       console.error('Error streaming text:', error)
-      return new Response(
-        JSON.stringify({ error: 'Failed to generate response' }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
+      return {
+        error: 'Error streaming text',
+        status: 500,
+        statusText: 'Error streaming text',
+      }
     }
   })
 })
