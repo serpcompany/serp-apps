@@ -1,6 +1,8 @@
 <template>
   <div class="flex h-dvh min-w-0 flex-col">
-    <AppAiChatHeader :title="conversationWithMessages?.title ?? 'New Chat'">
+    <AppAiChatHeader
+      :title="newTitle ?? conversationWithMessages?.title ?? 'New Chat'"
+    >
       <template #actions>
         <div class="flex items-center gap-2">
           <UTooltip text="New Chat" :delay-duration="0">
@@ -95,7 +97,26 @@ const { messages, input, handleSubmit, error, reload, stop, isLoading } =
       }),
     ),
     initialInput: route.query.firstMessage as string,
+    onFinish: async () => {
+      if (messages.value.length === 2) {
+        const updatedTitle = await $fetch(
+          `/api/teams/${currentTeam.value.id}/ai-chat/update-title`,
+          {
+            method: 'PATCH',
+            body: {
+              chatId: route.params.id,
+              initialMessage: messages.value[0]?.content,
+            },
+          },
+        )
+        updateConversationTitle(updatedTitle)
+      }
+    },
   })
+const newTitle = ref<string | null>(null)
+function updateConversationTitle(updatedTitle: string) {
+  newTitle.value = updatedTitle
+}
 
 onMounted(async () => {
   if (route.query.firstMessage) {

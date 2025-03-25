@@ -77,11 +77,9 @@ export default defineLazyEventHandler(async () => {
           status: 400,
         })
       }
-      console.log(`Using ${model}`)
       selectedModel = modelProviders[model]!()
     } else {
       // Default to OpenAI
-      console.log(`Using OpenAI model: ${model}`)
       selectedModel = openai(model)
     }
 

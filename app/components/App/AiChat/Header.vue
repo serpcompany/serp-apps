@@ -11,7 +11,12 @@
         @click="mobileMenu = !mobileMenu"
       />
       <div class="min-w-0 flex-1">
-        <h1 class="flex-1 truncate font-bold">{{ title }}</h1>
+        <Transition
+          name="fade"
+          mode="out-in"
+        >
+          <h1 :key="title" class="flex-1 truncate font-bold">{{ title }}</h1>
+        </Transition>
       </div>
       <slot name="actions"></slot>
     </div>
@@ -24,3 +29,15 @@ defineProps<{
   title: string
 }>()
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

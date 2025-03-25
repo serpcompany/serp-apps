@@ -49,6 +49,28 @@ export const deleteConversation = async (conversationId: string) => {
     .delete(tables.conversations)
     .where(eq(tables.conversations.id, conversationId))
 }
+
+export const updateConversationTitle = async (
+  conversationId: string,
+  title: string,
+  userId: string,
+  teamId: string,
+) => {
+  const conversation = await useDB()
+    .update(tables.conversations)
+    .set({ title })
+    .where(
+      and(
+        eq(tables.conversations.id, conversationId),
+        eq(tables.conversations.userId, userId),
+        eq(tables.conversations.teamId, teamId),
+      ),
+    )
+    .returning()
+    .get()
+  return conversation
+}
+
 enum MessageRole {
   USER = 'user',
   ASSISTANT = 'assistant',
