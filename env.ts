@@ -12,7 +12,7 @@ export const env = createEnv({
     APP_NAME: z.string(),
     APP_DESCRIPTION: z.string(),
     LOGO_URL: z.string().url(),
-    RESEND_API_TOKEN: z.string().min(1),
+    ZEPTOMAIL_API_KEY: z.string().min(1),
     NUXT_OAUTH_GITHUB_CLIENT_ID: z.string().min(1),
     NUXT_OAUTH_GITHUB_CLIENT_SECRET: z.string().min(1),
     NUXT_OAUTH_GOOGLE_CLIENT_ID: z.string().min(1),
@@ -29,7 +29,6 @@ export const env = createEnv({
       'plunk',
       'zeptomail',
     ]),
-    PAYMENT_PROVIDER: z.enum(['stripe', 'lemonsqueezy']),
     TWILIO_ACCOUNT_SID: z.string().min(1),
     TWILIO_AUTH_TOKEN: z.string().min(1),
     TWILIO_PHONE_NUMBER: z
