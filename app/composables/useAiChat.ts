@@ -28,10 +28,9 @@ export const useAiChat = () => {
       disabled: true,
     },
     {
-      label: 'Mistral 7B',
-      value: 'mistral-7b',
+      label: 'Mistral Small',
+      value: 'mistral-small-latest',
       icon: 'i-logos-mistral-ai-icon',
-      disabled: true,
     },
   ])
 

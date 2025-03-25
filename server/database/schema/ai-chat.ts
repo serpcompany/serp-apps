@@ -24,7 +24,7 @@ export const conversations = sqliteTable('conversations', {
     .notNull()
     .references(() => teams.id, { onDelete: 'cascade' }),
   title: text('title').notNull().default('New Conversation'),
-  model: text('model').notNull().default('gpt-4o-mini'),
+  model: text('model').notNull().default('openai'),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),

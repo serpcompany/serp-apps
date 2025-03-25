@@ -18,6 +18,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     openaiApiKey: process.env.OPENAI_API_KEY,
+    googleApiKey: process.env.GOOGLE_GEMINI_API_KEY,
+    mistralApiKey: process.env.MISTRAL_API_KEY,
     fromEmail: process.env.FROM_EMAIL,
     emailProvider: process.env.EMAIL_PROVIDER,
     // @ts-expect-error - We're just extending the type

@@ -102,7 +102,7 @@
 <script lang="ts" setup>
 import { useChat } from '@ai-sdk/vue'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 
 const { currentTeam } = useTeam()
 const { selectedModel, models, selectedModelIcon } = useAiChat()
@@ -110,19 +110,23 @@ const { selectedModel, models, selectedModelIcon } = useAiChat()
 const route = useRoute()
 const router = useRouter()
 
+const body = computed(() => ({
+  model: selectedModel.value
+}))
+
 const { messages, input, handleSubmit, isLoading } = useChat({
   api: `/api/teams/${currentTeam.value.id}/ai-chat/chat`,
-  body: {
-    model: selectedModel?.value,
-  },
+  body,
 })
 
 // Handle initial message on page load
 onMounted(async () => {
   if (route.query.firstMessage) {
     // Set the input value
+    console.log(route.query.model, 'route.query.model')
     input.value = route.query.firstMessage as string
-    
+    selectedModel.value = route.query.model as string
+    console.log(selectedModel.value, 'selectedModel.value')
     // Trigger the submission
     await handleSubmit()
     
