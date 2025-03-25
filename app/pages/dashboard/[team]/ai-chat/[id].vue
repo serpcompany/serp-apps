@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-dvh min-w-0 flex-col">
-    <AppAiChatHeader title="New Conversation">
+    <AppAiChatHeader :title="conversationWithMessages?.title ?? 'New Chat'">
       <template #actions>
         <div class="flex items-center gap-2">
           <UTooltip text="New Chat" :delay-duration="0">
@@ -30,7 +30,10 @@
         </div>
       </template>
     </AppAiChatHeader>
-    <AppAiChatMessagesList :messages="messages as UIMessage[]" :loading="isLoading" />
+    <AppAiChatMessagesList
+      :messages="messages as UIMessage[]"
+      :loading="isLoading"
+    />
     <div class="h-4" />
     <div class="mx-auto flex w-full gap-2 px-4 pb-4 md:max-w-3xl md:pb-4">
       <AppAiChatInputBox
@@ -53,6 +56,18 @@ import { useChat, type UIMessage } from '@ai-sdk/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, computed } from 'vue'
 
+interface Message {
+  id: string
+  content: string
+  role: 'user' | 'assistant'
+}
+
+interface Conversation {
+  id: string
+  title: string
+  messages: Message[]
+}
+
 const { currentTeam } = useTeam()
 const { selectedModel } = useAiChat()
 
@@ -61,20 +76,31 @@ const router = useRouter()
 
 const body = computed(() => ({
   model: selectedModel.value,
+  conversationId: route.params.id,
 }))
 
-const { messages, input, handleSubmit, error, reload, stop, isLoading } = useChat({
-  api: `/api/teams/${currentTeam.value.id}/ai-chat/chat`,
-  body,
-})
+const { data: conversationWithMessages } = await useFetch<Conversation>(
+  `/api/teams/${currentTeam.value.id}/ai-chat/${route.params.id}`,
+)
 
-// Handle initial message on page load
+const { messages, input, handleSubmit, error, reload, stop, isLoading } =
+  useChat({
+    api: `/api/teams/${currentTeam.value.id}/ai-chat/chat`,
+    body,
+    initialMessages: conversationWithMessages.value?.messages.map(
+      (msg: Message) => ({
+        id: msg.id,
+        content: msg.content,
+        role: msg.role,
+      }),
+    ),
+    initialInput: route.query.firstMessage as string,
+  })
+
 onMounted(async () => {
   if (route.query.firstMessage) {
-    input.value = route.query.firstMessage as string
     selectedModel.value = route.query.model as string
     await handleSubmit()
-
     await router.replace({
       query: {
         model: undefined,

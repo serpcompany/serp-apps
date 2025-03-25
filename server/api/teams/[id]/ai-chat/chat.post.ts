@@ -3,6 +3,8 @@ import { createOpenAI } from '@ai-sdk/openai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { createMistral } from '@ai-sdk/mistral'
 import { isTeamMember } from '@@/server/database/queries/teams'
+import { createMessage } from '@@/server/database/queries/ai-chat'
+import { MessageRole } from '@@/server/database/schema/ai-chat'
 
 export default defineLazyEventHandler(async () => {
   const config = useRuntimeConfig()
@@ -29,7 +31,7 @@ export default defineLazyEventHandler(async () => {
     : null
 
   return defineEventHandler(async (event) => {
-    const { messages, model } = await readBody(event)
+    const { messages, model, conversationId } = await readBody(event)
     const { user } = await requireUserSession(event)
     const teamId = getRouterParam(event, 'id')
     if (!teamId) {
@@ -46,11 +48,17 @@ export default defineLazyEventHandler(async () => {
       })
     }
 
-    if (!teamId) {
+    if (!conversationId) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Team ID is required',
+        statusMessage: 'Conversation ID is required',
       })
+    }
+
+    // Save the user's message before processing
+    const lastMessage = messages[messages.length - 1]
+    if (lastMessage.role === 'user') {
+      await createMessage(conversationId, lastMessage.content, MessageRole.USER)
     }
 
     type SupportedModel = 'gemini-2.0-flash' | 'mistral-small-latest' | string
@@ -83,6 +91,10 @@ export default defineLazyEventHandler(async () => {
         messages,
         onError: (error) => {
           console.error(error)
+        },
+        onFinish: async (event) => {
+          // Save the assistant's message
+          await createMessage(conversationId, event.text, MessageRole.ASSISTANT)
         },
       })
 

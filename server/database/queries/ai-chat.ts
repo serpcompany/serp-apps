@@ -19,9 +19,20 @@ export const createConversation = async (
   return conversation
 }
 
-export const getConversation = async (conversationId: string) => {
+export const getConversation = async (
+  conversationId: string,
+  userId: string,
+  teamId: string,
+) => {
   const conversation = await useDB().query.conversations.findFirst({
-    where: eq(tables.conversations.id, conversationId),
+    where: and(
+      eq(tables.conversations.id, conversationId),
+      eq(tables.conversations.userId, userId),
+      eq(tables.conversations.teamId, teamId),
+    ),
+    with: {
+      messages: true,
+    },
   })
   return conversation
 }

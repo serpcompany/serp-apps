@@ -35,7 +35,7 @@ const links = computed(() => [
     to: `/dashboard/${currentTeam.value?.slug}/ai-chat`,
   },
   {
-    label: 'AI Image Generator (Fal.ai)',
+    label: 'AI Image Generator',
     icon: 'i-lucide-image-plus',
     to: `/dashboard/${currentTeam.value?.slug}/ai-image-generator`,
   },

@@ -8,7 +8,7 @@ const generateAlphaNumericCode = (length: number = 6) => {
   return customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', length)()
 }
 
-enum MessageRole {
+export enum MessageRole {
   USER = 'user',
   ASSISTANT = 'assistant',
 }
@@ -47,7 +47,7 @@ export const messages = sqliteTable('messages', {
   ),
 })
 
-export const conversationsRelations = relations(conversations, ({ one }) => ({
+export const conversationsRelations = relations(conversations, ({ one, many }) => ({
   userId: one(users, {
     fields: [conversations.userId],
     references: [users.id],
@@ -55,5 +55,13 @@ export const conversationsRelations = relations(conversations, ({ one }) => ({
   teamId: one(teams, {
     fields: [conversations.teamId],
     references: [teams.id],
+  }),
+  messages: many(messages)
+}))
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  conversationId: one(conversations, {
+    fields: [messages.conversationId],
+    references: [conversations.id],
   }),
 }))

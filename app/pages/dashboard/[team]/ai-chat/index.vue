@@ -32,4 +32,3 @@ const handleStarterMessageSelect = (message: string) => {
   inputBoxRef.value?.setMessage(message)
 }
 </script>
- 
