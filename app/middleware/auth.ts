@@ -57,6 +57,15 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // If teams aren't loaded yet, fetch them
   if (!teams.value?.length) {
     teams.value = await useTeam().getMemberships()
+    
+    // If there are teams and we're coming from registration via invite, skip onboarding
+    const fromInvite = useCookie('from-invite')
+    if (fromInvite.value === 'true' && teams.value.length) {
+      fromInvite.value = null
+      // User has teams from accepting invite, redirect to the team page
+      return handleTeamRedirect()
+    }
+    
     if ((paramSlug || teamSlug.value) && !teams.value.length) {
       return handleTeamRedirect()
     }
