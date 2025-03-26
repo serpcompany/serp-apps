@@ -83,6 +83,9 @@ importers:
       stripe:
         specifier: 17.7.0
         version: 17.7.0
+      uqr:
+        specifier: ^0.1.2
+        version: 0.1.2
       use-email:
         specifier: ^0.0.9
         version: 0.0.9
