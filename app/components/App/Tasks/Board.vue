@@ -30,7 +30,7 @@
       </UDropdownMenu>
     </div>
     <div
-      class="flex max-h-[calc(100%-37px)] flex-col gap-2  sm:max-h-[calc(100%-45px)]"
+      class="flex max-h-[calc(100%-37px)] flex-col gap-2 sm:max-h-[calc(100%-45px)]"
     >
       <ScrollAreaRoot class="relative flex min-w-0 flex-1 overflow-hidden">
         <ScrollAreaViewport class="h-full w-full">
@@ -48,12 +48,14 @@
           />
         </ScrollAreaScrollbar>
       </ScrollAreaRoot>
-      <AppTasksNewTask />
+      <AppTasksNewTask @task-created="addTask" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { DropdownMenuItem } from '@nuxt/ui'
+
 import type { Task, Board } from '@@/types/database'
 import {
   ScrollAreaRoot,
@@ -80,4 +82,8 @@ const items = ref<DropdownMenuItem[]>([
     color: 'error',
   },
 ])
+
+const addTask = (task: Task) => {
+  console.log(task)
+}
 </script>

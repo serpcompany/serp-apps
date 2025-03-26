@@ -3,24 +3,37 @@
     v-if="showAddTask"
     class="max-h-64 min-h-20 rounded-xl border border-gray-200 px-2 pt-1 pb-2 dark:border-white/10"
   >
-    <UForm>
-      <UTextarea
-        variant="none"
-        placeholder="Call Emily"
-        :rows="1"
-        :maxrows="3"
-        autoresize
-        class="hide-scrollbar -mx-1 w-full flex-1 resize-none font-semibold"
-      />
-      <UTextarea
-        placeholder="Description"
-        autoresize
-        :maxrows="5"
-        variant="none"
-        class="hide-scrollbar -mx-1 w-full flex-1 resize-none"
-      />
+    <UForm :schema="taskSchema" :state="state" @submit="onSubmit">
+      <!-- Task Title -->
+      <UFormField name="title">
+        <UTextarea
+          v-model="state.title"
+          variant="none"
+          placeholder="Call Emily"
+          :rows="1"
+          :maxrows="3"
+          autoresize
+          class="hide-scrollbar -mx-1 w-full flex-1 resize-none font-semibold"
+        />
+      </UFormField>
+
+      <!-- Task Description -->
+      <UFormField name="description">
+        <UTextarea
+          v-model="state.description"
+          placeholder="Description"
+          autoresize
+          :maxrows="5"
+          variant="none"
+          class="hide-scrollbar -mx-1 w-full flex-1 resize-none"
+        />
+      </UFormField>
+
+      <!-- Task Controls -->
       <div class="flex w-full justify-between gap-1">
+        <!-- Left Controls -->
         <div class="flex items-center gap-1">
+          <!-- Priority Selector -->
           <UPopover
             :content="{
               align: 'start',
@@ -53,7 +66,7 @@
                 <li
                   v-for="priority in priorityOptions"
                   :key="priority.value"
-                  class="flex scroll-py-1 items-center justify-between gap-1 rounded-md p-1.5 focus-within:bg-neutral-100 hover:bg-neutral-100"
+                  class="flex scroll-py-1 items-center justify-between gap-1 rounded-md p-1.5 focus-within:bg-neutral-100 hover:bg-neutral-100 dark:focus-within:bg-white/10 dark:hover:bg-white/10"
                 >
                   <button
                     class="flex flex-1 cursor-pointer items-center gap-1 focus:outline-none"
@@ -71,16 +84,68 @@
               </ul>
             </template>
           </UPopover>
-          <USelect
-            v-model="value"
-            :items="items"
-            value-key="value"
-            :avatar="avatar"
-            color="neutral"
-            variant="soft"
-            class="max-w-30"
-          />
+
+          <!-- Assignee Selector -->
+          <UPopover
+            :content="{
+              align: 'start',
+              side: 'bottom',
+              sideOffset: 8,
+            }"
+          >
+            <UButton
+              :avatar="selectedAvatar"
+              square
+              size="sm"
+              color="neutral"
+              variant="soft"
+            />
+            <template #content>
+              <ul class="isolate w-40 space-y-px p-1 text-sm">
+                <li
+                  v-for="item in items"
+                  :key="item.value"
+                  class="flex scroll-py-1 items-center justify-between gap-1 rounded-md p-1.5 focus-within:bg-neutral-100 hover:bg-neutral-100 dark:focus-within:bg-white/10 dark:hover:bg-white/10"
+                >
+                  <button
+                    class="flex flex-1 cursor-pointer items-center gap-1 focus:outline-none"
+                    @click="selectedUserId = item.value"
+                  >
+                    <UAvatar
+                      v-if="item.avatar"
+                      :src="item.avatar.src"
+                      :alt="item.avatar.alt"
+                      size="xs"
+                    />
+                    <span>{{ item.label }}</span>
+                  </button>
+                  <UIcon
+                    v-if="selectedUserId === item.value"
+                    name="i-lucide-check"
+                    class="text-primary"
+                  />
+                </li>
+              </ul>
+            </template>
+          </UPopover>
+
+          <!-- Date Selector -->
+          <UPopover>
+            <UButton
+              color="neutral"
+              variant="soft"
+              square
+              icon="i-lucide-calendar"
+              class="text-neutral-500"
+              size="sm"
+            />
+            <template #content>
+              <UCalendar v-model="state.dueDate" size="sm" color="neutral" />
+            </template>
+          </UPopover>
         </div>
+
+        <!-- Action Buttons -->
         <div class="flex items-center gap-1">
           <UButton
             @click="showAddTask = false"
@@ -91,6 +156,7 @@
             size="sm"
           />
           <UButton
+            type="submit"
             icon="i-lucide-arrow-right"
             color="primary"
             square
@@ -100,6 +166,8 @@
       </div>
     </UForm>
   </div>
+
+  <!-- Add Task Button -->
   <UButton
     v-else
     icon="i-lucide-plus"
@@ -111,44 +179,107 @@
   />
 </template>
 
-<script lang="ts" setup>
-import type { SelectItem } from '@nuxt/ui'
-const { data: teamMembers } = useNuxtData('team-members')
+<script setup lang="ts">
+import { useDateFormat } from '@vueuse/core'
+import { getLocalTimeZone, today } from '@internationalized/date'
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
 
-const showAddTask = ref(false)
-const state = reactive({
-  title: '',
+// Task Schema
+const taskSchema = z.object({
+  title: z.string().min(1, 'Task title is required'),
+  description: z.string().optional(),
+  priority: z.enum(['low', 'medium', 'high']),
+  assignedTo: z.string(),
+  dueDate: z.any().optional(),
 })
-const selectedPriority = ref('low')
+
+type TaskSchema = z.output<typeof taskSchema>
+
+// Props & Emits
+const emit = defineEmits(['task-created'])
+
+// State
+const showAddTask = ref(false)
+const state = reactive<TaskSchema>({
+  title: '',
+  description: '',
+  priority: 'low',
+  assignedTo: '',
+  dueDate: today(getLocalTimeZone()),
+})
+
+// Team Members
+const { data: teamMembers } = useNuxtData('team-members')
+const items = computed(
+  () =>
+    teamMembers.value?.map((member) => ({
+      label: member.user.name.split(' ')[0],
+      value: member.userId,
+      avatar: {
+        src: member.user.avatarUrl,
+        alt: member.user.name,
+      },
+    })) ?? [],
+)
+
+// Computed properties
+const selectedPriority = computed({
+  get: () => state.priority,
+  set: (value) => {
+    state.priority = value
+  },
+})
+
+const selectedUserId = computed({
+  get: () => state.assignedTo,
+  set: (value) => {
+    state.assignedTo = value
+  },
+})
+
+const selectedAvatar = computed(
+  () => items.value.find((item) => item.value === state.assignedTo)?.avatar,
+)
+
+// Priority options
 const priorityOptions = [
   { label: 'Low', value: 'low', color: 'text-neutral-500' },
   { label: 'Medium', value: 'medium', color: 'text-yellow-500' },
   { label: 'High', value: 'high', color: 'text-red-500' },
 ]
 
-const items = computed(() => 
-  teamMembers.value?.map(member => ({
-    label: member.user.name.split(' ')[0],
-    value: member.userId,
-    avatar: {
-      src: member.user.avatarUrl,
-      alt: member.user.name
-    }
-  })) ?? []
-)
+// Set initial selection to first team member if available
+watchEffect(() => {
+  if (items.value.length && !state.assignedTo) {
+    state.assignedTo = items.value[0]?.value
+  }
+})
 
-const value = ref(items.value[0]?.value)
+// Methods
+function resetForm() {
+  state.title = ''
+  state.description = ''
+  state.priority = 'low'
+  state.dueDate = today(getLocalTimeZone())
+}
 
-const avatar = computed(
-  () => items.value.find((item) => item.value === value.value)?.avatar,
-)
+async function onSubmit(event: FormSubmitEvent<TaskSchema>) {
+  const formattedDueDate = state.dueDate
+    .toDate(getLocalTimeZone())
+    .toISOString()
+
+  emit('task-created', {
+    ...event.data,
+    dueDate: formattedDueDate,
+  })
+
+  resetForm()
+  showAddTask.value = false
+}
 </script>
 
 <style scoped>
-:deep(.button-select-menu) ul {
-  @apply min-w-max;
-}
-
 .hide-scrollbar textarea::-webkit-scrollbar {
   display: none;
 }

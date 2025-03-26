@@ -48,6 +48,10 @@ export type Message = typeof tables.messages.$inferSelect
 export type InsertMessage = typeof tables.messages.$inferInsert
 export type Url = typeof tables.urls.$inferSelect
 export type InsertUrl = typeof tables.urls.$inferInsert
+export type Task = typeof tables.tasks.$inferSelect
+export type InsertTask = typeof tables.tasks.$inferInsert
+export type Board = typeof tables.boards.$inferSelect
+export type InsertBoard = typeof tables.boards.$inferInsert
 
 // Zod schemas
 export const insertUserSchema = createInsertSchema(tables.users)
@@ -136,3 +140,9 @@ export const selectMessageSchema = createSelectSchema(tables.messages)
 
 export const insertUrlSchema = createInsertSchema(tables.urls)
 export const selectUrlSchema = createSelectSchema(tables.urls)
+
+export const insertTaskSchema = createInsertSchema(tables.tasks)
+export const selectTaskSchema = createSelectSchema(tables.tasks)
+
+export const insertBoardSchema = createInsertSchema(tables.boards)
+export const selectBoardSchema = createSelectSchema(tables.boards)

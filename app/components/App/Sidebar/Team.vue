@@ -40,9 +40,9 @@ const links = computed(() => [
     to: `/dashboard/${currentTeam.value?.slug}/url-shortener`,
   },
   {
-    label: 'File Storage',
-    icon: 'i-lucide-files',
-    to: `/dashboard/${currentTeam.value?.slug}/file-storage`,
+    label: 'Team Tasks',
+    icon: 'i-lucide-check-circle',
+    to: `/dashboard/${currentTeam.value?.slug}/tasks`,
   },
 ])
 
