@@ -148,7 +148,8 @@
           <UButton
             type="submit"
             icon="i-lucide-arrow-right"
-            color="primary"
+            color="neutral"
+            variant="soft"
             square
             size="sm"
           />

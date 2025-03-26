@@ -11,10 +11,12 @@
           :color="
             priorityOptions.find((p) => p.value === task.priority)?.buttonColor
           "
-          class="absolute top-0 left-0 -ml-1"
-          @click="emit('toggleCompletion', props.task.id, !props.task.completed)"
+          class="absolute top-0 left-0 -ml-1 -mt-1"
+          @click="
+            emit('toggleCompletion', props.task.id, !props.task.completed)
+          "
         />
-        <span class="w-full text-sm leading-7 font-semibold">
+        <span class="w-full text-sm font-semibold">
           {{ task.title }}
         </span>
         <UDropdownMenu
@@ -39,7 +41,7 @@
           />
         </UDropdownMenu>
       </div>
-      <div class="text-xs text-gray-600 dark:text-gray-400">
+      <div class="text-xs text-gray-600 dark:text-gray-400 mt-4">
         {{ task.description }}
       </div>
       <div class="mt-3 flex items-center gap-4">
