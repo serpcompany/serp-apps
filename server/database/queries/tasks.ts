@@ -115,9 +115,13 @@ export const getTasksByBoardId = async (boardId: string, teamId: string) => {
   return tasks
 }
 
-export const getTaskById = async (id: string) => {
+export const getTaskById = async (id: string, userId: string, teamId: string) => {
   const task = await useDB().query.tasks.findFirst({
-    where: eq(tables.tasks.id, id),
+    where: and(
+      eq(tables.tasks.id, id),
+      eq(tables.tasks.createdById, userId),
+      eq(tables.tasks.teamId, teamId),
+    ),
   })
   return task
 }

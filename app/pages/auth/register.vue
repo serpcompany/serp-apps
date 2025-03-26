@@ -1,6 +1,6 @@
 <template>
   <main class="relative flex min-h-screen items-center justify-center">
-    <div class="mx-auto w-full max-w-sm space-y-4">
+    <UContainer class="mx-auto w-full max-w-sm space-y-4">
       <template v-if="!registered">
         <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
         <div class="text-center">
@@ -87,7 +87,7 @@
           We've sent you an email to verify your account.
         </p>
       </UCard>
-    </div>
+    </UContainer>
     <div class="absolute bottom-2 left-1/2 -translate-x-1/2">
       <NuxtLink to="/auth/all-auth-options" class="text-sm text-neutral-500"
         >All auth options</NuxtLink

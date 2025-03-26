@@ -122,7 +122,6 @@ const {
   getUniqueShortcode,
   createUrl,
   refresh,
-  generateNewShortcode,
 } = useUrlShortner()
 
 const schema = z.object({

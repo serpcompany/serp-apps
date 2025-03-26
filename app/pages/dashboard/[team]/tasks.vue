@@ -10,9 +10,6 @@
         :board="board"
         :is-deleting="isDeleting"
         @delete="handleDeleteBoard(board.id)"
-        @add-task="
-          (boardId, task) => handleAddTask(boardId, task as unknown as Task)
-        "
       />
       <AppTasksNewBoard @create="handleCreateBoard" />
     </div>
@@ -57,13 +54,6 @@ const handleDeleteBoard = async (boardId: string) => {
     console.error(error)
   } finally {
     isDeleting.value = false
-  }
-}
-
-const handleAddTask = (boardId: string, task: Task) => {
-  const board = boards.value?.find((board) => board.id === boardId)
-  if (board) {
-    board.tasks = [...board.tasks, task]
   }
 }
 </script>

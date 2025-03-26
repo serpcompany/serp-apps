@@ -31,27 +31,17 @@
       </UDropdownMenu>
     </div>
     <div class="flex max-h-[calc(100%-45px)] flex-col gap-2">
-      <ScrollAreaRoot
-        class="relative flex min-w-0 flex-1 overflow-hidden"
-        :scroll-hide-delay="200"
-      >
-        <ScrollAreaViewport class="h-full w-full">
-          <ul class="space-y-2" v-auto-animate>
-            <li v-for="task in tasks" :key="task.id">
-              <AppTasksItem :task="task" />
-            </li>
-          </ul>
-        </ScrollAreaViewport>
-
-        <ScrollAreaScrollbar
-          class="z-20 flex touch-none rounded-full p-0.5 select-none hover:bg-neutral-200 data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:w-2.5 dark:bg-neutral-800 dark:hover:bg-neutral-700"
-          orientation="vertical"
-        >
-          <ScrollAreaThumb
-            class="relative flex-1 rounded-[10px] bg-neutral-400 before:absolute before:top-1/2 before:left-1/2 before:h-full before:min-h-[44px] before:w-full before:min-w-[44px] before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] dark:bg-neutral-600"
-          />
-        </ScrollAreaScrollbar>
-      </ScrollAreaRoot>
+      <div class="relative flex min-w-0 flex-1 overflow-y-auto">
+        <ul class="w-full space-y-2" v-auto-animate>
+          <li v-for="task in tasks" :key="task.id">
+            <AppTasksItem
+              :task="task"
+              @delete="handleDeleteTask"
+              @duplicate="handleDuplicateTask"
+            />
+          </li>
+        </ul>
+      </div>
       <AppTasksNewTask @task-created="handleTaskCreated" />
     </div>
   </div>
@@ -74,16 +64,9 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Board, Task } from '~/types/tasks'
-import {
-  ScrollAreaRoot,
-  ScrollAreaScrollbar,
-  ScrollAreaThumb,
-  ScrollAreaViewport,
-} from 'reka-ui'
 
 const emit = defineEmits<{
   (e: 'delete', boardId: string): void
-  (e: 'add-task', boardId: string, task: Task): void
 }>()
 
 const props = defineProps<{
@@ -114,7 +97,7 @@ const items = ref<DropdownMenuItem[]>([
   },
 ])
 
-const { createTask } = useTasks()
+const { createTask, deleteTask, duplicateTask } = useTasks()
 
 const isAddingTask = ref(false)
 const handleTaskCreated = async (task: {
@@ -126,7 +109,21 @@ const handleTaskCreated = async (task: {
 }) => {
   try {
     isAddingTask.value = true
-    const newTask = await createTask(
+    const optimisticTask: Task = {
+      ...task,
+      id: crypto.randomUUID(),
+      assignedToId: task.assignedTo,
+      dueDate: new Date(task.dueDate),
+      boardId: props.board.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdById: props.board.userId,
+      teamId: props.board.teamId,
+      completed: false,
+      description: task.description || null,
+    }
+    tasks.value.push(optimisticTask)
+    await createTask(
       {
         ...task,
         assignedToId: task.assignedTo,
@@ -134,12 +131,28 @@ const handleTaskCreated = async (task: {
       },
       props.board.id,
     )
-    tasks.value.push(newTask)
-    emit('add-task', props.board.id, newTask)
   } catch (error) {
     console.error(error)
   } finally {
     isAddingTask.value = false
+  }
+}
+
+function handleDeleteTask(taskId: string) {
+  try {
+    tasks.value = tasks.value.filter((task) => task.id !== taskId)
+    deleteTask(props.board.id, taskId)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function handleDuplicateTask(task: Task) {
+  try {
+    tasks.value.push(task)
+    const newTask = await duplicateTask(props.board.id, task.id)
+  } catch (error) {
+    console.error(error)
   }
 }
 </script>

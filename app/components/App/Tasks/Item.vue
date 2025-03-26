@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group rounded-xl border border-neutral-200 bg-white p-3 dark:border-white/10 dark:bg-neutral-950"
+    class="group rounded-xl border border-neutral-200 bg-white p-3 dark:border-white/10 dark:bg-neutral-900"
   >
     <div class="relative pl-6">
       <div class="flex items-start gap-2">
@@ -78,7 +78,10 @@ const assignedTo = computed(() => {
     (member) => member.userId === props.task.assignedToId,
   )
 })
-
+const emit = defineEmits<{
+  (e: 'delete', taskId: string): void
+  (e: 'duplicate', task: Task): void
+}>()
 const items = ref([
   [
     {
@@ -88,27 +91,19 @@ const items = ref([
     {
       label: 'Duplicate',
       icon: 'i-lucide-copy',
+      onSelect: () => {
+        emit('duplicate', props.task)
+      },
     },
   ],
   [
-    {
-      label: 'Move Up',
-      icon: 'i-ph-arrow-line-up',
-    },
-    {
-      label: 'Move Down',
-      icon: 'i-ph-arrow-line-down',
-    },
-  ],
-  [
-    {
-      label: 'Archive',
-      icon: 'i-lucide-archive',
-    },
     {
       label: 'Delete',
       icon: 'i-lucide-trash-2',
       color: 'error',
+      onSelect: () => {
+        emit('delete', props.task.id)
+      },
     },
   ],
 ])

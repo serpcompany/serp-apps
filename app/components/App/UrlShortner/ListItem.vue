@@ -5,7 +5,7 @@
     >
       <div class="flex flex-1 items-center gap-2">
         <div
-          class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 dark:border-white/10"
+          class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 dark:bg-neutral-950 dark:border-white/10"
         >
           <UAvatar
             :src="`https://logo.clearbit.com/${encodeURIComponent(url.url)}`"

@@ -13,6 +13,7 @@
           :rows="1"
           :maxrows="3"
           autoresize
+          :size="largerThanSm ? 'lg' : 'xl'"
           class="hide-scrollbar -mx-1 w-full flex-1 resize-none font-semibold"
         />
       </UFormField>
@@ -25,6 +26,7 @@
           autoresize
           :maxrows="5"
           variant="none"
+          :size="largerThanSm ? 'lg' : 'xl'"
           class="hide-scrollbar -mx-1 w-full flex-1 resize-none"
         />
       </UFormField>
@@ -168,11 +170,16 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+
 import { getLocalTimeZone, today } from '@internationalized/date'
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { Priority } from '~/types/tasks'
 
+const breakpoints = useBreakpoints(breakpointsTailwind)
+
+const largerThanSm = breakpoints.greater('sm')
 // Task Schema
 const taskSchema = z.object({
   title: z.string().min(1, 'Task title is required'),
@@ -296,7 +303,7 @@ function getRandomPlaceholder() {
   const placeholders = [
     'Call Emily',
     'Buy groceries',
-    'Make a video on how to use Supersaas',
+    'Record the next video',
     'Finish writing the new docs',
     'Fix the bug with the login',
     'Go over the PR one more time',

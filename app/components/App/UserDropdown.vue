@@ -46,15 +46,6 @@
       </div>
     </template>
   </UDropdownMenu>
-  <UModal
-    v-model:open="feedbackModal"
-    title="Need help?"
-    description="Have a question or need assistance? We're here to help!"
-  >
-    <template #body>
-      <AppFeedbackForm @close="feedbackModal = false" />
-    </template>
-  </UModal>
 </template>
 
 <script setup lang="ts">
@@ -63,7 +54,7 @@ const { user } = useUserSession()
 const { logout } = useAuth()
 const mobileMenu = useState('mobileMenu')
 const isSuperAdmin = computed(() => user.value?.superAdmin)
-const feedbackModal = ref(false)
+const feedbackModal = useState('feedbackModal')
 async function signOut() {
   await logout()
   await navigateTo('/')
