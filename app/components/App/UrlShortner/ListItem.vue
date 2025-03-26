@@ -4,13 +4,21 @@
       class="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-2"
     >
       <div class="flex flex-1 items-center gap-2">
-        <UAvatar :src="url.logo" icon="i-lucide-globe" />
+        <div
+          class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 dark:border-white/10"
+        >
+          <UAvatar
+            :src="`https://logo.clearbit.com/${encodeURIComponent(url.url)}`"
+            icon="i-lucide-globe"
+            :ui="{ root: 'size-4' }"
+          />
+        </div>
         <div class="flex flex-1 flex-col">
           <p class="text-sm font-medium">{{ fullUrl }}</p>
           <div class="mt-0.5 flex items-center gap-2">
             <UIcon
               name="i-fluent-arrow-enter-24-filled"
-              class="scale-x-[-1] text-sm"
+              class="scale-x-[-1] text-sm ml-1"
             />
             <p class="text-xs text-gray-500">{{ url.url }}</p>
           </div>
@@ -50,8 +58,9 @@
         <UButton
           color="error"
           variant="soft"
+          :loading="isDeleting"
           icon="i-lucide-trash"
-          @click="deleteUrl"
+          @click="deleteUrl(url.id)"
           :ui="{ leadingIcon: 'size-4' }"
         />
       </div>
@@ -66,7 +75,7 @@ const props = defineProps<{
   url: Url
 }>()
 
-const { host, copyUrl, copied, generateQRCode, deleteUrl } = useUrlShortner()
+const { host, copyUrl, copied, generateQRCode, deleteUrl, isDeleting } = useUrlShortner()
 
 const fullUrl = computed(() => {
   return `${host}/l/${props.url.shortcode}`

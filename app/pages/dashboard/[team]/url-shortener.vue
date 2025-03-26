@@ -39,7 +39,7 @@
             label="Short Link"
             name="shortcode"
             required
-            :help="`${host}/${state.shortcode}`"
+            :help="`${host}/l/${state.shortcode}`"
           >
             <UInput
               v-model="state.shortcode"
@@ -59,7 +59,7 @@
                     size="sm"
                     type="button"
                     icon="i-lucide-sparkles"
-                    @click="getUniqueShortcode"
+                    @click="randomizeShortcode"
                   />
                 </UTooltip>
               </template>
@@ -105,6 +105,9 @@
 <script lang="ts" setup>
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { useDocumentVisibility } from '@vueuse/core'
+
+const visibility = useDocumentVisibility()
 
 const isModalOpen = ref(false)
 const searchQuery = ref('')
@@ -118,6 +121,8 @@ const {
   downloadQRCode,
   getUniqueShortcode,
   createUrl,
+  refresh,
+  generateNewShortcode,
 } = useUrlShortner()
 
 const schema = z.object({
@@ -163,4 +168,14 @@ const copyQRCode = () => {
   const url = URL.createObjectURL(blob)
   navigator.clipboard.writeText(url)
 }
+
+const randomizeShortcode = async () => {
+  state.shortcode = await getUniqueShortcode()
+}
+
+watch(visibility, (current, previous) => {
+  if (current === 'visible' && previous === 'hidden') {
+    refresh()
+  }
+})
 </script>

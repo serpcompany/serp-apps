@@ -10,7 +10,7 @@ export const useUrlShortner = () => {
 
   // Fetch URLs for current team
   const { data: urls, refresh } = useFetch<Url[]>(
-    `/api/teams/${currentTeam.value.id}/urls`
+    `/api/teams/${currentTeam.value.id}/urls`,
   )
 
   // Generate QR code
@@ -47,37 +47,55 @@ export const useUrlShortner = () => {
       `/api/teams/${currentTeam.value.id}/urls/short-code`,
       {
         method: 'GET',
-      }
+      },
     )
   }
-
   // Create new URL
   const createUrl = async (data: any) => {
     const response = await useFetch(`/api/teams/${currentTeam.value.id}/urls`, {
       method: 'POST',
       body: data,
     })
-    
+
     if (response.data.value) {
       copyUrl(response.data.value.shortcode)
       refresh()
     }
-    
+
     return response.data.value
   }
 
+  const isDeleting = ref(false)
   // Delete URL
   const deleteUrl = async (id: string) => {
-    await $fetch(`/api/teams/${currentTeam.value.id}/urls/${id}`, {
-      method: 'DELETE',
-    })
-    refresh()
+    try {
+      isDeleting.value = true
+      await $fetch(`/api/teams/${currentTeam.value.id}/urls/${id}`, {
+        method: 'DELETE',
+      })
+      refresh()
+      toast.add({
+        title: 'URL deleted',
+        description: 'URL deleted successfully',
+        color: 'success',
+      })
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        title: 'Error deleting URL',
+        description: 'Failed to delete URL',
+        color: 'error',
+      })
+    } finally {
+      isDeleting.value = false
+    }
   }
 
   return {
     host,
     urls,
     copied,
+    isDeleting,
     refresh,
     generateQRCode,
     copyUrl,
