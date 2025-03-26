@@ -58,12 +58,7 @@
                 >
                   <button
                     class="flex flex-1 cursor-pointer items-center gap-1 focus:outline-none"
-                    @click="
-                      selectedPriority = priority.value as
-                        | 'low'
-                        | 'medium'
-                        | 'high'
-                    "
+                    @click="selectedPriority = priority.value"
                   >
                     <UIcon name="i-ph-circle-duotone" :class="priority.color" />
                     <span>{{ priority.label }}</span>
@@ -173,10 +168,10 @@
 </template>
 
 <script setup lang="ts">
-import { useDateFormat } from '@vueuse/core'
 import { getLocalTimeZone, today } from '@internationalized/date'
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { Priority } from '~/types/tasks'
 
 // Task Schema
 const taskSchema = z.object({
@@ -190,7 +185,15 @@ const taskSchema = z.object({
 type TaskSchema = z.output<typeof taskSchema>
 
 // Props & Emits
-const emit = defineEmits(['task-created'])
+const emit = defineEmits<{
+  (e: 'task-created', task: {
+    title: string
+    description: string
+    priority: Priority
+    assignedTo: string
+    dueDate: string
+  }): void
+}>()
 
 // State
 const showAddTask = ref(false)
@@ -206,7 +209,7 @@ const state = reactive<TaskSchema>({
 const { data: teamMembers } = useNuxtData('team-members')
 const items = computed(
   () =>
-    teamMembers.value?.map((member) => ({
+    teamMembers.value?.map((member: { user: { name: string, avatarUrl?: string }, userId: string }) => ({
       label: member.user.name.split(' ')[0],
       value: member.userId,
       avatar: {
@@ -219,17 +222,18 @@ const items = computed(
 // Computed properties
 const selectedPriority = computed({
   get: () => state.priority,
-  set: (value) => {
+  set: (value: Priority) => {
     state.priority = value
   },
 })
 
 const selectedUserId = computed({
   get: () => state.assignedTo,
-  set: (value) => {
+  set: (value: string) => {
     state.assignedTo = value
   },
 })
+
 const selectedAvatar = computed(
   () =>
     items.value.find(
@@ -239,9 +243,9 @@ const selectedAvatar = computed(
 
 // Priority options
 const priorityOptions = [
-  { label: 'Low', value: 'low', color: 'text-neutral-500' },
-  { label: 'Medium', value: 'medium', color: 'text-yellow-500' },
-  { label: 'High', value: 'high', color: 'text-red-500' },
+  { label: 'Low', value: 'low' as const, color: 'text-neutral-500' },
+  { label: 'Medium', value: 'medium' as const, color: 'text-yellow-500' },
+  { label: 'High', value: 'high' as const, color: 'text-red-500' },
 ]
 
 // Set initial selection to first team member if available
@@ -252,13 +256,13 @@ watchEffect(() => {
 })
 
 // Methods
-function getPriorityColor(priority: string) {
+function getPriorityColor(priority: Priority) {
   if (priority === 'low') return 'neutral'
   if (priority === 'medium') return 'warning'
   return 'error'
 }
 
-function getPriorityTextClass(priority: string) {
+function getPriorityTextClass(priority: Priority) {
   if (priority === 'low') return 'text-neutral-500'
   if (priority === 'medium') return 'text-yellow-500'
   return 'text-red-500'
@@ -277,7 +281,10 @@ async function onSubmit(event: FormSubmitEvent<TaskSchema>) {
     .toISOString()
 
   emit('task-created', {
-    ...event.data,
+    title: event.data.title,
+    description: event.data.description || '',
+    priority: event.data.priority,
+    assignedTo: event.data.assignedTo,
     dueDate: formattedDueDate,
   })
 

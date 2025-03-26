@@ -7,7 +7,7 @@
     >
       <h2 class="flex-1 text-sm font-bold">{{ board.name }}</h2>
       <UButton color="neutral" variant="soft" class="flex-shrink-0" size="sm">
-        {{ board.tasks.length }}
+        {{ tasks.length }}
       </UButton>
       <UDropdownMenu
         :items="items"
@@ -38,7 +38,7 @@
         <ScrollAreaViewport class="h-full w-full">
           <ul class="space-y-2" v-auto-animate>
             <li v-for="task in tasks" :key="task.id">
-              {{ task.title }}
+              <AppTasksItem :task="task" />
             </li>
           </ul>
         </ScrollAreaViewport>
@@ -52,7 +52,7 @@
           />
         </ScrollAreaScrollbar>
       </ScrollAreaRoot>
-      <AppTasksNewTask @task-created="addTask" />
+      <AppTasksNewTask @task-created="handleTaskCreated" />
     </div>
   </div>
   <UModal
@@ -65,7 +65,7 @@
         <UButton color="neutral" @click="showDeleteConfirmationModal = false"
           >Cancel</UButton
         >
-        <UButton color="error" @click="deleteBoard">Delete</UButton>
+        <UButton color="error" @click="handleDeleteBoard">Delete</UButton>
       </div>
     </template>
   </UModal>
@@ -73,8 +73,7 @@
 
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
-
-import type { Task } from '@@/types/database'
+import type { Board, Task } from '~/types/tasks'
 import {
   ScrollAreaRoot,
   ScrollAreaScrollbar,
@@ -82,41 +81,19 @@ import {
   ScrollAreaViewport,
 } from 'reka-ui'
 
-type BoardWithTasks = {
-  id: string
-  name: string
-  createdAt: string | Date | null
-  updatedAt: string | Date | null
-  teamId: string
-  userId: string
-  tasks:
-    | Task[]
-    | {
-        id: string
-        createdById: string
-        createdAt: string | Date | null
-        updatedAt: string | Date | null
-        teamId: string
-        assignedToId: string
-        boardId: string
-        title: string
-        description: string | null
-        status: string
-        dueDate: string | Date | null
-      }[]
-}
 const emit = defineEmits<{
   (e: 'delete', boardId: string): void
   (e: 'add-task', boardId: string, task: Task): void
 }>()
+
 const props = defineProps<{
-  board: BoardWithTasks
+  board: Board
   isDeleting: boolean
 }>()
 
 const tasks = ref<Task[]>(props.board.tasks)
 
-function deleteBoard() {
+function handleDeleteBoard() {
   emit('delete', props.board.id)
 }
 
@@ -136,10 +113,11 @@ const items = ref<DropdownMenuItem[]>([
     },
   },
 ])
-const { currentTeam } = useTeam()
+
+const { createTask } = useTasks()
 
 const isAddingTask = ref(false)
-const addTask = async (task: {
+const handleTaskCreated = async (task: {
   title: string
   description: string
   priority: 'low' | 'medium' | 'high'
@@ -148,23 +126,18 @@ const addTask = async (task: {
 }) => {
   try {
     isAddingTask.value = true
-    const newTask = await $fetch<Task>(
-      `/api/teams/${currentTeam.value.id}/task-board/${props.board.id}/task`,
+    const newTask = await createTask(
       {
-        method: 'POST',
-        body: {
-          ...task,
-          boardId: props.board.id,
-        },
+        ...task,
+        assignedToId: task.assignedTo,
+        dueDate: new Date(task.dueDate),
       },
+      props.board.id,
     )
     tasks.value.push(newTask)
+    emit('add-task', props.board.id, newTask)
   } catch (error) {
-    useToast().add({
-      title: 'Error',
-      description: 'Failed to create task',
-      color: 'error',
-    })
+    console.error(error)
   } finally {
     isAddingTask.value = false
   }

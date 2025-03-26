@@ -9,44 +9,20 @@
         :key="board.id"
         :board="board"
         :is-deleting="isDeleting"
-        @delete="deleteBoard(board.id)"
-        @add-task="appendTask(board.id, task)"
+        @delete="handleDeleteBoard(board.id)"
+        @add-task="
+          (boardId, task) => handleAddTask(boardId, task as unknown as Task)
+        "
       />
-      <AppTasksNewBoard @create="createBoard" />
+      <AppTasksNewBoard @create="handleCreateBoard" />
     </div>
   </AppContainer>
 </template>
 
-<script lang="ts" setup>
-type SerializedTask = {
-  id: string
-  createdById: string
-  createdAt: string | null
-  updatedAt: string | null
-  teamId: string
-  assignedToId: string
-  boardId: string
-  title: string
-  description: string | null
-  status: string
-  dueDate: string | null
-}
-
-type SerializedBoard = {
-  id: string
-  name: string
-  createdAt: string | null
-  updatedAt: string | null
-  teamId: string
-  userId: string
-  tasks: SerializedTask[]
-}
-
-const { currentTeam } = useTeam()
-const { data: boards } = await useFetch<SerializedBoard[]>(
-  `/api/teams/${currentTeam.value.id}/task-board`,
-)
+<script setup lang="ts">
+import type { Board, Task } from '~/types/tasks'
 const nuxtApp = useNuxtApp()
+const { currentTeam } = useTeam()
 await useFetch(`/api/teams/${currentTeam.value.id}`, {
   lazy: true,
   server: false,
@@ -55,45 +31,27 @@ await useFetch(`/api/teams/${currentTeam.value.id}`, {
     return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
   },
 })
+const { createBoard, deleteBoard, getBoards } = useTasks()
+const { data: boards } = await getBoards()
 
-const toast = useToast()
-const createBoard = async (name: string) => {
+const isDeleting = ref(false)
+
+const handleCreateBoard = async (name: string) => {
   try {
-    const data = await $fetch<SerializedBoard>(
-      `/api/teams/${currentTeam.value.id}/task-board`,
-      {
-        method: 'POST',
-        body: { name },
-      },
-    )
+    const newBoard = await createBoard({ name })
     // Add empty tasks array if it's not included
-    const newBoard = { ...data, tasks: data.tasks || [] }
-
+    const boardWithTasks = { ...newBoard, tasks: newBoard.tasks || [] }
     // Use array spread to create a new array reference, triggering reactivity
-    boards.value = [...(boards.value || []), newBoard]
-
-    toast.add({
-      title: 'Board created',
-      description: 'Board created successfully',
-      icon: 'i-lucide-check-circle',
-    })
+    boards.value = [...(boards.value || []), boardWithTasks]
   } catch (error) {
     console.error(error)
-    toast.add({
-      title: 'Error',
-      description: 'Error creating board',
-      icon: 'i-lucide-x-circle',
-    })
   }
 }
 
-const isDeleting = ref(false)
-const deleteBoard = async (boardId: string) => {
+const handleDeleteBoard = async (boardId: string) => {
   try {
     isDeleting.value = true
-    await $fetch(`/api/teams/${currentTeam.value.id}/task-board/${boardId}`, {
-      method: 'DELETE',
-    })
+    await deleteBoard(boardId)
     boards.value = boards.value?.filter((board) => board.id !== boardId)
   } catch (error) {
     console.error(error)
@@ -102,7 +60,7 @@ const deleteBoard = async (boardId: string) => {
   }
 }
 
-const appendTask = (boardId: string, task: Task) => {
+const handleAddTask = (boardId: string, task: Task) => {
   const board = boards.value?.find((board) => board.id === boardId)
   if (board) {
     board.tasks = [...board.tasks, task]
