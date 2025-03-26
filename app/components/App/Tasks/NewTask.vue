@@ -9,7 +9,7 @@
         <UTextarea
           v-model="state.title"
           variant="none"
-          placeholder="Call Emily"
+          :placeholder="getRandomPlaceholder()"
           :rows="1"
           :maxrows="3"
           autoresize
@@ -46,20 +46,8 @@
               size="sm"
               variant="soft"
               square
-              :color="
-                selectedPriority === 'low'
-                  ? 'neutral'
-                  : selectedPriority === 'medium'
-                    ? 'warning'
-                    : 'error'
-              "
-              :class="
-                selectedPriority === 'low'
-                  ? 'text-neutral-500'
-                  : selectedPriority === 'medium'
-                    ? 'text-yellow-500'
-                    : 'text-red-500'
-              "
+              :color="getPriorityColor(selectedPriority)"
+              :class="getPriorityTextClass(selectedPriority)"
             />
             <template #content>
               <ul class="isolate w-40 space-y-px p-1 text-sm">
@@ -70,7 +58,12 @@
                 >
                   <button
                     class="flex flex-1 cursor-pointer items-center gap-1 focus:outline-none"
-                    @click="selectedPriority = priority.value"
+                    @click="
+                      selectedPriority = priority.value as
+                        | 'low'
+                        | 'medium'
+                        | 'high'
+                    "
                   >
                     <UIcon name="i-ph-circle-duotone" :class="priority.color" />
                     <span>{{ priority.label }}</span>
@@ -105,7 +98,7 @@
                 <li
                   v-for="item in items"
                   :key="item.value"
-                  class="flex scroll-py-1 items-center justify-between gap-1 rounded-md p-1.5 focus-within:bg-neutral-100 hover:bg-neutral-100 dark:focus-within:bg-white/10 dark:hover:bg-white/10"
+                  class="flex scroll-py-1 items-center justify-between gap-1 rounded-md px-1.5 py-1 focus-within:bg-neutral-100 hover:bg-neutral-100 dark:focus-within:bg-white/10 dark:hover:bg-white/10"
                 >
                   <button
                     class="flex flex-1 cursor-pointer items-center gap-1 focus:outline-none"
@@ -115,7 +108,7 @@
                       v-if="item.avatar"
                       :src="item.avatar.src"
                       :alt="item.avatar.alt"
-                      size="xs"
+                      size="3xs"
                     />
                     <span>{{ item.label }}</span>
                   </button>
@@ -237,9 +230,11 @@ const selectedUserId = computed({
     state.assignedTo = value
   },
 })
-
 const selectedAvatar = computed(
-  () => items.value.find((item) => item.value === state.assignedTo)?.avatar,
+  () =>
+    items.value.find(
+      (item: { value: string }) => item.value === state.assignedTo,
+    )?.avatar,
 )
 
 // Priority options
@@ -257,6 +252,18 @@ watchEffect(() => {
 })
 
 // Methods
+function getPriorityColor(priority: string) {
+  if (priority === 'low') return 'neutral'
+  if (priority === 'medium') return 'warning'
+  return 'error'
+}
+
+function getPriorityTextClass(priority: string) {
+  if (priority === 'low') return 'text-neutral-500'
+  if (priority === 'medium') return 'text-yellow-500'
+  return 'text-red-500'
+}
+
 function resetForm() {
   state.title = ''
   state.description = ''
@@ -276,6 +283,18 @@ async function onSubmit(event: FormSubmitEvent<TaskSchema>) {
 
   resetForm()
   showAddTask.value = false
+}
+
+function getRandomPlaceholder() {
+  const placeholders = [
+    'Call Emily',
+    'Buy groceries',
+    'Make a video on how to use Supersaas',
+    'Finish writing the new docs',
+    'Fix the bug with the login',
+    'Go over the PR one more time',
+  ]
+  return placeholders[Math.floor(Math.random() * placeholders.length)]
 }
 </script>
 

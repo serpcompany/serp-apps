@@ -5,7 +5,7 @@
     <div
       class="mb-2 flex items-center justify-between gap-2 border-b border-neutral-100 pb-2 dark:border-white/10"
     >
-      <h2 class="flex-1 text-sm">{{ board.name }}</h2>
+      <h2 class="flex-1 text-sm font-bold">{{ board.name }}</h2>
       <UButton color="neutral" variant="soft" class="flex-shrink-0" size="sm">
         {{ board.tasks.length }}
       </UButton>
@@ -29,10 +29,8 @@
         />
       </UDropdownMenu>
     </div>
-    <div
-      class="flex max-h-[calc(100%-37px)] flex-col gap-2 sm:max-h-[calc(100%-45px)]"
-    >
-      <ScrollAreaRoot class="relative flex min-w-0 flex-1 overflow-hidden">
+    <div class="flex max-h-[calc(100%-45px)] flex-col gap-2">
+      <ScrollAreaRoot class="relative flex min-w-0 flex-1 overflow-hidden" :scroll-hide-delay="200">
         <ScrollAreaViewport class="h-full w-full">
           <ul class="space-y-2" v-auto-animate>
             <li v-for="n in 100" :key="n">hello</li>
@@ -51,6 +49,20 @@
       <AppTasksNewTask @task-created="addTask" />
     </div>
   </div>
+  <UModal
+    v-model:open="showDeleteConfirmationModal"
+    title="Delete Board"
+    description="Are you sure you want to delete this board? This action cannot be undone."
+  >
+    <template #body>
+      <div class="flex items-center justify-end gap-2">
+        <UButton color="neutral" @click="showDeleteConfirmationModal = false"
+          >Cancel</UButton
+        >
+        <UButton color="error" @click="deleteBoard">Delete</UButton>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <script lang="ts" setup>
@@ -64,12 +76,38 @@ import {
   ScrollAreaViewport,
 } from 'reka-ui'
 
-type BoardWithTasks = Board & {
-  tasks: Task[]
+type BoardWithTasks = {
+  id: string
+  name: string
+  createdAt: string | Date | null
+  updatedAt: string | Date | null
+  teamId: string
+  userId: string
+  tasks:
+    | Task[]
+    | {
+        id: string
+        createdById: string
+        createdAt: string | Date | null
+        updatedAt: string | Date | null
+        teamId: string
+        assignedToId: string
+        boardId: string
+        title: string
+        description: string | null
+        status: string
+        dueDate: string | Date | null
+      }[]
 }
-const props = defineProps<{
+
+defineProps<{
   board: BoardWithTasks
 }>()
+
+const showDeleteConfirmationModal = ref(false)
+const deleteBoard = () => {
+  console.log('delete')
+}
 
 const items = ref<DropdownMenuItem[]>([
   {
@@ -80,6 +118,9 @@ const items = ref<DropdownMenuItem[]>([
     label: 'Delete',
     icon: 'i-lucide-trash',
     color: 'error',
+    onSelect: () => {
+      showDeleteConfirmationModal.value = true
+    },
   },
 ])
 

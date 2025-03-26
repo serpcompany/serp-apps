@@ -32,7 +32,6 @@ export const getBoardById = async (
 export const getBoardsByTeamId = async (teamId: string) => {
   const boards = await useDB().query.boards.findMany({
     where: eq(tables.boards.teamId, teamId),
-    orderBy: [desc(tables.boards.createdAt)],
     with: {
       tasks: true,
     },
