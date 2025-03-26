@@ -16,22 +16,22 @@
     "setup-env": "node setup-env.js"
   },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.31",
+    "@iconify-json/lucide": "^1.2.32",
     "@nuxt/eslint": "^1.2.0",
-    "@nuxt/ui": "3.0.0",
-    "@nuxthub/core": "^0.8.18",
+    "@nuxt/ui": "3.0.1",
+    "@nuxthub/core": "^0.8.21",
     "@simplewebauthn/browser": "^13.1.0",
     "@simplewebauthn/server": "^13.1.1",
     "@t3-oss/env-nuxt": "^0.12.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue-email/components": "^0.0.21",
     "@vue-email/render": "^0.0.9",
-    "drizzle-orm": "0.40.1",
+    "drizzle-orm": "0.41.0",
     "drizzle-zod": "^0.7.0",
     "nanoid": "5.1.5",
     "nuxt": "^3.16.1",
     "nuxt-auth-utils": "0.5.17",
-    "resend": "4.1.2",
+    "resend": "4.2.0",
     "stripe": "17.7.0",
     "use-email": "^0.0.9",
     "vue": "^3.5.13",
@@ -51,7 +51,7 @@
     "simple-git-hooks": "^2.12.1",
     "typescript": "^5.8.2",
     "vue-tsc": "3.0.0-alpha.2",
-    "wrangler": "^4.3.0"
+    "wrangler": "^4.4.1"
   },
   "packageManager": "pnpm@9.12.3",
   "simple-git-hooks": {
