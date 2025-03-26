@@ -13,31 +13,7 @@
     </template>
     <div>
       <ul class="divide-y divide-gray-200 dark:divide-white/10">
-        <li v-for="url in urls" :key="url.id" class="p-4">
-          <div class="flex w-full items-center gap-2">
-            <UAvatar :src="url.logo" icon="i-lucide-globe" />
-            <div class="flex flex-1 flex-col">
-              <p class="text-sm font-medium">{{ url.shortcode }}</p>
-              <p class="text-sm text-gray-500">{{ url.url }}</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <UButton
-                color="neutral"
-                variant="soft"
-                icon="i-lucide-copy"
-                @click="copy(url.shortcode)"
-                :ui="{ leadingIcon: 'size-4' }"
-              />
-              <UButton
-                color="neutral"
-                variant="soft"
-                icon="i-lucide-trash"
-                @click="deleteUrl(url.id)"
-                :ui="{ leadingIcon: 'size-4' }"
-              />
-            </div>
-          </div>
-        </li>
+        <AppUrlShortnerListItem v-for="url in urls" :key="url.id" :url="url" />
       </ul>
     </div>
   </AppContainer>
@@ -127,21 +103,22 @@
 </template>
 
 <script lang="ts" setup>
-import { renderSVG } from 'uqr'
-import { useClipboard } from '@vueuse/core'
-const { copy } = useClipboard()
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
 
 const isModalOpen = ref(false)
 const searchQuery = ref('')
-const { currentTeam } = useTeam()
-const { data: urls } = useFetch(`/api/teams/${currentTeam.value.id}/urls`)
 const loading = ref(false)
 const items = ref(['Social Media', 'Marketing', 'Sales', 'Product'])
 
-const host = useRuntimeConfig().public.host
-
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
+const {
+  host,
+  urls,
+  generateQRCode,
+  downloadQRCode,
+  getUniqueShortcode,
+  createUrl,
+} = useUrlShortner()
 
 const schema = z.object({
   url: z.string().url('Invalid URL'),
@@ -161,55 +138,29 @@ const state = reactive<Partial<Schema>>({
   shortcode: undefined,
 })
 
-const toast = useToast()
-async function onSubmit(event: FormSubmitEvent<Schema>) {
-  const { data } = await useFetch(`/api/teams/${currentTeam.value.id}/urls`, {
-    method: 'POST',
-    body: event.data,
-  })
-  copy(`https://${host}/${data.value?.shortcode}`)
-  toast.add({
-    title: 'Your short link is ready',
-    description: `https://${host}/${data.value?.shortcode} has been copied to your clipboard`,
-    color: 'success',
-  })
-  isModalOpen.value = false
-}
-
 const qrCode = computed(() => {
-  return renderSVG(state.url || '')
+  return generateQRCode(state.shortcode || '')
 })
 
-const downloadQRCode = () => {
-  const svg = renderSVG(state.url || '')
-  const blob = new Blob([svg], { type: 'image/svg+xml' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'qr-code.svg'
-  a.click()
-  URL.revokeObjectURL(url)
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  loading.value = true
+  try {
+    await createUrl(event.data)
+    isModalOpen.value = false
+  } finally {
+    loading.value = false
+  }
+}
+
+const openModal = async () => {
+  isModalOpen.value = true
+  state.shortcode = await getUniqueShortcode()
 }
 
 const copyQRCode = () => {
-  const svg = renderSVG(`${host}/${state.shortcode}`)
+  const svg = generateQRCode(state.shortcode || '')
   const blob = new Blob([svg], { type: 'image/svg+xml' })
   const url = URL.createObjectURL(blob)
   navigator.clipboard.writeText(url)
-}
-
-const openModal = () => {
-  isModalOpen.value = true
-  getUniqueShortcode()
-}
-
-const getUniqueShortcode = async () => {
-  const data = await $fetch(
-    `/api/teams/${currentTeam.value.id}/urls/short-code`,
-    {
-      method: 'GET',
-    },
-  )
-  state.shortcode = data
 }
 </script>
