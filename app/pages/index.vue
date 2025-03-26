@@ -45,9 +45,7 @@
                   color="neutral"
                   variant="soft"
                   icon="i-lucide-chevron-down"
-                  :ui="{
-                    leadingIcon: 'size-4',
-                  }"
+                  class="border-l border-neutral-200/50 dark:border-white/10"
                 />
               </UDropdownMenu>
             </UButtonGroup>
@@ -66,7 +64,7 @@
               >
                 Ship 🏴‍☠️ a fullstack SaaS app faster than ever.
               </p>
-              <p class="text-sm text-balance text-neutral-500 sm:text-xl">
+              <p class="text-base text-balance text-neutral-500 sm:text-xl">
                 Teams, Typescript, Drizzle ORM, NuxtHub, Postgres, Turso,
                 TailwindCSS V4, Nuxt UI V3. All in one package. This is a mock
                 title.

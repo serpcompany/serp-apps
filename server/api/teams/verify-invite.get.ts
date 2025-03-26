@@ -3,9 +3,11 @@ import {
   updateInviteStatus,
   acceptTeamInvite,
   isTeamMember,
+  getTeam,
 } from '@@/server/database/queries/teams'
 import { findUserById, verifyUser } from '@@/server/database/queries/users'
 import { z } from 'zod'
+import type { SessionUser } from '#auth-utils'
 
 const querySchema = z.object({
   token: z.string().length(32, 'Invalid token'),
@@ -28,6 +30,16 @@ export default defineEventHandler(async (event) => {
 
   // 3. Validate user session and permissions
   const session = await getUserSession(event)
+  
+  if (session?.user) {
+    if (session.user.email !== invite.email) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: 'Unauthorized invite',
+      })
+    }
+  }
+  
   if (!session?.user || !(await findUserById(session.user.id))) {
     setCookie(event, 'invite-token', token, {
       maxAge: 60 * 60 * 24, // discard cookie after 1 day
@@ -66,5 +78,21 @@ export default defineEventHandler(async (event) => {
   deleteCookie(event, 'invite-token')
   deleteCookie(event, 'invite-email')
 
-  return sendRedirect(event, '/dashboard', 302)
+  // 7. Get the team's slug for the redirect
+  const team = await getTeam(invite.teamId)
+  if (!team) {
+    return sendRedirect(event, '/dashboard', 302)
+  }
+  
+  // 8. Set this team as the last used team
+  setCookie(event, 'lastTeamSlug', team.slug, {
+    maxAge: 60 * 60 * 24 * 365, // 1 year
+    path: '/',
+    secure: true,
+    httpOnly: true,
+    sameSite: 'lax',
+  })
+
+  // 9. Redirect to the team dashboard
+  return sendRedirect(event, `/dashboard/${team.slug}`, 302)
 })

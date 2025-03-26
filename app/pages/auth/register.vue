@@ -128,6 +128,16 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       inviteToken: inviteToken.value,
     })
     if (emailVerified && !error) {
+      // If this registration was from an invite, set a cookie to track that
+      if (inviteToken.value) {
+        const fromInviteCookie = useCookie('from-invite', {
+          maxAge: 60 * 60, // 1 hour
+          secure: true,
+          sameSite: 'lax',
+        })
+        fromInviteCookie.value = 'true'
+      }
+      
       // Ensure client has session data and navigate to the dashboard
       // See https://github.com/atinux/nuxt-auth-utils/issues/357
       await nextTick()
