@@ -38,6 +38,7 @@
               :task="task"
               @delete="handleDeleteTask"
               @duplicate="handleDuplicateTask"
+              @toggle-completion="handleToggleCompletion"
             />
           </li>
         </ul>
@@ -97,7 +98,8 @@ const items = ref<DropdownMenuItem[]>([
   },
 ])
 
-const { createTask, deleteTask, duplicateTask } = useTasks()
+const { createTask, deleteTask, duplicateTask, toggleTaskCompletion } =
+  useTasks()
 
 const isAddingTask = ref(false)
 const handleTaskCreated = async (task: {
@@ -150,9 +152,16 @@ function handleDeleteTask(taskId: string) {
 async function handleDuplicateTask(task: Task) {
   try {
     tasks.value.push(task)
-    const newTask = await duplicateTask(props.board.id, task.id)
+    await duplicateTask(props.board.id, task.id)
   } catch (error) {
     console.error(error)
   }
+}
+
+function handleToggleCompletion(taskId: string, completed: boolean) {
+  tasks.value = tasks.value.map((task) =>
+    task.id === taskId ? { ...task, completed } : task,
+  )
+  toggleTaskCompletion(props.board.id, taskId, completed)
 }
 </script>

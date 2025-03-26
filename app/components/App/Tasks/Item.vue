@@ -2,12 +2,17 @@
   <div
     class="group rounded-xl border border-neutral-200 bg-white p-3 dark:border-white/10 dark:bg-neutral-900"
   >
-    <div class="relative pl-6">
+    <div class="relative pl-7">
       <div class="flex items-start gap-2">
-        <UIcon
-          name="i-lucide-circle"
-          class="absolute top-0 left-0 mt-1.5"
-          :class="priorityOptions.find((p) => p.value === task.priority)?.color"
+        <UButton
+          :icon="task.completed ? 'i-lucide-circle-check' : 'i-lucide-circle'"
+          variant="ghost"
+          size="sm"
+          :color="
+            priorityOptions.find((p) => p.value === task.priority)?.buttonColor
+          "
+          class="absolute top-0 left-0 -ml-1"
+          @click="emit('toggleCompletion', props.task.id, !props.task.completed)"
         />
         <span class="w-full text-sm leading-7 font-semibold">
           {{ task.title }}
@@ -68,9 +73,24 @@ const props = defineProps<{
 const { data: teamMembers } = useNuxtData('team-members')
 
 const priorityOptions = [
-  { label: 'Low', value: 'low' as const, color: 'text-neutral-500' },
-  { label: 'Medium', value: 'medium' as const, color: 'text-yellow-500' },
-  { label: 'High', value: 'high' as const, color: 'text-red-500' },
+  {
+    label: 'Low',
+    value: 'low' as const,
+    color: 'text-neutral-500',
+    buttonColor: 'neutral' as const,
+  },
+  {
+    label: 'Medium',
+    value: 'medium' as const,
+    color: 'text-yellow-500',
+    buttonColor: 'warning' as const,
+  },
+  {
+    label: 'High',
+    value: 'high' as const,
+    color: 'text-red-500',
+    buttonColor: 'error' as const,
+  },
 ]
 
 const assignedTo = computed(() => {
@@ -81,6 +101,7 @@ const assignedTo = computed(() => {
 const emit = defineEmits<{
   (e: 'delete', taskId: string): void
   (e: 'duplicate', task: Task): void
+  (e: 'toggleCompletion', taskId: string, completed: boolean): void
 }>()
 const items = ref([
   [

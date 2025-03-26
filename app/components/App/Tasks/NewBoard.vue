@@ -49,6 +49,7 @@ const state = reactive<Schema>({
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
+  state.name = ''
   emit('create', event.data.name)
 }
 </script>

@@ -134,6 +134,32 @@ export const useTasks = () => {
     }
   }
 
+  const toggleTaskCompletion = async (
+    boardId: string,
+    taskId: string,
+    completed: boolean,
+  ) => {
+    console.log('toggleTaskCompletion', boardId, taskId, completed)
+    try {
+      await $fetch(
+        `/api/teams/${currentTeam.value.id}/task-board/${boardId}/task/${taskId}/toggle-complete`,
+        {
+          method: 'POST',
+          body: {
+            completed,
+          },
+        },
+      )
+      return true
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        title: 'Error',
+        description: 'Error toggling task completion',
+      })
+    }
+  }
+
   return {
     createBoard,
     deleteBoard,
@@ -141,5 +167,6 @@ export const useTasks = () => {
     getBoards,
     deleteTask,
     duplicateTask,
+    toggleTaskCompletion,
   }
 }
