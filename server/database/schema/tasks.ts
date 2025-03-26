@@ -22,6 +22,11 @@ export const boards = sqliteTable('boards', {
     () => new Date(),
   ),
 })
+enum Priority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+}
 
 export const tasks = sqliteTable('tasks', {
   id: text('id')
@@ -41,7 +46,10 @@ export const tasks = sqliteTable('tasks', {
     .references(() => boards.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   description: text('description'),
-  status: text('status').notNull().default('Pending'),
+  priority: text('priority', { enum: ['low', 'medium', 'high'] })
+    .notNull()
+    .default('low'),
+  completed: integer('completed', { mode: 'boolean' }).notNull().default(false),
   dueDate: integer('due_date', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),

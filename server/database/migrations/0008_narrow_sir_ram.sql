@@ -1,0 +1,1 @@
+ALTER TABLE `tasks` ADD `completed` integer DEFAULT false NOT NULL;

@@ -25,15 +25,21 @@
           variant="soft"
           class="flex-shrink-0"
           size="sm"
+          :loading="props.isDeleting"
           icon="i-lucide-ellipsis"
         />
       </UDropdownMenu>
     </div>
     <div class="flex max-h-[calc(100%-45px)] flex-col gap-2">
-      <ScrollAreaRoot class="relative flex min-w-0 flex-1 overflow-hidden" :scroll-hide-delay="200">
+      <ScrollAreaRoot
+        class="relative flex min-w-0 flex-1 overflow-hidden"
+        :scroll-hide-delay="200"
+      >
         <ScrollAreaViewport class="h-full w-full">
           <ul class="space-y-2" v-auto-animate>
-            <li v-for="n in 100" :key="n">hello</li>
+            <li v-for="task in tasks" :key="task.id">
+              {{ task.title }}
+            </li>
           </ul>
         </ScrollAreaViewport>
 
@@ -68,7 +74,7 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-import type { Task, Board } from '@@/types/database'
+import type { Task } from '@@/types/database'
 import {
   ScrollAreaRoot,
   ScrollAreaScrollbar,
@@ -99,15 +105,22 @@ type BoardWithTasks = {
         dueDate: string | Date | null
       }[]
 }
-
-defineProps<{
+const emit = defineEmits<{
+  (e: 'delete', boardId: string): void
+  (e: 'add-task', boardId: string, task: Task): void
+}>()
+const props = defineProps<{
   board: BoardWithTasks
+  isDeleting: boolean
 }>()
 
-const showDeleteConfirmationModal = ref(false)
-const deleteBoard = () => {
-  console.log('delete')
+const tasks = ref<Task[]>(props.board.tasks)
+
+function deleteBoard() {
+  emit('delete', props.board.id)
 }
+
+const showDeleteConfirmationModal = ref(false)
 
 const items = ref<DropdownMenuItem[]>([
   {
@@ -123,8 +136,37 @@ const items = ref<DropdownMenuItem[]>([
     },
   },
 ])
+const { currentTeam } = useTeam()
 
-const addTask = (task: Task) => {
-  console.log(task)
+const isAddingTask = ref(false)
+const addTask = async (task: {
+  title: string
+  description: string
+  priority: 'low' | 'medium' | 'high'
+  assignedTo: string
+  dueDate: string
+}) => {
+  try {
+    isAddingTask.value = true
+    const newTask = await $fetch<Task>(
+      `/api/teams/${currentTeam.value.id}/task-board/${props.board.id}/task`,
+      {
+        method: 'POST',
+        body: {
+          ...task,
+          boardId: props.board.id,
+        },
+      },
+    )
+    tasks.value.push(newTask)
+  } catch (error) {
+    useToast().add({
+      title: 'Error',
+      description: 'Failed to create task',
+      color: 'error',
+    })
+  } finally {
+    isAddingTask.value = false
+  }
 }
 </script>

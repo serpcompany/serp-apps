@@ -29,6 +29,22 @@ export const getBoardById = async (
   return board
 }
 
+export const deleteBoard = async (
+  id: string,
+  userId: string,
+  teamId: string,
+) => {
+  await useDB()
+    .delete(tables.boards)
+    .where(
+      and(
+        eq(tables.boards.id, id),
+        eq(tables.boards.userId, userId),
+        eq(tables.boards.teamId, teamId),
+      ),
+    )
+}
+
 export const getBoardsByTeamId = async (teamId: string) => {
   const boards = await useDB().query.boards.findMany({
     where: eq(tables.boards.teamId, teamId),
@@ -60,18 +76,10 @@ export const updateBoard = async (
   return updatedBoard
 }
 
-export const createTask = async (
-  task: InsertTask,
-  userId: string,
-  teamId: string,
-) => {
+export const createTask = async (task: InsertTask) => {
   const newTask = await useDB()
     .insert(tables.tasks)
-    .values({
-      ...task,
-      createdById: userId,
-      teamId,
-    })
+    .values(task)
     .returning()
     .get()
   return newTask
@@ -91,6 +99,17 @@ export const getTasksByUserId = async (userId: string, teamId: string) => {
 export const getTasksByTeamId = async (teamId: string) => {
   const tasks = await useDB().query.tasks.findMany({
     where: eq(tables.tasks.teamId, teamId),
+    orderBy: [desc(tables.tasks.createdAt)],
+  })
+  return tasks
+}
+
+export const getTasksByBoardId = async (boardId: string, teamId: string) => {
+  const tasks = await useDB().query.tasks.findMany({
+    where: and(
+      eq(tables.tasks.boardId, boardId),
+      eq(tables.tasks.teamId, teamId),
+    ),
     orderBy: [desc(tables.tasks.createdAt)],
   })
   return tasks

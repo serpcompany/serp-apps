@@ -4,14 +4,20 @@
       class="flex h-[calc(100dvh-80px)] snap-x snap-mandatory gap-8 overflow-x-auto"
       v-auto-animate
     >
-      <AppTasksBoard v-for="board in boards" :key="board.id" :board="board" />
+      <AppTasksBoard
+        v-for="board in boards"
+        :key="board.id"
+        :board="board"
+        :is-deleting="isDeleting"
+        @delete="deleteBoard(board.id)"
+        @add-task="appendTask(board.id, task)"
+      />
       <AppTasksNewBoard @create="createBoard" />
     </div>
   </AppContainer>
 </template>
 
 <script lang="ts" setup>
-// Define a serialized version that matches the API response format
 type SerializedTask = {
   id: string
   createdById: string
@@ -78,6 +84,28 @@ const createBoard = async (name: string) => {
       description: 'Error creating board',
       icon: 'i-lucide-x-circle',
     })
+  }
+}
+
+const isDeleting = ref(false)
+const deleteBoard = async (boardId: string) => {
+  try {
+    isDeleting.value = true
+    await $fetch(`/api/teams/${currentTeam.value.id}/task-board/${boardId}`, {
+      method: 'DELETE',
+    })
+    boards.value = boards.value?.filter((board) => board.id !== boardId)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isDeleting.value = false
+  }
+}
+
+const appendTask = (boardId: string, task: Task) => {
+  const board = boards.value?.find((board) => board.id === boardId)
+  if (board) {
+    board.tasks = [...board.tasks, task]
   }
 }
 </script>

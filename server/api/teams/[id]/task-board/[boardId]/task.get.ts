@@ -1,5 +1,5 @@
 import { isTeamMember } from '@@/server/database/queries/teams'
-import { getTasksByTeamId } from '@@/server/database/queries/tasks'
+import { getTasksByBoardId } from '@@/server/database/queries/tasks'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
@@ -18,6 +18,13 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Unauthorized Access',
     })
   }
-  const tasks = await getTasksByTeamId(teamId)
+  const boardId = getRouterParam(event, 'boardId')
+  if (!boardId) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Board ID is required',
+    })
+  }
+  const tasks = await getTasksByBoardId(boardId, teamId)
   return tasks
 })
