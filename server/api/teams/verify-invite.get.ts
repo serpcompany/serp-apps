@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
       httpOnly: true,
       sameSite: 'lax',
     })
-    return sendRedirect(event, '/auth/register', 302)
+    return sendRedirect(event, '/auth/login', 302)
   }
 
   // 4. Check if user is already a team member

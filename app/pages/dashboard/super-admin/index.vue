@@ -1,6 +1,12 @@
 <template>
   <AppContainer title="Users">
     <template #actions>
+      <UButton
+        :label="isEmailsMasked ? 'Unmask emails' : 'Mask Emails'"
+        @click="maskEmails"
+        variant="soft"
+        color="neutral"
+      />
       <UButton label="Create a new user" @click="newUserModal = true" />
     </template>
 
@@ -33,7 +39,9 @@
                 {{ user.name }}
               </div>
             </td>
-            <td class="p-2">{{ user.email }}</td>
+            <td class="p-2">
+              {{ isEmailsMasked ? maskEmail(user.email) : user.email }}
+            </td>
             <td class="p-2">{{ user.emailVerified ? 'Yes' : 'No' }}</td>
             <td class="p-2">
               <SuperAdminUserBanStatus
@@ -155,6 +163,7 @@ const loadingUserId = ref<string | null>(null)
 const showDeleteUserConfirmation = ref(false)
 const selectedUser = ref<UserWithOAuthAccounts | null>(null)
 const toast = useToast()
+const isEmailsMasked = ref(true)
 
 const { data: users, refresh } = await useFetch<UserWithOAuthAccounts[]>(
   '/api/super-admin/users',
@@ -291,5 +300,17 @@ const startImpersonationSession = async (user: User) => {
     await refreshUserSession()
     window.location.href = '/dashboard'
   }
+}
+
+const maskEmail = (email: string) => {
+  const [localPart, domain] = email.split('@')
+  return `${localPart
+    .split('')
+    .map(() => '•')
+    .join('')}@${domain}`
+}
+
+const maskEmails = () => {
+  isEmailsMasked.value = !isEmailsMasked.value
 }
 </script>
