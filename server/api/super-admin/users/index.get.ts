@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
       hashedPassword: false,
     },
     orderBy: (users, { desc }) => [desc(users.createdAt)],
-    limit: 20,
+    limit: 50,
     offset: 0,
   })
   return users
