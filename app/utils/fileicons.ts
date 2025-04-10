@@ -7,10 +7,12 @@ export function getFileIcon(fileType: string) {
     case 'text/javascript':
     case 'application/javascript':
       return 'i-ph-file-js'
+    case 'application/typescript':
+      return 'i-ph-file-ts'
     case 'text/css':
       return 'i-ph-file-css'
     case 'application/json':
-      return 'i-ph-file-json'
+      return 'i-ph-file-code'
     case 'text/csv':
       return 'i-ph-file-csv'
     case 'text/markdown':
@@ -39,6 +41,7 @@ export function getFileIcon(fileType: string) {
     case 'audio/wav':
     case 'audio/ogg':
     case 'audio/midi':
+    case 'audio/x-m4a':
       return 'i-ph-file-audio'
     case 'image/jpeg':
     case 'image/jpg':

@@ -54,7 +54,7 @@
                 <td class="px-4 py-3">
                   <img
                     v-if="file.type.startsWith('image/')"
-                    :src="getFileUrl(file) || ''"
+                    :src="getFileUrl(file)"
                     class="h-12 w-12 rounded object-cover"
                     :alt="file.fileName"
                   />
@@ -80,7 +80,11 @@
                 </td>
                 <td class="px-4 py-3">
                   <div class="text-sm text-neutral-600 dark:text-neutral-400">
-                    {{ useDateFormat(file.createdAt, 'MMM D, YYYY').value }}
+                    {{
+                      file.createdAt
+                        ? useDateFormat(file.createdAt, 'MMM D, YYYY').value
+                        : '-'
+                    }}
                   </div>
                 </td>
                 <td class="px-4 py-3 text-right">
@@ -90,7 +94,7 @@
                       color="neutral"
                       variant="ghost"
                       size="xs"
-                      :to="`/files/${file.pathname}`"
+                      :to="getFileUrl(file)"
                       target="_blank"
                     />
                     <UButton
@@ -123,90 +127,20 @@
 </template>
 
 <script lang="ts" setup>
-import { z } from 'zod'
-import type { File, InsertFile } from '@@/types/database'
+import { useDateFormat } from '@vueuse/core'
+import { getFileIcon } from '~/utils/fileicons'
 
-import { useDateFormat, useFileDialog } from '@vueuse/core'
-import { getFileIcon } from '@/utils/fileicons'
-
-const deletingFileId = ref<string | null>(null)
 const mobileMenu = useState('mobileMenu')
 const { currentTeam } = useTeam()
-const selectedFile = ref<File | null>(null)
-const loading = ref(false)
 
-// File upload handling
-const { open: openFileDialog, onChange: onFileSelect } = useFileDialog({
-  multiple: false,
-})
-
-// File selection handler
-onFileSelect((files) => {
-  if (!files?.[0]) return
-  handleFileUpload(files[0])
-})
-
-async function handleFileUpload(file: File) {
-  const formData = new FormData()
-  formData.append('file', file)
-  formData.append('size', file.size.toString())
-  formData.append('type', file.type)
-  formData.append('fileName', file.name)
-  try {
-    loading.value = true
-    await createFile(formData)
-    refresh()
-  } catch (error) {
-    console.error(error)
-    throw createError('Failed to upload file')
-  } finally {
-    loading.value = false
-  }
-}
-
-async function createFile(formData: FormData) {
-  try {
-    const response = await $fetch(`/api/teams/${currentTeam.value?.id}/files`, {
-      method: 'POST',
-      body: formData,
-    })
-    return response
-  } catch (error) {
-    console.error(error)
-    throw createError('Failed to upload file')
-  }
-}
-
-const { data: files, refresh } = await useFetch<File[]>(
-  `/api/teams/${currentTeam.value?.id}/files`,
-  {
-    watch: [currentTeam],
-  },
-)
-
-// File size formatter
-function formatFileSize(bytes: string) {
-  const size = parseInt(bytes)
-  if (size < 1024) return size + ' B'
-  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB'
-  return (size / (1024 * 1024)).toFixed(1) + ' MB'
-}
-
-const getFileUrl = (file: File) => {
-  return `/files/${file.pathname}`
-}
-
-const handleDeleteFile = async (fileId: string) => {
-  try {
-    deletingFileId.value = fileId
-    await $fetch(`/api/teams/${currentTeam.value?.id}/files/${fileId}`, {
-      method: 'DELETE',
-    })
-    refresh()
-    selectedFile.value = null
-  } catch (error) {
-    console.error(error)
-    throw createError('Failed to delete file')
-  }
-}
+const {
+  loading,
+  files,
+  selectedFile,
+  deletingFileId,
+  openFileDialog,
+  formatFileSize,
+  getFileUrl,
+  handleDeleteFile,
+} = useFileManager(currentTeam.value?.id)
 </script>

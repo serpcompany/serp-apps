@@ -18,19 +18,19 @@
       >
         <img
           v-if="file.type.startsWith('image/')"
-          :src="getFileUrl(file) || ''"
+          :src="getFileUrl(file)"
           class="h-full w-full object-cover"
-          :alt="file.file"
+          :alt="file.fileName"
         />
         <video
           v-else-if="file.type.startsWith('video/')"
-          :src="getFileUrl(file) || ''"
+          :src="getFileUrl(file)"
           class="h-full w-full"
           controls
           playsinline
         />
         <div v-else-if="file.type.startsWith('audio/')" class="w-full p-4">
-          <audio :src="getFileUrl(file) || ''" class="w-full" controls />
+          <audio :src="getFileUrl(file)" class="w-full" controls />
         </div>
         <div v-else class="flex h-full w-full items-center justify-center">
           <UIcon
@@ -54,23 +54,29 @@
         </div>
         <div class="flex items-center justify-between">
           <p class="text-sm text-neutral-500 dark:text-neutral-400">Owner</p>
-          <p class="text-sm font-medium">
-            {{ file.user?.email || 'Unknown' }}
+          <p class="flex items-center gap-2 text-sm font-medium">
+            <UAvatar :src="file.userId.avatarUrl" size="xs" />
+            {{ file.userId.name }}
           </p>
         </div>
         <div class="flex items-center justify-between">
           <p class="text-sm text-neutral-500 dark:text-neutral-400">Modified</p>
           <p class="text-sm font-medium">
             {{
-              useDateFormat(file.updated || file.created, 'MMM D, YYYY h:mm')
-                .value
+              file.updatedAt
+                ? useDateFormat(file.updatedAt, 'MMM D, YYYY h:mm').value
+                : '-'
             }}
           </p>
         </div>
         <div class="flex items-center justify-between">
           <p class="text-sm text-neutral-500 dark:text-neutral-400">Created</p>
           <p class="text-sm font-medium">
-            {{ useDateFormat(file.created, 'MMM D, YYYY h:mm').value }}
+            {{
+              file.createdAt
+                ? useDateFormat(file.createdAt, 'MMM D, YYYY h:mm').value
+                : '-'
+            }}
           </p>
         </div>
       </div>
@@ -82,7 +88,7 @@
           color="neutral"
           variant="solid"
           block
-          :to="getFileUrl(file) || ''"
+          :to="getFileUrl(file)"
           target="_blank"
         >
           Download
@@ -113,21 +119,23 @@
 
 <script setup lang="ts">
 import { useDateFormat } from '@vueuse/core'
-import { getFileIcon } from '@/utils/fileicons'
+import { getFileIcon } from '~/utils/fileicons'
 
-interface File {
+type File = {
   id: string
-  file: string
-  type: string
-  size: number
-  created: string
-  updated?: string
-  user: {
-    email: string
+  userId: {
     id: string
     name: string
     avatarUrl: string
+    email: string
   }
+  createdAt: Date | null
+  updatedAt: Date | null
+  teamId: string
+  pathname: string
+  fileName: string
+  size: number | null
+  type: string
 }
 
 const { file } = defineProps<{
@@ -143,8 +151,8 @@ const handleDeleteFile = async (id: string) => {
   emit('delete', id)
 }
 
-const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return '0 Bytes'
+const formatFileSize = (bytes: number | null) => {
+  if (!bytes) return '0 Bytes'
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
