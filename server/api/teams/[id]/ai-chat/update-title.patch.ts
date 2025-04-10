@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   const { text: updatedTitle } = await generateText({
     model: openai('gpt-4o-mini'),
-    prompt: `Generate a small title for a conversation - this is the initial message: ${initialMessage}. Only return the final title, no explaination or formatting needed.`,
+    prompt: `Generate a small title for a conversation - this is the initial message: ${initialMessage}. Only return the final title, no explaination or formatting needed or quotes needed, just a raw title string.`,
   })
 
   await updateConversationTitle(chatId, updatedTitle, user.id, teamId)

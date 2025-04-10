@@ -341,9 +341,6 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
       })
     } else {
       const post = await createPost(payload)
-      // if (posts.value) {
-      //   posts.value.unshift(post)
-      // }
       toast.add({
         title: 'Post created',
         description: 'Your post has been created successfully',

@@ -8,7 +8,9 @@
           class="mx-auto w-full max-w-3xl px-4 [&:first-child[data-role='assistant']_.action-buttons]:!opacity-100"
           :data-role="message.role"
         >
-          <AppAiChatMessageBubble :message="message" :preview="preview" />
+          <ClientOnly>
+            <AppAiChatMessageBubble :message="message" :preview="preview" />
+          </ClientOnly>
         </li>
       </ul>
     </ScrollAreaViewport>
@@ -58,9 +60,13 @@ const scrollToBottom = async () => {
 }
 
 // Watch for changes in the messages array
-watch(() => props.messages, () => {
-  scrollToBottom()
-}, { deep: true })
+watch(
+  () => props.messages,
+  () => {
+    scrollToBottom()
+  },
+  { deep: true },
+)
 
 // Initial scroll when component is mounted
 onMounted(() => {
