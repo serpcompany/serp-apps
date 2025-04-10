@@ -8,9 +8,7 @@
           class="mx-auto w-full max-w-3xl px-4 [&:first-child[data-role='assistant']_.action-buttons]:!opacity-100"
           :data-role="message.role"
         >
-          <ClientOnly>
-            <AppAiChatMessageBubble :message="message" :preview="preview" />
-          </ClientOnly>
+          <AppAiChatMessageBubble :message="message" :preview="preview" />
         </li>
       </ul>
     </ScrollAreaViewport>
