@@ -3,12 +3,12 @@
     <div
       class="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-2"
     >
-      <div class="flex flex-1 items-center gap-2">
+      <div class="flex flex-1 items-start gap-2 sm:items-center">
         <div
-          class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 dark:bg-neutral-950 dark:border-white/10"
+          class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 dark:border-white/10 dark:bg-neutral-950"
         >
           <UAvatar
-            :src="`https://logo.clearbit.com/${encodeURIComponent(url.url)}`"
+            :src="`https://img.logo.dev/${encodeURIComponent(getUrlDomain(url.url))}?token=pk_DiLBLzA1St2ipFARbBGklA`"
             icon="i-lucide-globe"
             :ui="{ root: 'size-4' }"
           />
@@ -18,14 +18,17 @@
           <div class="mt-0.5 flex items-center gap-2">
             <UIcon
               name="i-fluent-arrow-enter-24-filled"
-              class="scale-x-[-1] text-sm ml-1"
+              class="ml-1 flex-shrink-0 scale-x-[-1] text-sm"
             />
             <p class="text-xs text-gray-500">{{ url.url }}</p>
           </div>
         </div>
       </div>
       <div class="flex flex-wrap items-center justify-end gap-2">
-        <UBadge :label="`${url.clicks} clicks`" color="neutral" />
+        <UBadge
+          :label="`${numberToKFormatter(url.clicks)} clicks`"
+          color="neutral"
+        />
         <UButton
           color="neutral"
           variant="soft"
@@ -52,6 +55,16 @@
           <template #content>
             <div class="p-2">
               <div v-html="qrCode" class="h-32 w-32"></div>
+              <UButton
+                label="Download"
+                icon="i-lucide-download"
+                block
+                size="sm"
+                class="mt-1"
+                color="neutral"
+                :ui="{ leadingIcon: 'size-4' }"
+                @click="downloadQRCode(url.shortcode)"
+              />
             </div>
           </template>
         </UPopover>
@@ -75,13 +88,31 @@ const props = defineProps<{
   url: Url
 }>()
 
-const { host, copyUrl, copied, generateQRCode, deleteUrl, isDeleting } = useUrlShortner()
+const {
+  host,
+  copyUrl,
+  copied,
+  generateQRCode,
+  deleteUrl,
+  isDeleting,
+  downloadQRCode,
+} = useUrlShortner()
 
 const fullUrl = computed(() => {
-  return `${host}/l/${props.url.shortcode}`
+  // return `${host}/l/${props.url.shortcode}`
+  return `link.supersaas.dev/l/${props.url.shortcode}`
 })
 
 const qrCode = computed(() => {
   return generateQRCode(props.url.shortcode)
 })
+
+const getUrlDomain = (url: string) => {
+  const parsedUrl = new URL(url)
+  return parsedUrl.hostname
+}
+
+const numberToKFormatter = (num: number) => {
+  return num > 1000 ? `${(num / 1000).toFixed(1)}k` : num
+}
 </script>

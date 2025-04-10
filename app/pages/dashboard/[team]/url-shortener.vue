@@ -85,7 +85,7 @@
           <div class="flex items-center gap-2">
             <UButton
               icon="i-lucide-download"
-              @click="downloadQRCode"
+              @click="() => downloadQRCode(state.shortcode || '')"
               color="neutral"
               variant="soft"
             />
@@ -151,6 +151,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     await createUrl(event.data)
     isModalOpen.value = false
+    state.url = undefined
+    state.comments = undefined
+    state.tags = undefined
+    state.logo = undefined
+    state.shortcode = undefined
   } finally {
     loading.value = false
   }

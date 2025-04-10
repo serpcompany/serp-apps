@@ -29,16 +29,55 @@ export const useUrlShortner = () => {
     })
   }
 
-  // Download QR code
-  const downloadQRCode = (shortcode: string) => {
-    const svg = generateQRCode(shortcode)
-    const blob = new Blob([svg], { type: 'image/svg+xml' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'qr-code.svg'
-    a.click()
-    URL.revokeObjectURL(url)
+  async function svgToPng(svg: SVGElement | string): Promise<string> {
+    const svgString =
+      typeof svg === 'string' ? svg : new XMLSerializer().serializeToString(svg)
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml' })
+    const svgUrl = URL.createObjectURL(svgBlob)
+
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = 512
+        canvas.height = 512
+
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          URL.revokeObjectURL(svgUrl)
+          reject(new Error('Failed to get canvas context'))
+          return
+        }
+
+        ctx.drawImage(img, 0, 0)
+        URL.revokeObjectURL(svgUrl)
+        resolve(canvas.toDataURL('image/png'))
+      }
+
+      img.onerror = () => {
+        URL.revokeObjectURL(svgUrl)
+        reject(new Error('Failed to load SVG'))
+      }
+
+      img.src = svgUrl
+    })
+  }
+
+  const downloadQRCode = async (shortcode: string) => {
+    try {
+      if (!shortcode) {
+        throw new Error('Shortcode is required')
+      }
+      const svgString = generateQRCode(shortcode)
+      const pngDataUrl = await svgToPng(svgString)
+
+      const a = document.createElement('a')
+      a.href = pngDataUrl
+      a.download = `${shortcode}.png`
+      a.click()
+    } catch (error) {
+      console.error('Failed to convert QR code to PNG:', error)
+    }
   }
 
   // Get unique shortcode
