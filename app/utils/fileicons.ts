@@ -36,13 +36,13 @@ export function getFileIcon(fileType: string) {
     case 'video/quicktime':
     case 'video/x-msvideo':
     case 'video/x-matroska':
-      return 'i-ph-file-video'
+      return 'i-ph-play-circle-duotone'
     case 'audio/mpeg':
     case 'audio/wav':
     case 'audio/ogg':
     case 'audio/midi':
     case 'audio/x-m4a':
-      return 'i-ph-file-audio'
+      return 'i-ph-music-notes-duotone'
     case 'image/jpeg':
     case 'image/jpg':
       return 'i-ph-file-jpg'
