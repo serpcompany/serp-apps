@@ -44,6 +44,11 @@ const links = computed(() => [
     icon: 'i-lucide-check-circle',
     to: `/dashboard/${currentTeam.value?.slug}/tasks`,
   },
+  {
+    label: 'File manager',
+    icon: 'i-lucide-folder',
+    to: `/dashboard/${currentTeam.value?.slug}/file-manager`,
+  },
 ])
 
 const settings = computed(() => [

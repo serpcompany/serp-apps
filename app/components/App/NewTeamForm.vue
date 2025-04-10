@@ -132,7 +132,7 @@ const uploadLogo = async () => {
       method: 'POST',
       body: formData,
     })
-    return `/images/${filePath}`
+    return `/files/${filePath}`
   } catch (error) {
     if (error instanceof FetchError) {
       throw new Error(`Failed to upload logo: ${error.message || error}`, {

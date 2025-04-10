@@ -200,7 +200,7 @@ const uploadImage = async () => {
       method: 'POST',
       body: formData,
     })
-    return `/images/${filePath}`
+    return `/files/${filePath}`
   } catch (error: any) {
     console.log(error)
     toast.add({
