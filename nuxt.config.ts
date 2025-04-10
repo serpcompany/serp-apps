@@ -50,13 +50,11 @@ export default defineNuxtConfig({
       anchorLinks: false,
     },
     highlight: {
-      highlighter: 'shiki',
       theme: {
         default: 'github-dark',
         light: 'github-light',
         dark: 'github-dark',
       },
-      shikiEngine: 'javascript',
       langs: [
         'ts',
         'js',
