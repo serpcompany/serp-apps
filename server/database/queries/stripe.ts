@@ -29,7 +29,7 @@ export const createOrUpdateStripeProduct = async (payload: InsertProduct) => {
   if (!payload.id) {
     throw new Error('Product ID is required')
   }
-  
+
   // First delete the existing product and its prices
   await useDB()
     .delete(tables.prices)
@@ -39,7 +39,7 @@ export const createOrUpdateStripeProduct = async (payload: InsertProduct) => {
     .delete(tables.products)
     .where(eq(tables.products.id, payload.id))
     .run()
-  
+
   // Then create fresh
   return createStripeProduct(payload)
 }
@@ -48,13 +48,13 @@ export const createOrUpdateStripePrice = async (payload: InsertPrice) => {
   if (!payload.id) {
     throw new Error('Price ID is required')
   }
-  
+
   // First delete the existing price
   await useDB()
     .delete(tables.prices)
     .where(eq(tables.prices.id, payload.id))
     .run()
-  
+
   // Then create fresh
   return createStripePrice(payload)
 }
@@ -67,4 +67,12 @@ export const getAllPlans = async () => {
     orderBy: (prices, { asc }) => [asc(prices.unitAmount)],
   })
   return plans
+}
+
+export const deleteStripeProduct = async (id: string) => {
+  await useDB().delete(tables.products).where(eq(tables.products.id, id)).run()
+}
+
+export const deleteStripePrice = async (id: string) => {
+  await useDB().delete(tables.prices).where(eq(tables.prices.id, id)).run()
 }

@@ -17,6 +17,16 @@
         :key="product.id"
         :title="product.name"
       >
+        <template #actions>
+          <UButton
+            icon="i-lucide-trash-2"
+            color="error"
+            variant="soft"
+            size="sm"
+            :loading="deletingProduct === product.id"
+            @click="deleteProduct(product.id)"
+          />
+        </template>
         <div class="divide-y divide-neutral-100 dark:divide-white/10">
           <div
             v-for="plan in getProductPlans(product.id)"
@@ -107,7 +117,7 @@ const formatPrice = (price: number) => {
 const syncStripeData = async () => {
   try {
     loading.value = true
-    await $fetch('/api/super-admin/sync-stripe-data')
+    await $fetch('/api/super-admin/stripe/sync-products')
     await refreshPlans()
     toast.add({
       title: 'Stripe data synced successfully',
@@ -124,6 +134,32 @@ const syncStripeData = async () => {
     })
   } finally {
     loading.value = false
+  }
+}
+const deletingProduct = ref<string | null>(null)
+const deleteProduct = async (productId: string) => {
+  try {
+    deletingProduct.value = productId
+    await $fetch(`/api/super-admin/stripe/${productId}`, {
+      method: 'DELETE',
+    })
+    await refreshPlans()
+    toast.add({
+      title: 'Product deleted successfully',
+      icon: 'i-lucide-check-circle',
+      color: 'success',
+    })
+  } catch (error) {
+    console.error(error)
+    toast.add({
+      title: 'Failed to delete product',
+      description:
+        error instanceof Error ? error.message : 'An unexpected error occurred',
+      icon: 'i-lucide-alert-circle',
+      color: 'error',
+    })
+  } finally {
+    deletingProduct.value = null
   }
 }
 </script>
