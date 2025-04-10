@@ -70,6 +70,7 @@ export default defineNuxtConfig({
         'swift',
         'csharp',
       ],
+      shikiEngine: 'javascript'
     },
   },
   hub: {
