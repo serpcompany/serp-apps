@@ -167,17 +167,19 @@ const handleSubscriptionEvent = async (data: Stripe.Subscription) => {
     quantity: data.items.data[0].quantity ?? 1,
     cancelAtPeriodEnd: data.cancel_at_period_end,
     currentPeriodEnd: new Date(data.items.data[0].current_period_end * 1000),
-    currentPeriodStart: new Date(
-      data.items.data[0].current_period_start * 1000,
-    ),
+    currentPeriodStart: new Date(data.items.data[0].current_period_start * 1000),
     endedAt: data.ended_at ? new Date(data.ended_at * 1000) : null,
     cancelAt: data.cancel_at ? new Date(data.cancel_at * 1000) : null,
     trialStart: data.trial_start ? new Date(data.trial_start * 1000) : null,
     trialEnd: data.trial_end ? new Date(data.trial_end * 1000) : null,
   })
+
+  // Update user's pro account status based on subscription status
+  const isProAccount = ['active', 'trialing'].includes(data.status)
   await updateUser(userId, {
-    proAccount: data.status === 'active',
+    proAccount: isProAccount,
   })
+
   return subscription
 }
 
