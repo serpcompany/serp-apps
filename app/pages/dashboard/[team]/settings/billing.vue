@@ -27,14 +27,17 @@
                 </div>
                 <UBadge
                   :label="currentPlan.status"
-                  color="success"
+                  :color="getStatusColor(currentPlan.status)"
                   variant="subtle"
                   class="capitalize"
                 />
                 <span class="text-sm text-neutral-500">
-                  Renews on
+                  {{ getSubscriptionMessage(currentPlan) }}
                   {{
-                    useDateFormat(currentPlan.currentPeriodEnd, 'MMM DD, YYYY')
+                    useDateFormat(
+                      currentPlan.cancelAt || currentPlan.currentPeriodEnd,
+                      'MMM DD, YYYY'
+                    )
                   }}
                 </span>
               </div>
@@ -115,6 +118,7 @@ interface BillingPlan {
   amount: number
   interval: string
   priceId: string
+  cancelAt?: Date
 }
 
 const currentPlan = computed<BillingPlan>(() => {
@@ -147,6 +151,7 @@ const currentPlan = computed<BillingPlan>(() => {
     amount: plan.unitAmount,
     interval: plan.interval,
     priceId: plan.id,
+    cancelAt: activeSubscription.value.cancelAt,
   } as BillingPlan
 })
 
@@ -227,6 +232,34 @@ const formatPrice = (price?: number): string => {
     currency: 'USD',
     minimumFractionDigits: 0,
   }).format(price / 100)
+}
+
+const getStatusColor = (status?: string) => {
+  switch (status) {
+    case 'active':
+      return 'success'
+    case 'trialing':
+      return 'primary'
+    case 'canceled':
+    case 'incomplete_expired':
+    case 'unpaid':
+      return 'error'
+    case 'past_due':
+    case 'incomplete':
+      return 'warning'
+    default:
+      return 'neutral'
+  }
+}
+
+const getSubscriptionMessage = (plan: BillingPlan) => {
+  if (plan.cancelAt) {
+    return 'Cancels on'
+  }
+  if (plan.status === 'trialing') {
+    return 'Trial ends on'
+  }
+  return 'Renews on'
 }
 
 onMounted(async () => {
