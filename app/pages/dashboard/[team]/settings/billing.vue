@@ -77,7 +77,9 @@
         :active="currentPlan.id === plan.id"
         :loading="loadingPriceId === plan.id"
         :disabled="disabled"
+        :has-active-subscription="!!activeSubscription"
         @subscribe="handleSubscribe"
+        @manage="handleManageSubscription"
       />
     </div>
   </AppContainer>
