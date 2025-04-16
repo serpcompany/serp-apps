@@ -16,7 +16,7 @@
                 You are on
                 <span class="font-bold">{{ currentPlan.name }}</span> plan
               </h3>
-              <div class="flex flex-wrap items-center gap-3">
+              <div class="flex flex-wrap items-ce gap-3">
                 <div class="flex items-center gap-2">
                   <span class="text-xl font-semibold">{{
                     formatPrice(currentPlan.amount)

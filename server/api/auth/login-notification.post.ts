@@ -12,23 +12,23 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Missing required user information',
     })
   }
-
   // Get location information from Cloudflare headers if available
   const city = event.context.cf.city
   const country = event.context.cf.country
-
   // Only send email if we have location information
   try {
     const htmlTemplate = await render(LoginNotification, {
       userName: user.name,
+      email: user.email,
       city,
       country,
+      loginMethod: 'Email',
     })
 
     if (!env.MOCK_EMAIL) {
       await sendEmail({
         to: user.email,
-        subject: 'Login from a new location',
+        subject: 'Recent login to your account',
         html: htmlTemplate,
       })
     }
