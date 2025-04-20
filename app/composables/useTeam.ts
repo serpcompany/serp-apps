@@ -100,13 +100,6 @@ export const useTeam = () => {
         color: 'success',
       })
       return updatedTeam
-    } catch (error) {
-      toast.add({
-        title: 'Failed to update team',
-        description: (error as FetchError).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
@@ -121,13 +114,6 @@ export const useTeam = () => {
         title: 'Team deleted successfully',
         color: 'success',
       })
-    } catch (error) {
-      toast.add({
-        title: 'Failed to delete team',
-        description: (error as FetchError).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
@@ -176,12 +162,8 @@ export const useTeam = () => {
           method: 'POST',
         },
       )
-    } catch (error) {
-      toast.add({
-        title: 'Failed to resend invite',
-        description: (error as FetchError).statusMessage,
-        color: 'error',
-      })
+    } finally {
+      loading.value = false
     }
   }
 

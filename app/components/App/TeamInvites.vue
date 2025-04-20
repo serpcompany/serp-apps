@@ -83,7 +83,7 @@ import { useDateFormat } from '@vueuse/core'
 import type { TeamInvite } from '@@/types/database'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { currentTeam, cancelInvite } = useTeam()
+const { currentTeam, cancelInvite, resendInvite } = useTeam()
 const toast = useToast()
 
 const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvite[]>(`/api/teams/${currentTeam.value.id}/invites`, {
@@ -108,12 +108,7 @@ const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
       label: 'Resend Invite',
       onSelect: async () => {
         try {
-          await $fetch(
-            `/api/teams/${currentTeam.value.id}/invites/${invite.id}/resend`,
-            {
-              method: 'POST',
-            },
-          )
+          resendInvite(invite.id)
           toast.add({
             title: 'Invite resent successfully!',
             color: 'success',

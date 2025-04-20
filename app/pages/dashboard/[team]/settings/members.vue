@@ -100,7 +100,7 @@ const onSubmit = async (event: FormSubmitEvent<z.infer<typeof schema>>) => {
     await refreshNuxtData('team-invites')
   } catch (error) {
     toast.add({
-      title: 'Error inviting member',
+      title: 'Failed to invite member',
       description: (error as FetchError).data.message,
       color: 'error',
     })

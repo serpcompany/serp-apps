@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '#ui/types'
 
+const toast = useToast()
 const { teamSchema, updateTeam, currentTeam, loading } = useTeam()
 const selectedFile = ref<File | null>(null)
 
@@ -104,7 +105,11 @@ const onSubmit = async (event: FormSubmitEvent<typeof teamSchema>) => {
 
     await updateTeam(currentTeam.value.id, teamData)
   } catch (error) {
-    console.error(error)
+    toast.add({
+      title: 'Failed to update team',
+      description: (error as any).statusMessage,
+      color: 'error',
+    })
   }
 }
 
