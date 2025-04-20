@@ -10,10 +10,10 @@ export const subscribers = sqliteTable('subscribers', {
   email: text('email').notNull().unique(),
   referrer: text('referrer'),
   meta: text('meta', { mode: 'json' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })
@@ -29,7 +29,7 @@ export const feedback = sqliteTable('feedback', {
   status: text('status').notNull().default('pending'),
   reply: text('reply'),
   meta: text('meta', { mode: 'json' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
 })

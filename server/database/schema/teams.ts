@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { users } from './users'
-import { relations } from 'drizzle-orm'
 import { subscriptions } from './subscriptions'
+import { relations } from 'drizzle-orm'
 
 export const teams = sqliteTable('teams', {
   id: text('id')
@@ -14,10 +14,10 @@ export const teams = sqliteTable('teams', {
     .references(() => users.id, { onDelete: 'cascade' }),
   logo: text('logo'),
   slug: text('slug').notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })
@@ -33,10 +33,10 @@ export const teamMembers = sqliteTable('team_members', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   role: text('role').notNull().default('member'), // 'owner', 'admin', 'member'
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })
@@ -53,7 +53,7 @@ export const teamInvites = sqliteTable('team_invites', {
   token: text('token').notNull(),
   status: text('status').notNull().default('pending'),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
 })
