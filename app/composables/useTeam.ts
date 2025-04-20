@@ -122,7 +122,7 @@ export const useTeam = () => {
   const inviteMember = async (email: string, role = 'member') => {
     loading.value = true
     try {
-      await $fetch(`/api/teams/${currentTeam.value.id}/members`, {
+      return await $fetch(`/api/teams/${currentTeam.value.id}/members`, {
         method: 'POST',
         body: { email, role },
       })
@@ -134,20 +134,9 @@ export const useTeam = () => {
   const cancelInvite = async (inviteId: string) => {
     loading.value = true
     try {
-      await $fetch(`/api/teams/${currentTeam.value.id}/invites/${inviteId}`, {
+      return await $fetch(`/api/teams/${currentTeam.value.id}/invites/${inviteId}`, {
         method: 'DELETE',
       })
-      toast.add({
-        title: 'Invite cancelled successfully',
-        color: 'success',
-      })
-    } catch (error) {
-      toast.add({
-        title: 'Failed to cancel invite',
-        description: (error as FetchError).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }

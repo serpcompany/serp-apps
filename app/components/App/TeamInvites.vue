@@ -82,6 +82,7 @@
 import { useDateFormat } from '@vueuse/core'
 import type { TeamInvite } from '@@/types/database'
 import type { DropdownMenuItem } from '@nuxt/ui'
+import type { FetchError } from 'ofetch'
 
 const { currentTeam, cancelInvite, resendInvite } = useTeam()
 const toast = useToast()
@@ -108,14 +109,15 @@ const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
       label: 'Resend Invite',
       onSelect: async () => {
         try {
-          resendInvite(invite.id)
+          await resendInvite(invite.id)
           toast.add({
             title: 'Invite resent successfully!',
             color: 'success',
           })
-        } catch {
+        } catch (error) {
           toast.add({
             title: 'Failed to resend invite',
+            description: (error as FetchError).statusMessage,
             color: 'error',
           })
         }
@@ -126,7 +128,20 @@ const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
       label: 'Cancel Invite',
       color: 'error' as const,
       onSelect: async () => {
-        await cancelInvite(invite.id)
+        try {
+          await cancelInvite(invite.id)
+          toast.add({
+            title: 'Invite cancelled successfully',
+            color: 'success',
+          })
+        } catch (error) {
+          toast.add({
+            title: 'Failed to cancel invite',
+            description: (error as FetchError).statusMessage,
+            color: 'error',
+          })
+        }
+          
         await fetchTeamInvites()
       },
     },

@@ -28,6 +28,12 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Invitation not found',
     })
   }
+  if (invitation.status === 'accepted') {
+    throw createError({
+      statusCode: 422,
+      statusMessage: 'Invitation has already been accepted',
+    })
+  }
 
   // Update invitation expiry
   await updateTeamInvite(inviteId, {
