@@ -141,7 +141,7 @@ const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
             color: 'error',
           })
         }
-          
+
         await fetchTeamInvites()
       },
     },

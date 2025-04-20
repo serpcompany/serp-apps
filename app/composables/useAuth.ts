@@ -16,12 +16,12 @@ export const useAuth = () => {
   const { fetch: refreshSession, clear } = useUserSession()
 
   const handleAuthError = (error: FetchError<AuthError>) => {
-    const errorMessage = error.data?.message || 'An unexpected error occurred'
+    const errorMessage = error.statusMessage || 'An unexpected error occurred'
     const statusCode = error.data?.statusCode
 
     // Check if this is an unverified email error
-    if (error.data?.data?.needsVerification) {
-      const email = error.data.data.email
+    if (error.data?.needsVerification) {
+      const email = error.data.email
 
       // Add toast with action button
       toast.add({
@@ -49,9 +49,9 @@ export const useAuth = () => {
 
     return {
       error: {
-        message: errorMessage,
+        statusMessage: errorMessage,
         statusCode,
-        data: error.data?.data,
+        data: error.data,
       } as AuthError,
     }
   }

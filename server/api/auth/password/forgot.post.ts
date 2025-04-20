@@ -19,7 +19,8 @@ export default defineEventHandler(async (event) => {
   const user = await findUserByEmail(email)
   if (!user) {
     // Return 200 even if user not found for security
-    sendNoContent(event); return
+    sendNoContent(event)
+    return
   }
 
   // 3. Generate reset token

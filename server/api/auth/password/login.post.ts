@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   if (!user) {
     throw createError({
       statusCode: 400,
-      message: 'User not found',
+      statusMessage: 'User not found',
     })
   }
   // 3. Check if user uses OAuth (should use OAuth login instead)
@@ -41,14 +41,14 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: 400,
-      message: `Your account is linked to ${providerList}. Please sign in using ${providers.length > 1 ? 'one of these providers' : 'this provider'} instead of password.`,
+      statusMessage: `Your account is linked to ${providerList}. Please sign in using ${providers.length > 1 ? 'one of these providers' : 'this provider'} instead of password.`,
     })
   }
   // 4. Verify password
   if (!user.hashedPassword) {
     throw createError({
       statusCode: 400,
-      message:
+      statusMessage:
         'This account was registered via a social login (e.g., Google, GitHub). Please use the same method to log in.',
     })
   }
@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
   if (!isPasswordCorrect) {
     throw createError({
       statusCode: 400,
-      message: 'Invalid password',
+      statusMessage: 'Invalid password',
     })
   }
 
@@ -69,11 +69,9 @@ export default defineEventHandler(async (event) => {
   if (!user.emailVerified) {
     throw createError({
       statusCode: 400,
-      message: 'Email not verified',
-      data: {
-        needsVerification: true,
-        email: user.email,
-      },
+      statusMessage: 'Email not verified',
+      needsVerification: true,
+      email: user.email,
     } as AuthError)
   }
 
@@ -81,7 +79,7 @@ export default defineEventHandler(async (event) => {
   if (user.banned && user.bannedUntil && user.bannedUntil > new Date()) {
     throw createError({
       statusCode: 403,
-      message: 'You account has been banned',
+      statusMessage: 'You account has been banned',
     })
   }
 

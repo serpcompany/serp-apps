@@ -30,7 +30,7 @@ export async function sendEmail({ to, subject, text, html }: EmailPayload) {
       text,
       html,
     })
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to send email',

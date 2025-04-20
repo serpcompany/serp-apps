@@ -1,12 +1,10 @@
 import type { InsertUser } from '@@/types/database'
 
 export interface AuthError {
-  message: string
-  statusCode?: number
-  data?: {
-    needsVerification: boolean
-    email: string
-  } | undefined
+  statusCode: number
+  statusMessage: string
+  needsVerification?: boolean
+  email?: string
 }
 
 export type SanitizedUser = Omit<
