@@ -121,7 +121,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     // Emit event to notify parent component
     emit('user-created', response)
   } catch (error) {
-    const errorMessage = (error instanceof FetchError ? error?.data?.message : null) || 'Failed to create user'
+    const errorMessage = (error instanceof FetchError ? error.data?.message : null) || 'Failed to create user'
     toast.add({
       title: 'Error',
       description: errorMessage,

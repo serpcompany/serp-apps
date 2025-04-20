@@ -185,7 +185,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>
 
 const { data: posts, refresh } = await useFetch(
-  `/api/teams/${currentTeam.value?.id}/posts`,
+  `/api/teams/${currentTeam.value.id}/posts`,
   {
     watch: [currentTeam],
   },
@@ -216,7 +216,7 @@ const uploadImage = async () => {
 const createPost = async (post: Partial<InsertPost>) => {
   try {
     const { data, error } = await useFetch(
-      `/api/teams/${currentTeam.value?.id}/posts`,
+      `/api/teams/${currentTeam.value.id}/posts`,
       {
         method: 'POST',
         body: post,
@@ -242,7 +242,7 @@ const createPost = async (post: Partial<InsertPost>) => {
 const updatePost = async (id: string, post: Partial<Post>) => {
   try {
     const updatedPost = await $fetch<Post>(
-      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+      `/api/teams/${currentTeam.value.id}/posts/${id}`,
       {
         method: 'PATCH',
         body: post,
@@ -264,7 +264,7 @@ const deletePost = async (id: string) => {
   try {
     deletingPostId.value = id
     return await $fetch<Post>(
-      `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+      `/api/teams/${currentTeam.value.id}/posts/${id}`,
       {
         method: 'DELETE',
       },

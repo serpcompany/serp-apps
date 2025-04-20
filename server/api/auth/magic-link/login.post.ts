@@ -91,5 +91,5 @@ export default defineEventHandler(async (event) => {
       html: emailHtml,
     })
   }
-  return sendNoContent(event)
+  sendNoContent(event)
 })

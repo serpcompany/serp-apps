@@ -30,7 +30,7 @@ export const useTeam = () => {
       return teams.value[0] || ({} as Team)
     }
 
-    const team = teams.value?.find((team) => team.slug === teamSlug.value)
+    const team = teams.value.find((team) => team.slug === teamSlug.value)
     if (!team) {
       throw createError('Team not found')
     }
@@ -41,7 +41,7 @@ export const useTeam = () => {
   watch(
     currentTeam,
     (team) => {
-      isTeamOwner.value = team?.ownerId === user.value?.id
+      isTeamOwner.value = team.ownerId === user.value?.id
     },
     { immediate: true },
   )
@@ -136,7 +136,7 @@ export const useTeam = () => {
   const inviteMember = async (email: string, role = 'member') => {
     loading.value = true
     try {
-      await $fetch(`/api/teams/${currentTeam?.value?.id}/members`, {
+      await $fetch(`/api/teams/${currentTeam.value.id}/members`, {
         method: 'POST',
         body: { email, role },
       })
@@ -148,7 +148,7 @@ export const useTeam = () => {
   const cancelInvite = async (inviteId: string) => {
     loading.value = true
     try {
-      await $fetch(`/api/teams/${currentTeam?.value?.id}/invites/${inviteId}`, {
+      await $fetch(`/api/teams/${currentTeam.value.id}/invites/${inviteId}`, {
         method: 'DELETE',
       })
       toast.add({
@@ -171,7 +171,7 @@ export const useTeam = () => {
     loading.value = true
     try {
       await $fetch(
-        `/api/teams/${currentTeam?.value?.id}/invites/${inviteId}/resend`,
+        `/api/teams/${currentTeam.value.id}/invites/${inviteId}/resend`,
         {
           method: 'POST',
         },
@@ -188,7 +188,7 @@ export const useTeam = () => {
   const removeTeamMember = async (memberId: string) => {
     loading.value = true
     try {
-      if (!currentTeam.value?.id) return
+      if (!currentTeam.value.id) return
 
       await $fetch(`/api/teams/${currentTeam.value.id}/members/${memberId}`, {
         method: 'DELETE',

@@ -62,7 +62,7 @@ import type { FormSubmitEvent } from '#ui/types'
 import type { z } from 'zod'
 import { inviteTeamMemberSchema } from '@@/shared/validations/team'
 import { UserRole } from '@@/constants'
-import { FetchError } from 'ofetch'
+import type { FetchError } from 'ofetch'
 
 const { currentTeam, inviteMember, loading } = useTeam()
 const toast = useToast()

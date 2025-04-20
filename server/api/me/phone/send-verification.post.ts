@@ -48,5 +48,5 @@ export default defineEventHandler(async (event) => {
     console.log(error)
   }
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Update invitation expiry
-  const updatedInvitation = await updateTeamInvite(inviteId, {
+  await updateTeamInvite(inviteId, {
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
   })
 
@@ -55,6 +55,4 @@ export default defineEventHandler(async (event) => {
       html: htmlTemplate,
     })
   }
-
-  return updatedInvitation
 })

@@ -42,7 +42,7 @@ export const usePosts = async () => {
   type Schema = z.output<typeof schema>
 
   const { data: posts, refresh } = await useFetch<Post[]>(
-    () => `/api/teams/${currentTeam.value?.id}/posts`,
+    () => `/api/teams/${currentTeam.value.id}/posts`,
     {
       watch: [currentTeam],
       default: () => [],
@@ -74,7 +74,7 @@ export const usePosts = async () => {
   const createPost = async (post: Partial<InsertPost>) => {
     try {
       const { data, error } = await useFetch<Post>(
-        `/api/teams/${currentTeam.value?.id}/posts`,
+        `/api/teams/${currentTeam.value.id}/posts`,
         {
           method: 'POST',
           body: post,
@@ -100,7 +100,7 @@ export const usePosts = async () => {
   const updatePost = async (id: string, post: Partial<Post>) => {
     try {
       const updatedPost = await $fetch<Post>(
-        `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+        `/api/teams/${currentTeam.value.id}/posts/${id}`,
         {
           method: 'PATCH',
           body: post,
@@ -122,7 +122,7 @@ export const usePosts = async () => {
     try {
       deletingPostId.value = id
       return await $fetch<Post>(
-        `/api/teams/${currentTeam.value?.id}/posts/${id}`,
+        `/api/teams/${currentTeam.value.id}/posts/${id}`,
         {
           method: 'DELETE',
         },

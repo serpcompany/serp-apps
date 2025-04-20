@@ -10,5 +10,5 @@ export default defineEventHandler(async (event) => {
   }
   const { id } = getRouterParams(event)
   await deleteFeedback(id)
-  return sendNoContent(event)
+  sendNoContent(event)
 })

@@ -97,5 +97,5 @@ export default defineEventHandler(async (event) => {
     email: user.email,
   })
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

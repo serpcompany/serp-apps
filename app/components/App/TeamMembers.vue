@@ -105,7 +105,7 @@ interface TeamMember {
   createdAt: Date
 }
 const { data: members, refresh: refreshMembers } = await useFetch<TeamMember[]>(
-  `/api/teams/${currentTeam.value?.id}/members`,
+  `/api/teams/${currentTeam.value.id}/members`,
 )
 const columns = ['Name', 'Email', 'Role', 'Last Login', 'Created At']
 const toast = useToast()

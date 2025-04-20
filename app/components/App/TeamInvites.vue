@@ -86,7 +86,7 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 const { currentTeam, cancelInvite } = useTeam()
 const toast = useToast()
 
-const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvite[]>(`/api/teams/${currentTeam.value?.id}/invites`, {
+const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvite[]>(`/api/teams/${currentTeam.value.id}/invites`, {
   key: 'team-invites',
 })
 
@@ -109,7 +109,7 @@ const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
       onSelect: async () => {
         try {
           await $fetch(
-            `/api/teams/${currentTeam.value?.id}/invites/${invite.id}/resend`,
+            `/api/teams/${currentTeam.value.id}/invites/${invite.id}/resend`,
             {
               method: 'POST',
             },

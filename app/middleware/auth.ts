@@ -34,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     })
     if (teamSlug.value) teamSlug.value = ''
     if (teams.value.length) teams.value = []
-    return navigateTo('/auth/login')
+    return await navigateTo('/auth/login')
   }
 
   // Check for invite token, this means the user was not logged in or did not have an account when they clicked the verification link,
@@ -49,14 +49,14 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     // Redirect if token still valid
     try {
       await getInvite(inviteTokenStr)
-      return navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
+      return await navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
     } catch {
       // Invalid token means user already verified it upon submitting registration
     }
   }
 
   // If teams aren't loaded yet, fetch them
-  if (!teams.value?.length) {
+  if (!teams.value.length) {
     teams.value = await useTeam().getMemberships()
 
     // If there are teams and we're coming from registration via invite, skip onboarding
@@ -68,7 +68,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     }
 
     if ((paramSlug || teamSlug.value) && !teams.value.length) {
-      return handleTeamRedirect()
+      return await handleTeamRedirect()
     }
   }
 
@@ -78,12 +78,12 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     || to.fullPath === '/dashboard/'
     || (teams.value.length && to.fullPath === '/dashboard/onboard')
   ) {
-    return handleTeamRedirect()
+    return await handleTeamRedirect()
   }
 
   // Validate that the team in the slug belongs to the user
   if (paramSlug && !teams.value.find((team) => team.slug === paramSlug)) {
-    return handleTeamRedirect()
+    return await handleTeamRedirect()
   } else if (paramSlug) {
     teamSlug.value = paramSlug
   }

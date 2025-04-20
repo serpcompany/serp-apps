@@ -41,6 +41,7 @@ const state = reactive<Partial<Schema>>({
     browser: navigator.userAgent,
     screenResolution: `${window.innerWidth}x${window.innerHeight}`,
     language: navigator.language,
+
     platform: navigator.platform,
     colorScheme: useColorMode().preference,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,

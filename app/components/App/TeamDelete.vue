@@ -68,7 +68,7 @@ const formSchema = z.object({
   teamName: z
     .string()
     .min(1, 'Team name is required')
-    .refine((val) => val === currentTeam.value?.name, {
+    .refine((val) => val === currentTeam.value.name, {
       message: 'Team name does not match',
     }),
 })

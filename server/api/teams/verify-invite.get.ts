@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   // 3. Validate user session and permissions
   const session = await getUserSession(event)
 
-  if (session?.user) {
+  if (session.user) {
     if (session.user.email !== invite.email) {
       throw createError({
         statusCode: 403,
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (!session?.user || !(await findUserById(session.user.id))) {
+  if (!session.user || !(await findUserById(session.user.id))) {
     setCookie(event, 'invite-token', token, {
       maxAge: 60 * 60 * 24, // discard cookie after 1 day
       path: '/',

@@ -56,5 +56,5 @@ export default defineEventHandler(async (event) => {
     },
   )
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

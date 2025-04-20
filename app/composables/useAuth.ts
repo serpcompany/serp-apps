@@ -16,11 +16,11 @@ export const useAuth = () => {
   const { fetch: refreshSession, clear } = useUserSession()
 
   const handleAuthError = (error: FetchError<AuthError>) => {
-    const errorMessage = error?.data?.message || 'An unexpected error occurred'
-    const statusCode = error?.data?.statusCode
+    const errorMessage = error.data?.message || 'An unexpected error occurred'
+    const statusCode = error.data?.statusCode
 
     // Check if this is an unverified email error
-    if (error?.data?.data?.needsVerification) {
+    if (error.data?.data?.needsVerification) {
       const email = error.data.data.email
 
       // Add toast with action button
@@ -51,7 +51,7 @@ export const useAuth = () => {
       error: {
         message: errorMessage,
         statusCode,
-        data: error?.data?.data,
+        data: error.data?.data,
       } as AuthError,
     }
   }
@@ -87,7 +87,7 @@ export const useAuth = () => {
         method: 'POST',
         body: userData,
       })
-      return { success: true, emailVerified: user?.emailVerified }
+      return { success: true, emailVerified: user.emailVerified }
     } catch (error) {
       return handleAuthError(error as FetchError<AuthError>)
     }

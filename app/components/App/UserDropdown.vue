@@ -71,10 +71,10 @@ const items = ref([
   [
     {
       slot: 'profile',
-      label: user?.value?.name,
+      label: user.value?.name,
       avatar: {
-        src: user?.value?.avatarUrl || '',
-        alt: user?.value?.name,
+        src: user.value?.avatarUrl || '',
+        alt: user.value?.name,
       },
       type: 'label',
       onSelect: () => {

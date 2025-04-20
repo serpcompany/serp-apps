@@ -97,7 +97,7 @@ const { data: activeSubscription } = await useFetch<ExpandedSubscription>(
   '/api/stripe/subscription',
   {
     query: {
-      teamId: currentTeam.value?.id,
+      teamId: currentTeam.value.id,
     },
   },
 )
@@ -161,7 +161,7 @@ const handleSubscribe = async (priceId: string) => {
     loadingPriceId.value = priceId
     disabled.value = true
 
-    if (!currentTeam.value?.id || !currentTeam.value?.slug) {
+    if (!currentTeam.value.id || !currentTeam.value.slug) {
       throw new Error('Team information is missing')
     }
 
@@ -197,7 +197,7 @@ const handleManageSubscription = async () => {
   try {
     loadingPortal.value = true
 
-    if (!currentTeam.value?.id) {
+    if (!currentTeam.value.id) {
       throw new Error('Team information is missing')
     }
 

@@ -4,5 +4,5 @@ export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
   const { providerId } = getRouterParams(event)
   await unlinkAccount(user.id, providerId)
-  return sendNoContent(event)
+  sendNoContent(event)
 })
