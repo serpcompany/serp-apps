@@ -20,7 +20,7 @@
         name="i-lucide-image-plus"
         class="h-4 w-5 text-neutral-400"
       />
-      <img v-else :src="model" class="h-full w-full object-cover" />
+      <img v-else :src="model" class="h-full w-full object-cover">
     </button>
   </div>
 </template>

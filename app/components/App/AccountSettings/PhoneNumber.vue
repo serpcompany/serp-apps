@@ -25,8 +25,8 @@
           color="neutral"
           :loading="loading"
           :disabled="loading || !isValidPhoneNumber"
-          @click="sendVerificationCode"
           label="Verify Phone Number"
+          @click="sendVerificationCode"
         />
 
         <UButton
@@ -35,8 +35,8 @@
           variant="ghost"
           :loading="loading"
           :disabled="loading"
-          @click="removePhoneNumber"
           label="Remove"
+          @click="removePhoneNumber"
         />
       </div>
     </div>
@@ -63,8 +63,8 @@
           color="neutral"
           :loading="loading"
           :disabled="loading || otpCode.length !== 6"
-          @click="verifyCode"
           label="Verify"
+          @click="verifyCode"
         />
 
         <UButton
@@ -83,8 +83,8 @@
           color="neutral"
           variant="ghost"
           :disabled="loading"
-          @click="mode = 'input'"
           label="Cancel"
+          @click="mode = 'input'"
         />
       </div>
     </div>
@@ -102,8 +102,8 @@
 
       <UButton
         color="neutral"
-        @click="mode = 'input'"
         label="Change Phone Number"
+        @click="mode = 'input'"
       />
     </div>
   </UCard>

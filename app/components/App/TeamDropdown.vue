@@ -19,8 +19,8 @@
     />
   </UDropdownMenu>
   <UDrawer
-    :ui="{ container: 'max-w-xl mx-auto' }"
     v-model:open="newTeamModal"
+    :ui="{ container: 'max-w-xl mx-auto' }"
     title="Create a new team"
     description="A team is a workspace for your organization."
   >

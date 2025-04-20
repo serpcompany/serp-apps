@@ -48,7 +48,10 @@
   "compounds": [
     {
       "name": "Next Dev Full Stack",
-      "configurations": ["Nuxt Dev Server", "Chrome Browser"]
+      "configurations": [
+        "Nuxt Dev Server",
+        "Chrome Browser"
+      ]
     }
   ]
 }

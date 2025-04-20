@@ -8,8 +8,8 @@
             size="lg"
             color="neutral"
             :loading="creating"
-            @click="modal = true"
             :disabled="creating"
+            @click="modal = true"
           >
             Add Passkey
           </UButton>
@@ -54,8 +54,8 @@
       </div>
     </UCard>
     <UDrawer
-      title="Register a new passkey"
       v-model:open="modal"
+      title="Register a new passkey"
       :ui="{ container: 'max-w-xl mx-auto' }"
     >
       <template #body>

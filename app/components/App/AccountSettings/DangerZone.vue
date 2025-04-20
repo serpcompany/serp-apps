@@ -32,11 +32,11 @@
 
         <div class="mt-6 flex justify-end gap-2">
           <UButton
-            @click="deleteAccountModal = false"
             label="Cancel"
             variant="ghost"
             color="neutral"
             :loading="isDeleting"
+            @click="deleteAccountModal = false"
           />
           <UButton
             type="submit"

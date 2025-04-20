@@ -11,10 +11,10 @@
       as a super admin. Please proceed with caution.
     </div>
     <UButton
-      @click="stopImpersonation()"
       size="xs"
       color="neutral"
       label="Stop session"
+      @click="stopImpersonation()"
     />
   </div>
 </template>

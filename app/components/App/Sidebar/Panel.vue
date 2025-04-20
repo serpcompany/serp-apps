@@ -7,8 +7,8 @@
   </div>
   <USlideover
     v-else
-    side="left"
     v-model:open="model"
+    side="left"
     :ui="{ content: 'max-w-[75%] sm:max-w-[50%]' }"
   >
     <template #content>

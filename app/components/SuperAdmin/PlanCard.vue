@@ -5,10 +5,10 @@
         class="border-b border-neutral-100 px-4 py-2 dark:border-white/10 flex items-center justify-between"
       >
         <p class="text-sm text-neutral-500">{{ title }}</p>
-        <slot name="actions"></slot>
+        <slot name="actions" />
       </header>
       <div class="p-4">
-        <slot></slot>
+        <slot />
         <p v-if="description" class="text-sm text-neutral-500">
           {{ description }}
         </p>

@@ -8,12 +8,12 @@
     </UFormField>
     <UFormField label="Password" name="password" required>
       <UInput
+        ref="passwordInput"
         v-model="state.password"
         :type="copied ? 'text' : 'password'"
         class="w-full"
         size="lg"
         :ui="{ trailing: 'pr-1' }"
-        ref="passwordInput"
       >
         <template #trailing>
           <UTooltip text="Generate Password" :content="{ side: 'right' }">
@@ -38,14 +38,14 @@
     </UFormField>
     <UFormField label="Avatar" name="avatar">
       <AppAvatarUploader
-        :avatar-size="'md'"
         v-model="state.avatarUrl"
+        :avatar-size="'md'"
         @file-selected="handleFileSelected"
       />
     </UFormField>
     <UCheckbox
-      size="lg"
       v-model="state.emailVerified"
+      size="lg"
       label="Auto verify user"
       description="If checked, the user will be automatically verified after registration."
     />

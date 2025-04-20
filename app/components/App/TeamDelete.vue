@@ -27,8 +27,8 @@
           <UForm
             :schema="formSchema"
             :state="formState"
-            @submit="handleSubmit"
             class="space-y-4"
+            @submit="handleSubmit"
           >
             <UFormField
               label="Team Name"
