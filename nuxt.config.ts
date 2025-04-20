@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-auth-utils',
     'nuxthub-ratelimit',
+    '@nuxt/eslint',
   ],
   colorMode: {
     preference: 'system',
@@ -30,6 +31,20 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-07-30',
   auth: {
     webAuthn: true,
+  },
+  eslint: {
+    config: {
+      standalone: true,
+      typescript: {
+        strict: false,
+      },
+      stylistic: {
+        indent: 2,
+        semi: false,
+        quotes: 'single',
+        commaDangle: 'always-multiline',
+      },
+    },
   },
   nitro: {
     rollupConfig: {
