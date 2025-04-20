@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f6b54c42-d3ed-4950-97d5-aff7fba5385b",
+  "id": "26d93add-ea13-45dd-aea0-701038a48ae3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feedback": {
@@ -800,6 +800,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "accepted_at": {
+          "name": "accepted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "accepted_by": {
+          "name": "accepted_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -821,6 +835,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "team_invites_accepted_by_users_id_fk": {
+          "name": "team_invites_accepted_by_users_id_fk",
+          "tableFrom": "team_invites",
+          "tableTo": "users",
+          "columnsFrom": [
+            "accepted_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },

@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
 
   // 6. Process invite acceptance
   await acceptTeamInvite(invite, session.user.id)
-  await updateInviteStatus(invite.id, 'accepted')
+  await updateInviteStatus(invite.id, 'accepted', session.user.id)
   deleteCookie(event, 'invite-token')
   deleteCookie(event, 'invite-email')
 

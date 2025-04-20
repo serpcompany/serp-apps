@@ -118,8 +118,11 @@ CREATE TABLE `team_invites` (
 	`token` text NOT NULL,
 	`status` text DEFAULT 'pending' NOT NULL,
 	`expires_at` integer NOT NULL,
+	`accepted_at` integer,
+	`accepted_by` text,
 	`created_at` integer,
-	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`accepted_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `team_members` (
