@@ -4,7 +4,7 @@ import type { TableColumn } from '@nuxt/ui'
 
 const UBadge = resolveComponent('UBadge')
 
-type Invoice = {
+interface Invoice {
   id: string
   planName: string
   amount: number

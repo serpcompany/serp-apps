@@ -39,7 +39,7 @@ const teams = useState<Team[]>('teams')
 const { setLastUsedTeam } = useTeamPreferences()
 
 const getAvatarProps = (team?: Team) => ({
-  src: team?.logo as string,
+  src: team?.logo!,
   size: 'xs' as const,
 })
 
@@ -54,7 +54,7 @@ const items = computed(() => {
   const allTeams = teams.value.map((team) => ({
     label: team.name,
     avatar: {
-      src: team.logo as string,
+      src: team.logo!,
       size: '2xs' as const,
     },
     type: 'checkbox' as const,

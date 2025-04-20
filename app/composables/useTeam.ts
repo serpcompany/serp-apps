@@ -53,7 +53,7 @@ export const useTeam = () => {
       const { data: memberships } = await useFetch<Team[]>(
         '/api/me/memberships',
       )
-      return memberships.value as Team[]
+      return memberships.value!
     } finally {
       loading.value = false
     }
@@ -134,7 +134,7 @@ export const useTeam = () => {
     }
   }
 
-  const inviteMember = async (email: string, role: string = 'member') => {
+  const inviteMember = async (email: string, role = 'member') => {
     loading.value = true
     try {
       await $fetch(`/api/teams/${currentTeam?.value?.id}/members`, {

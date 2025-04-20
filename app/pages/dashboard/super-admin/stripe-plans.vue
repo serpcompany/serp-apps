@@ -82,8 +82,8 @@
 <script lang="ts" setup>
 const loading = ref(false)
 const toast = useToast()
-const { data: plans, refresh: refreshPlans } =
-  await useFetch('/api/stripe/plans')
+const { data: plans, refresh: refreshPlans }
+  = await useFetch('/api/stripe/plans')
 
 // Compute unique products from plans
 const uniqueProducts = computed(() => {

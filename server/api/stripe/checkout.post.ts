@@ -13,7 +13,7 @@ interface CheckoutBody {
 
 async function getOrCreateCustomer(
   teamId: string,
-  user: { id: string; email: string },
+  user: { id: string, email: string },
 ) {
   try {
     const customerRecord = await getCustomerByTeamId(teamId)

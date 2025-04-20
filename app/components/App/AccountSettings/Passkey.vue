@@ -93,8 +93,8 @@ import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 
 const modal = ref(false)
-const { passkeys, status, creating, deleting, createPasskey, deletePasskey } =
-  usePasskeys()
+const { passkeys, status, creating, deleting, createPasskey, deletePasskey }
+  = usePasskeys()
 
 const { user } = useUserSession()
 const schema = z.object({

@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
   // 3. Validate user session and permissions
   const session = await getUserSession(event)
-  
+
   if (session?.user) {
     if (session.user.email !== invite.email) {
       throw createError({
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       })
     }
   }
-  
+
   if (!session?.user || !(await findUserById(session.user.id))) {
     setCookie(event, 'invite-token', token, {
       maxAge: 60 * 60 * 24, // discard cookie after 1 day
@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
   if (!team) {
     return sendRedirect(event, '/dashboard', 302)
   }
-  
+
   // 8. Set this team as the last used team
   setCookie(event, 'lastTeamSlug', team.slug, {
     maxAge: 60 * 60 * 24 * 365, // 1 year

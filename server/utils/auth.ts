@@ -8,7 +8,7 @@ export interface SanitizedUser
 
 export const sanitizeUser = (
   user: InsertUser,
-  showBannedData: boolean = false,
+  showBannedData = false,
 ) => {
   if (!showBannedData) {
     delete user.banned

@@ -47,9 +47,7 @@ const state = reactive<Partial<Schema>>({
     url: `${window.location.origin}${window.location.pathname}`,
   },
 })
-const emit = defineEmits<{
-  (e: 'close'): void
-}>()
+const emit = defineEmits<(e: 'close') => void>()
 const loading = ref(false)
 const toast = useToast()
 

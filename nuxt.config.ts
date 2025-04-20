@@ -10,11 +10,11 @@ export default defineNuxtConfig({
     'nuxthub-ratelimit',
     '@nuxt/eslint',
   ],
+  devtools: { enabled: true },
+  css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'system',
   },
-  devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
   runtimeConfig: {
     openaiApiKey: process.env.OPENAI_API_KEY,
     fromEmail: process.env.FROM_EMAIL,
@@ -29,6 +29,20 @@ export default defineNuxtConfig({
   },
   future: { compatibilityVersion: 4 },
   compatibilityDate: '2024-07-30',
+  nitro: {
+    rollupConfig: {
+      // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
+      plugins: [vue()],
+    },
+    experimental: {
+      tasks: true,
+    },
+  },
+  hub: {
+    database: true,
+    blob: true,
+    kv: true,
+  },
   auth: {
     webAuthn: true,
   },
@@ -46,15 +60,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  nitro: {
-    rollupConfig: {
-      // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
-      plugins: [vue()],
-    },
-    experimental: {
-      tasks: true,
-    },
-  },
   nuxtHubRateLimit: {
     routes: {
       '/api/auth/*': {
@@ -66,10 +71,5 @@ export default defineNuxtConfig({
         intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
       },
     },
-  },
-  hub: {
-    database: true,
-    blob: true,
-    kv: true,
   },
 })

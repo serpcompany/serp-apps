@@ -137,7 +137,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         })
         fromInviteCookie.value = 'true'
       }
-      
+
       // Ensure client has session data and navigate to the dashboard
       // See https://github.com/atinux/nuxt-auth-utils/issues/357
       await nextTick()

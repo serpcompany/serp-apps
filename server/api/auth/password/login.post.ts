@@ -31,11 +31,11 @@ export default defineEventHandler(async (event) => {
 
     // Format the list of providers
     const formattedProviders = providers.map(formatProviderName)
-    const providerList =
-      formattedProviders.length > 1
-        ? formattedProviders.slice(0, -1).join(', ') +
-          ' and ' +
-          formattedProviders.slice(-1)
+    const providerList
+      = formattedProviders.length > 1
+        ? formattedProviders.slice(0, -1).join(', ')
+        + ' and '
+        + formattedProviders.slice(-1)
         : formattedProviders[0]
 
     throw createError({

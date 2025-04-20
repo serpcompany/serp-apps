@@ -111,11 +111,11 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
     emit('success', newTeam)
   } catch (error) {
     toast.add({
-      title: `Failed to create team`,
+      title: 'Failed to create team',
       description:
-        (error as any).message ||
-        (error as any).statusMessage ||
-        'Please try again',
+        (error as any).message
+        || (error as any).statusMessage
+        || 'Please try again',
       color: 'error',
     })
   } finally {

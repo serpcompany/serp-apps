@@ -42,9 +42,7 @@ defineProps<{
   loading: boolean
 }>()
 
-defineEmits<{
-  (e: 'liftBan', user: User): void
-}>()
+defineEmits<(e: 'liftBan', user: User) => void>()
 
 const formatDate = (date: string | Date | undefined) => {
   if (!date) return 'NA'
