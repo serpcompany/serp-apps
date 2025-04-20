@@ -135,10 +135,11 @@ const uploadLogo = async () => {
     return `/images/${filePath}`
   } catch (error) {
     if (error instanceof FetchError) {
-      throw new Error(`Failed to upload logo: ${error.message || error}`, {
+      throw new Error(`Failed to upload logo: ${error.message}`, {
         cause: error,
       })
     } else {
+      console.error(error)
       throw new Error('Failed to upload logo', { cause: error })
     }
   }

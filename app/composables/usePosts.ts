@@ -1,6 +1,7 @@
-import { ref, reactive } from 'vue'
-import type { Post, InsertPost } from '@@/types/database'
 import { z } from 'zod'
+import { ref, reactive } from 'vue'
+import { FetchError } from 'ofetch'
+import type { Post, InsertPost } from '@@/types/database'
 
 export const usePosts = async () => {
   const { currentTeam } = useTeam()
@@ -58,12 +59,12 @@ export const usePosts = async () => {
         body: formData,
       })
       return `/images/${filePath}`
-    } catch (error: any) {
+    } catch (error) {
       console.log(error)
       toast.add({
         title: 'Failed to upload image',
         description:
-          error.data?.message || 'An error occurred while uploading the image',
+          (error instanceof FetchError ? error.data?.message : null) || 'An error occurred while uploading the image',
         color: 'error',
       })
       throw createError('Failed to upload image')
@@ -85,11 +86,11 @@ export const usePosts = async () => {
       }
 
       return data.value
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         title: 'Failed to create post',
         description:
-          error.data?.message || 'An error occurred while creating the post',
+          (error instanceof FetchError ? error.data?.message : null) || 'An error occurred while creating the post',
         color: 'error',
       })
       throw error
@@ -106,11 +107,11 @@ export const usePosts = async () => {
         },
       )
       return updatedPost
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         title: 'Failed to update post',
         description:
-          error.data?.message || 'An error occurred while updating the post',
+          (error instanceof FetchError ? error.data?.message : null) || 'An error occurred while updating the post',
         color: 'error',
       })
       throw error
@@ -126,11 +127,11 @@ export const usePosts = async () => {
           method: 'DELETE',
         },
       )
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         title: 'Failed to delete post',
         description:
-          error.data?.message || 'An error occurred while deleting the post',
+          (error instanceof FetchError ? error.data?.message : null) || 'An error occurred while deleting the post',
         color: 'error',
       })
       throw error
@@ -204,7 +205,7 @@ export const usePosts = async () => {
           color: 'success',
         })
       }
-      refresh()
+      await refresh()
       postModal.isOpen = false
       resetForm()
     } catch (error) {
@@ -220,7 +221,7 @@ export const usePosts = async () => {
     try {
       loading.value = true
       await deletePost(deleteModal.postId)
-      refresh()
+      await refresh()
       toast.add({
         title: 'Post deleted',
         description: 'Your post has been deleted successfully',

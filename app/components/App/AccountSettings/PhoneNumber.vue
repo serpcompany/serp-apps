@@ -125,7 +125,7 @@ const isValidPhoneNumber = computed(() => {
   try {
     phoneSchema.parse({ phoneNumber: phoneNumber.value })
     return true
-  } catch (error) {
+  } catch {
     return false
   }
 })

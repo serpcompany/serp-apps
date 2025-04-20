@@ -1,5 +1,4 @@
 import { deleteStripeProduct } from '@@/server/database/queries/stripe'
-import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const productId = getRouterParam(event, 'id')

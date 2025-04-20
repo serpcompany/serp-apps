@@ -13,9 +13,9 @@ import {
 import { env } from '@@/env'
 
 interface MemberInviteProps {
-  inviterName: string
-  organizationName: string
-  inviteLink: string
+  inviterName?: string
+  organizationName?: string
+  inviteLink?: string
 }
 
 withDefaults(defineProps<MemberInviteProps>(), {
@@ -91,7 +91,7 @@ const footer = {
 
         <Text :style="footer">
           If you weren't expecting this invitation, you can ignore this email.
-          <br />
+          <br>
           <Link
             :href="env.BASE_URL"
             target="_blank"

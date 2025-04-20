@@ -48,7 +48,6 @@ const errorMessage = ref(
 )
 const hasEmail = computed(() => !!route.query.email)
 const email = ref((route.query.email as string) || '')
-const toast = useToast()
 const { resendVerification } = useAuth()
 
 async function resend() {

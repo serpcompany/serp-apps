@@ -78,7 +78,7 @@ const uploadLogo = async () => {
       body: formData,
     })
     return `/images/${filePath}`
-  } catch (error) {
+  } catch {
     throw new Error('Failed to upload logo')
   }
 }

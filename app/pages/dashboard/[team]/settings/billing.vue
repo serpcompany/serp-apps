@@ -21,9 +21,7 @@
                   <span class="text-xl font-semibold">{{
                     formatPrice(currentPlan.amount)
                   }}</span>
-                  <span class="text-neutral-500"
-                    >every {{ currentPlan.interval }}</span
-                  >
+                  <span class="text-neutral-500">every {{ currentPlan.interval }}</span>
                 </div>
                 <UBadge
                   :label="currentPlan.status"
@@ -36,7 +34,7 @@
                   {{
                     useDateFormat(
                       currentPlan.cancelAt || currentPlan.currentPeriodEnd,
-                      'MMM DD, YYYY'
+                      'MMM DD, YYYY',
                     )
                   }}
                 </span>
@@ -87,6 +85,7 @@
 
 <script lang="ts" setup>
 import type { Subscription, Price } from '@@/types/database'
+
 const { data: plans } = await useFetch('/api/stripe/plans')
 interface ExpandedSubscription extends Subscription {
   expand: {

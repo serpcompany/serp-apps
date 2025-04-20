@@ -59,6 +59,7 @@
 
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types'
+
 const { user, fetch: refreshSession } = useUserSession()
 const selectedFile = ref<File | null>(null)
 const { updateUser, loading, schema } = useUserAccount()
@@ -73,7 +74,7 @@ const uploadAvatar = async () => {
       body: formData,
     })
     return `/images/${filePath}`
-  } catch (error) {
+  } catch {
     throw new Error('Failed to upload avatar')
   }
 }

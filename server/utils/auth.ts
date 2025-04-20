@@ -1,10 +1,18 @@
 import type { InsertUser } from '@@/types/database'
 
-export interface SanitizedUser
-  extends Omit<
-    InsertUser,
-    'hashedPassword' | 'createdAt' | 'updatedAt' | 'lastActive' | 'phoneNumber'
-  > {}
+export interface AuthError {
+  message: string
+  statusCode?: number
+  data?: {
+    needsVerification: boolean
+    email: string
+  } | undefined
+}
+
+export type SanitizedUser = Omit<
+  InsertUser,
+  'hashedPassword' | 'createdAt' | 'updatedAt' | 'lastActive' | 'phoneNumber'
+>
 
 export const sanitizeUser = (
   user: InsertUser,

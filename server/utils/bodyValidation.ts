@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 import type { H3Event } from 'h3'
 
 export async function validateBody<T extends z.ZodType>(

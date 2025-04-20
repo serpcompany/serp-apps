@@ -1,6 +1,5 @@
-import { eq, and, desc } from 'drizzle-orm'
 import type { InsertPost, Post } from '@@/types/database'
-import { createError } from 'h3'
+import { H3Error } from 'h3'
 
 export const getAllPosts = async (teamId: string) => {
   try {
@@ -36,7 +35,7 @@ export const createPost = async (post: InsertPost) => {
       .returning()
       .get()
     return newPost
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to create post',
@@ -58,7 +57,7 @@ export const getPostById = async (
       ),
     })
     return post
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to get post by ID',
@@ -94,8 +93,8 @@ export const updatePost = async (
     }
 
     return result[0]
-  } catch (error: any) {
-    if (error.statusCode) throw error
+  } catch (error) {
+    if (error instanceof H3Error && error.statusCode) throw error
 
     throw createError({
       statusCode: 500,
@@ -130,8 +129,8 @@ export const deletePost = async (
     }
 
     return result[0]
-  } catch (error: any) {
-    if (error.statusCode) throw error
+  } catch (error) {
+    if (error instanceof H3Error && error.statusCode) throw error
 
     throw createError({
       statusCode: 500,

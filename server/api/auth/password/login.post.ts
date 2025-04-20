@@ -9,6 +9,7 @@ import {
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { sendLoginNotification } from '@@/server/utils/auth'
+import type { AuthError } from '@@/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
   if (!user) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'User not found',
+      message: 'User not found',
     })
   }
   // 3. Check if user uses OAuth (should use OAuth login instead)
@@ -35,19 +36,19 @@ export default defineEventHandler(async (event) => {
       = formattedProviders.length > 1
         ? formattedProviders.slice(0, -1).join(', ')
         + ' and '
-        + formattedProviders.slice(-1)
+        + formattedProviders.slice(-1)[0]
         : formattedProviders[0]
 
     throw createError({
       statusCode: 400,
-      statusMessage: `Your account is linked to ${providerList}. Please sign in using ${providers.length > 1 ? 'one of these providers' : 'this provider'} instead of password.`,
+      message: `Your account is linked to ${providerList}. Please sign in using ${providers.length > 1 ? 'one of these providers' : 'this provider'} instead of password.`,
     })
   }
   // 4. Verify password
   if (!user.hashedPassword) {
     throw createError({
       statusCode: 400,
-      statusMessage:
+      message:
         'This account was registered via a social login (e.g., Google, GitHub). Please use the same method to log in.',
     })
   }
@@ -60,7 +61,7 @@ export default defineEventHandler(async (event) => {
   if (!isPasswordCorrect) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Invalid password',
+      message: 'Invalid password',
     })
   }
 
@@ -68,19 +69,19 @@ export default defineEventHandler(async (event) => {
   if (!user.emailVerified) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Email not verified',
+      message: 'Email not verified',
       data: {
         needsVerification: true,
         email: user.email,
       },
-    })
+    } as AuthError)
   }
 
   // 6. Check if user is banned
   if (user.banned && user.bannedUntil && user.bannedUntil > new Date()) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'You account has been banned',
+      message: 'You account has been banned',
     })
   }
 

@@ -39,8 +39,8 @@
                     color="error"
                     variant="ghost"
                     size="xs"
-                    @click="confirmDelete(post.id)"
                     :loading="deletingPostId === post.id"
+                    @click="confirmDelete(post.id)"
                   />
                 </div>
               </header>
@@ -50,7 +50,7 @@
                   :src="post.image"
                   class="mb-2 min-h-40 w-full rounded-md object-cover"
                   :alt="post.title"
-                />
+                >
                 <p
                   class="text-sm whitespace-pre-wrap text-neutral-500 dark:text-neutral-400"
                 >
@@ -61,7 +61,7 @@
                 class="flex min-w-0 items-center justify-between gap-2 border-t border-neutral-100 px-4 py-2 dark:border-white/10"
               >
                 <div class="flex items-center gap-2">
-                  <UAvatar :src="post.userId.avatarUrl" size="xs" />
+                  <UAvatar v-if="post.userId.avatarUrl" :src="post.userId.avatarUrl" size="xs" />
                   <p class="text-xs font-medium text-neutral-500">
                     {{ post.userId.name }}
                   </p>
@@ -133,8 +133,8 @@
           <UButton
             label="Delete"
             color="error"
-            @click="handleDeletePost"
             :loading="loading"
+            @click="handleDeletePost"
           />
         </div>
       </template>
@@ -184,7 +184,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
-const { data: posts, refresh } = await useFetch<Post[]>(
+const { data: posts, refresh } = await useFetch(
   `/api/teams/${currentTeam.value?.id}/posts`,
   {
     watch: [currentTeam],
@@ -215,7 +215,7 @@ const uploadImage = async () => {
 
 const createPost = async (post: Partial<InsertPost>) => {
   try {
-    const { data, error } = await useFetch<Post>(
+    const { data, error } = await useFetch(
       `/api/teams/${currentTeam.value?.id}/posts`,
       {
         method: 'POST',
@@ -296,7 +296,7 @@ const openCreateModal = () => {
   postModal.isOpen = true
 }
 
-const openEditModal = (post: Post) => {
+const openEditModal = (post: Omit<Post, 'createdAt' | 'updatedAt'>) => {
   resetForm()
   state.title = post.title
   state.content = post.content
@@ -340,17 +340,14 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
         color: 'success',
       })
     } else {
-      const post = await createPost(payload)
-      // if (posts.value) {
-      //   posts.value.unshift(post)
-      // }
+      await createPost(payload)
       toast.add({
         title: 'Post created',
         description: 'Your post has been created successfully',
         color: 'success',
       })
     }
-    refresh()
+    await refresh()
     postModal.isOpen = false
     resetForm()
   } catch (error) {

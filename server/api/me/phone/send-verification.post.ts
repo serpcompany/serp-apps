@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const oneTimePassword = await generateNumericCode(6)
+  const oneTimePassword = generateNumericCode(6)
 
   await saveOneTimePassword({
     userId: user.id,

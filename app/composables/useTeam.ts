@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { FetchError } from 'ofetch'
 import type { Team } from '@@/types/database'
 
 export const useTeam = () => {
@@ -40,9 +41,7 @@ export const useTeam = () => {
   watch(
     currentTeam,
     (team) => {
-      try {
-        isTeamOwner.value = team?.ownerId === user.value?.id
-      } catch (error) {}
+      isTeamOwner.value = team?.ownerId === user.value?.id
     },
     { immediate: true },
   )
@@ -74,7 +73,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to create team',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error
@@ -104,7 +103,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to update team',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error
@@ -125,7 +124,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to delete team',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error
@@ -141,13 +140,6 @@ export const useTeam = () => {
         method: 'POST',
         body: { email, role },
       })
-    } catch (error) {
-      toast.add({
-        title: 'Failed to invite member',
-        description: (error as any).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
@@ -166,7 +158,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to cancel invite',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error
@@ -187,7 +179,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to resend invite',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
     }
@@ -208,7 +200,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to remove team member',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error

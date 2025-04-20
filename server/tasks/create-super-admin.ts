@@ -1,5 +1,3 @@
-import { eq } from 'drizzle-orm'
-
 export default defineTask({
   meta: {
     name: 'create-super-admin',

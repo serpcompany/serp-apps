@@ -7,7 +7,7 @@ import {
 } from '@@/server/database/queries/stripe'
 import { consola } from 'consola'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (_event) => {
   const stripe = new Stripe(env.NUXT_STRIPE_SECRET_KEY)
   consola.start('Syncing Stripe products and prices...')
   try {

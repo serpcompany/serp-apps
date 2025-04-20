@@ -89,22 +89,21 @@
       </UCard>
     </div>
     <div class="absolute bottom-2 left-1/2 -translate-x-1/2">
-      <NuxtLink to="/auth/all-auth-options" class="text-sm text-neutral-500"
-        >All auth options</NuxtLink
-      >
+      <NuxtLink to="/auth/all-auth-options" class="text-sm text-neutral-500">All auth options</NuxtLink>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
 import middleware from '@@/app/middleware/invite-email'
+
+import type { z } from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
+import { registerUserSchema } from '@@/shared/validations/auth'
+
 definePageMeta({
   middleware: [middleware],
 })
-
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
-import { registerUserSchema } from '@@/shared/validations/auth'
 type Schema = z.output<typeof registerUserSchema>
 
 const registered = ref(false)

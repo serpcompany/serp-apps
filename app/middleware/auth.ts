@@ -1,6 +1,7 @@
 import type { Team } from '@@/types/database'
 import { getInvite } from '~~/server/database/queries/teams'
-export default defineNuxtRouteMiddleware(async (to, from) => {
+
+export default defineNuxtRouteMiddleware(async (to, _from) => {
   const paramSlug
     = (Array.isArray(to.params.team) ? to.params.team[0] : to.params.team) || ''
   const toast = useToast()
@@ -49,7 +50,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     try {
       await getInvite(inviteTokenStr)
       return navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
-    } catch (error) {
+    } catch {
       // Invalid token means user already verified it upon submitting registration
     }
   }

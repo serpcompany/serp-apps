@@ -1,4 +1,3 @@
-import { eq, count, lt, and } from 'drizzle-orm'
 import type {
   InsertEmailVerificationCodes,
   InsertOneTimePasswords,

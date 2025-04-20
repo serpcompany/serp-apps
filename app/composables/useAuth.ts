@@ -1,13 +1,9 @@
-import { z } from 'zod'
-import { FetchError } from 'ofetch'
-import { registerUserSchema } from '@@/shared/validations/auth'
-type RegisterUserSchema = z.output<typeof registerUserSchema>
+import type { z } from 'zod'
+import type { FetchError } from 'ofetch'
+import type { registerUserSchema } from '@@/shared/validations/auth'
+import type { AuthError } from '@@/server/utils/auth'
 
-interface AuthError {
-  message: string
-  statusCode?: number
-  data?: any
-}
+type RegisterUserSchema = z.output<typeof registerUserSchema>
 
 interface AuthResponse {
   error?: AuthError
@@ -17,14 +13,14 @@ interface AuthResponse {
 
 export const useAuth = () => {
   const toast = useToast()
-  const { fetch: refreshSession, clear, user } = useUserSession()
+  const { fetch: refreshSession, clear } = useUserSession()
 
-  const handleAuthError = (error: FetchError | any) => {
+  const handleAuthError = (error: FetchError<AuthError>) => {
     const errorMessage = error?.data?.message || 'An unexpected error occurred'
     const statusCode = error?.data?.statusCode
 
     // Check if this is an unverified email error
-    if (error?.data?.data?.needsVerification && error?.data?.data?.email) {
+    if (error?.data?.data?.needsVerification) {
       const email = error.data.data.email
 
       // Add toast with action button
@@ -72,8 +68,8 @@ export const useAuth = () => {
       await refreshSession()
       toast.add({ title: 'Logged in successfully', color: 'success' })
       return { success: true }
-    } catch (error: FetchError | any) {
-      return handleAuthError(error)
+    } catch (error) {
+      return handleAuthError(error as FetchError<AuthError>)
     }
   }
 
@@ -92,8 +88,8 @@ export const useAuth = () => {
         body: userData,
       })
       return { success: true, emailVerified: user?.emailVerified }
-    } catch (error: FetchError | any) {
-      return handleAuthError(error)
+    } catch (error) {
+      return handleAuthError(error as FetchError<AuthError>)
     }
   }
 
@@ -109,8 +105,8 @@ export const useAuth = () => {
         color: 'success',
       })
       return { success: true }
-    } catch (error: FetchError | any) {
-      return handleAuthError(error)
+    } catch (error) {
+      return handleAuthError(error as FetchError)
     }
   }
 
@@ -128,8 +124,8 @@ export const useAuth = () => {
         color: 'success',
       })
       return { success: true }
-    } catch (error: FetchError | any) {
-      return handleAuthError(error)
+    } catch (error) {
+      return handleAuthError(error as FetchError)
     }
   }
 
@@ -146,9 +142,9 @@ export const useAuth = () => {
         duration: 5000,
       })
       return { success: true }
-    } catch (error: FetchError | any) {
+    } catch (error) {
       // Use the same error handler for consistency
-      return handleAuthError(error)
+      return handleAuthError(error as FetchError)
     }
   }
 

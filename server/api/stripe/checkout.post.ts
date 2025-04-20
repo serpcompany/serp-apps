@@ -28,7 +28,7 @@ async function getOrCreateCustomer(
       userId: user.id,
     })
     return newCustomerId
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to get or create customer',

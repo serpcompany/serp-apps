@@ -8,8 +8,8 @@
       />
     </template>
     <UModal
-      size="xl"
       v-model:open="newMemberModal"
+      size="xl"
       prevent-close
       :title="`Invite a new member to ${currentTeam?.name}`"
       description="We will email them a link to join your team. Invitations are valid for 7 days."
@@ -59,9 +59,11 @@
 
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types'
-import { z } from 'zod'
+import type { z } from 'zod'
 import { inviteTeamMemberSchema } from '@@/shared/validations/team'
 import { UserRole } from '@@/constants'
+import { FetchError } from 'ofetch'
+
 const { currentTeam, inviteMember, loading } = useTeam()
 const toast = useToast()
 
@@ -99,7 +101,7 @@ const onSubmit = async (event: FormSubmitEvent<z.infer<typeof schema>>) => {
   } catch (error) {
     toast.add({
       title: 'Error inviting member',
-      description: (error as any).data.message,
+      description: (error as FetchError).data.message,
       color: 'error',
     })
   } finally {

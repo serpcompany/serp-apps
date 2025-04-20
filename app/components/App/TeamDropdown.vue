@@ -39,13 +39,13 @@ const teams = useState<Team[]>('teams')
 const { setLastUsedTeam } = useTeamPreferences()
 
 const getAvatarProps = (team?: Team) => ({
-  src: team?.logo!,
+  src: team?.logo || undefined,
   size: 'xs' as const,
 })
 
-const onTeamCreated = (team: Team) => {
+const onTeamCreated = async (team: Team) => {
   newTeamModal.value = false
-  navigateTo(`/dashboard/${team.slug}`)
+  await navigateTo(`/dashboard/${team.slug}`)
 }
 
 const items = computed(() => {
@@ -59,7 +59,7 @@ const items = computed(() => {
     },
     type: 'checkbox' as const,
     checked: team.slug === currentTeam.value?.slug,
-    onSelect: async (e: Event) => {
+    onSelect: async (_e: Event) => {
       setLastUsedTeam(team.slug)
       await navigateTo(`/dashboard/${team.slug}`, { replace: true })
     },

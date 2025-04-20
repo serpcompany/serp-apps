@@ -1,4 +1,4 @@
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to, _from) => {
   // Read the invite-email cookie into state data for rendering in the login/register forms
   const inviteEmail = useState<string>('inviteEmail')
   const inviteEmailCookie = useCookie('invite-email')

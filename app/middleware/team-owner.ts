@@ -1,5 +1,6 @@
 import type { Team } from '@@/types/database'
-export default defineNuxtRouteMiddleware(async (to, from) => {
+
+export default defineNuxtRouteMiddleware(async (to, _from) => {
   const toast = useToast()
   const { loggedIn } = useUserSession()
   const teams = useState<Team[]>('teams', () => [])

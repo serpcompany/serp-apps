@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod'
+import type { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema, otpLoginSchema } from '@@/shared/validations/auth'
 
@@ -129,7 +129,7 @@ async function onOtpSubmit(event: FormSubmitEvent<OtpSchema>) {
       body: event.data,
     })
     await refreshSession()
-    navigateTo('/dashboard')
+    await navigateTo('/dashboard')
   } catch (error) {
     toast.add({
       title: 'Failed to verify code',

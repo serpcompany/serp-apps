@@ -71,7 +71,7 @@ const state = reactive<Partial<Schema>>({
   confirmation: undefined,
 })
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+async function onSubmit(_event: FormSubmitEvent<Schema>) {
   try {
     isDeleting.value = true
     await $fetch('/api/me/delete-account', {
@@ -84,7 +84,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
     await logout()
     await navigateTo('/')
-  } catch (error) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'Failed to delete account. Please try again.',

@@ -13,11 +13,11 @@
       <div class="mt-4 flex justify-center">
         <UButton
           variant="ghost"
-          @click="signOut"
           color="neutral"
           size="lg"
           icon="i-lucide-arrow-left"
           label="Sign out"
+          @click="signOut"
         />
       </div>
     </UContainer>
@@ -25,12 +25,13 @@
 </template>
 
 <script setup lang="ts">
-const { user } = useUserSession()
-const { logout } = useAuth()
 import type { Team } from '@@/types/database'
 
-const onTeamCreated = (team: Team) => {
-  navigateTo(`/dashboard/${team.slug}`)
+const { user } = useUserSession()
+const { logout } = useAuth()
+
+const onTeamCreated = async (team: Team) => {
+  await navigateTo(`/dashboard/${team.slug}`)
 }
 
 async function signOut() {

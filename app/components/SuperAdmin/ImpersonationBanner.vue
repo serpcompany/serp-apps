@@ -21,6 +21,7 @@
 
 <script lang="ts" setup>
 import type { User } from '@@/types/database'
+
 const props = defineProps<{
   user: User
 }>()

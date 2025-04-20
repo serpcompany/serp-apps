@@ -1,3 +1,5 @@
+import { FetchError } from 'ofetch'
+
 export const usePasskeys = () => {
   const toast = useToast()
   const creating = ref(false)
@@ -27,10 +29,10 @@ export const usePasskeys = () => {
         color: 'success',
       })
       return true
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         title: 'Failed to add passkey',
-        description: error.data?.message || error.message,
+        description: error instanceof FetchError ? error.data?.message : null,
         color: 'error',
       })
       return false
@@ -52,10 +54,10 @@ export const usePasskeys = () => {
         color: 'success',
       })
       return true
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         title: 'Failed to delete passkey',
-        description: error.data?.statusMessage || 'Failed to delete passkey',
+        description: error instanceof FetchError ? error.data?.message : null,
         color: 'error',
       })
       return false
@@ -68,10 +70,10 @@ export const usePasskeys = () => {
     try {
       await authenticate(email)
       return true
-    } catch (error: any) {
+    } catch (error) {
       toast.add({
         title: 'Failed to authenticate with passkey',
-        description: error.data?.message,
+        description: error instanceof FetchError ? error.data?.message : null,
         color: 'error',
       })
       return false

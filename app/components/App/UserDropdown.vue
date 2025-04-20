@@ -57,6 +57,7 @@
 
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
+
 const { user } = useUserSession()
 const { logout } = useAuth()
 const mobileMenu = useState('mobileMenu')

@@ -24,6 +24,7 @@ import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { render } from '@vue-email/render'
 import EmailVerification from '@@/emails/email-verification.vue'
 import { sanitizeUser } from '@@/server/utils/auth'
+import type { AuthError } from '@@/server/utils/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import {
   getInvite,
@@ -42,12 +43,12 @@ export default defineEventHandler(async (event) => {
     if (!existingUser.emailVerified) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Email not verified',
+        message: 'Email not verified',
         data: {
           email: data.email,
           needsVerification: true,
         },
-      })
+      } as AuthError)
     }
 
     // If user exists and email is verified, return error

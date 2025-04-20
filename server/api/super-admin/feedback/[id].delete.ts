@@ -1,4 +1,5 @@
 import { deleteFeedback } from '@@/server/database/queries/admin'
+
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
   if (!user.superAdmin) {

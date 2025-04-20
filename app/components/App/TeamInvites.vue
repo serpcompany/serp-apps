@@ -80,32 +80,24 @@
 
 <script lang="ts" setup>
 import { useDateFormat } from '@vueuse/core'
+import type { TeamInvite } from '@@/types/database'
+import type { DropdownMenuItem } from '@nuxt/ui'
+
 const { currentTeam, cancelInvite } = useTeam()
 const toast = useToast()
 
-const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
-  {
-    id: string
-    teamId: string
-    email: string
-    role: string
-    token: string
-    status: string
-    expiresAt: Date
-    createdAt: Date
-  }[]
->(`/api/teams/${currentTeam.value?.id}/invites`, {
+const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvite[]>(`/api/teams/${currentTeam.value?.id}/invites`, {
   key: 'team-invites',
 })
 
 const columns = ['Email', 'Role', 'Status', 'Expires At', 'Created At', '']
 
-const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
+const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: () => {
-        navigator.clipboard.writeText(invite.email)
+      onSelect: async () => {
+        await navigator.clipboard.writeText(invite.email)
         toast.add({
           title: 'Email copied to clipboard!',
           color: 'success',
@@ -126,7 +118,7 @@ const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
             title: 'Invite resent successfully!',
             color: 'success',
           })
-        } catch (error) {
+        } catch {
           toast.add({
             title: 'Failed to resend invite',
             color: 'error',

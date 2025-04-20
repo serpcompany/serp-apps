@@ -27,6 +27,7 @@
             <td class="px-4 py-3">
               <div class="flex items-center gap-2">
                 <UAvatar
+                  v-if="member.avatarUrl"
                   :src="
                     getAvatarUrl({
                       path: member.avatarUrl,
@@ -57,7 +58,7 @@
               {{
                 member.lastLoginAt
                   ? useDateFormat(member.lastLoginAt, 'MMM D, YYYY hh:mm a')
-                      .value
+                    .value
                   : 'Never'
               }}
             </td>
@@ -89,6 +90,8 @@
 <script setup lang="ts">
 import { useDateFormat } from '@vueuse/core'
 import { getAvatarUrl } from '@/utils/avatar'
+import type { DropdownMenuItem } from '@nuxt/ui'
+
 const { currentTeam, removeTeamMember } = useTeam()
 interface TeamMember {
   id: string
@@ -106,12 +109,12 @@ const { data: members, refresh: refreshMembers } = await useFetch<TeamMember[]>(
 )
 const columns = ['Name', 'Email', 'Role', 'Last Login', 'Created At']
 const toast = useToast()
-const getRowItems = (member: TeamMember) => {
+const getRowItems = (member: TeamMember): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: () => {
-        navigator.clipboard.writeText(member.email)
+      onSelect: async () => {
+        await navigator.clipboard.writeText(member.email)
         toast.add({
           title: 'Email copied to clipboard!',
           color: 'success',
@@ -120,8 +123,8 @@ const getRowItems = (member: TeamMember) => {
     },
     {
       label: 'Copy User ID',
-      onSelect: () => {
-        navigator.clipboard.writeText(member.userId)
+      onSelect: async () => {
+        await navigator.clipboard.writeText(member.userId)
         toast.add({
           title: 'User ID copied to clipboard!',
           color: 'success',
@@ -136,7 +139,7 @@ const getRowItems = (member: TeamMember) => {
         try {
           await removeTeamMember(member.id)
           await refreshMembers()
-        } catch (error) {
+        } catch {
           toast.add({
             title: 'Failed to remove member',
             color: 'error',

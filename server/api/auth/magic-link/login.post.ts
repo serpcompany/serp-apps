@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const emailVerificationCode = generateAlphaNumericCode(32)
-  const oneTimePassword = await generateNumericCode(6)
+  const oneTimePassword = generateNumericCode(6)
 
   await saveEmailVerificationCode({
     userId: user.id,

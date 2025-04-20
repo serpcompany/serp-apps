@@ -14,9 +14,9 @@
           <UButton label="Docs" color="neutral" variant="ghost" />
         </div>
         <div class="flex items-center gap-3">
-          <AuthState v-slot="{ loggedIn }">
+          <AuthState v-slot="{ loggedIn: isAuthLoggedIn }">
             <UButton
-              v-if="loggedIn"
+              v-if="isAuthLoggedIn"
               color="neutral"
               variant="soft"
               label="Go to App"
@@ -241,7 +241,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       color: 'success',
     })
   } catch (error) {
-    const msg = (error as any).data.message.includes(
+    const msg = (error as { data: { message: string } }).data.message.includes(
       'D1_ERROR: UNIQUE constraint failed: subscribers.email: SQLITE_CONSTRAINT',
     )
       ? 'You are already subscribed to our newsletter.'
