@@ -15,40 +15,40 @@
         </thead>
         <tbody>
           <tr
-            v-for="feedback in feedback"
-            :key="feedback.id"
+            v-for="feedbackItem in feedback"
+            :key="feedbackItem.id"
             class="border-b border-neutral-100 text-sm text-neutral-500 hover:bg-neutral-50 dark:border-white/10 dark:text-neutral-400 dark:hover:bg-neutral-800/50 [&>td]:whitespace-nowrap"
           >
             <td class="p-2">
               <div class="flex items-center gap-2">
                 <UAvatar
-                  :src="feedback.user.avatarUrl ?? undefined"
+                  :src="feedbackItem.user.avatarUrl ?? undefined"
                   size="2xs"
-                  :alt="feedback.user.name"
+                  :alt="feedbackItem.user.name"
                 />
-                {{ feedback.user.name }}
+                {{ feedbackItem.user.name }}
               </div>
             </td>
-            <td class="p-2">{{ feedback.user.email }}</td>
+            <td class="p-2">{{ feedbackItem.user.email }}</td>
             <td class="p-2">
               <UBadge
                 variant="soft"
-                :color="getFeedbackStatusColor(feedback.status)"
+                :color="getFeedbackStatusColor(feedbackItem.status)"
                 class="capitalize"
               >
-                {{ feedback.status }}
+                {{ feedbackItem.status }}
               </UBadge>
             </td>
             <td class="max-w-xs p-2">
-              <div class="truncate">{{ feedback.message }}</div>
+              <div class="truncate">{{ feedbackItem.message }}</div>
             </td>
             <td class="p-2">
               <UTooltip
-                :text="formatDate(feedback.createdAt)"
+                :text="formatDate(feedbackItem.createdAt)"
                 :delay-duration="0"
               >
                 <div>
-                  {{ useTimeAgo(feedback.createdAt) }}
+                  {{ useTimeAgo(feedbackItem.createdAt) }}
                 </div>
               </UTooltip>
             </td>
@@ -62,8 +62,8 @@
                   variant="ghost"
                   color="neutral"
                   class="text-neutral-500"
-                  :loading="loadingFeedbackId === feedback.id"
-                  @click="selectedFeedback = feedback"
+                  :loading="loadingFeedbackId === feedbackItem.id"
+                  @click="selectedFeedback = feedbackItem"
                 />
               </UDropdownMenu>
             </td>
@@ -99,61 +99,46 @@
         <div class="mb-4 rounded-lg bg-neutral-50 p-4 dark:bg-neutral-800">
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div v-if="selectedFeedback?.meta?.url" class="col-span-2">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Page URL:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Page URL:</span>
               <span class="ml-2 text-neutral-500 dark:text-neutral-400">{{
                 selectedFeedback.meta.url
               }}</span>
             </div>
             <div v-if="selectedFeedback?.meta?.browser">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Browser:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Browser:</span>
               <span class="ml-2 text-neutral-500 dark:text-neutral-400">{{
                 selectedFeedback.meta.browser.split(' ')[0]
               }}</span>
             </div>
             <div v-if="selectedFeedback?.meta?.platform">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Platform:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Platform:</span>
               <span class="ml-2 text-neutral-500 dark:text-neutral-400">{{
                 selectedFeedback.meta.platform
               }}</span>
             </div>
             <div v-if="selectedFeedback?.meta?.screenResolution">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Screen:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Screen:</span>
               <span class="ml-2 text-neutral-500 dark:text-neutral-400">{{
                 selectedFeedback.meta.screenResolution
               }}</span>
             </div>
             <div v-if="selectedFeedback?.meta?.language">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Language:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Language:</span>
               <span class="ml-2 text-neutral-500 dark:text-neutral-400">{{
                 selectedFeedback.meta.language
               }}</span>
             </div>
             <div v-if="selectedFeedback?.meta?.timezone">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Timezone:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Timezone:</span>
               <span class="ml-2 text-neutral-500 dark:text-neutral-400">{{
                 selectedFeedback.meta.timezone
               }}</span>
             </div>
             <div v-if="selectedFeedback?.meta?.colorScheme">
-              <span class="font-medium text-neutral-600 dark:text-neutral-300"
-                >Color Scheme:</span
-              >
+              <span class="font-medium text-neutral-600 dark:text-neutral-300">Color Scheme:</span>
               <span
                 class="ml-2 text-neutral-500 capitalize dark:text-neutral-400"
-                >{{ selectedFeedback.meta.colorScheme }}</span
-              >
+              >{{ selectedFeedback.meta.colorScheme }}</span>
             </div>
           </div>
         </div>
@@ -199,8 +184,8 @@
           <UButton
             color="error"
             :loading="isDeleting"
-            @click="handleDelete"
             label="Delete"
+            @click="handleDelete"
           />
         </div>
       </template>
@@ -214,12 +199,22 @@ import { useDateFormat, useTimeAgo } from '@vueuse/core'
 interface Feedback {
   id: string
   message: string
+  status: string
   createdAt: string
   user: {
     id: string
     name: string
     email: string
     avatarUrl?: string
+  }
+  meta?: {
+    url?: string
+    browser?: string
+    platform?: string
+    screenResolution?: string
+    language?: string
+    timezone?: string
+    colorScheme?: string
   }
 }
 
@@ -253,7 +248,7 @@ const actions = computed(() => [
     label: 'Mark as Closed',
     onSelect: () => {
       if (selectedFeedback.value) {
-        handleMarkAsClosed(selectedFeedback.value)
+        void handleMarkAsClosed(selectedFeedback.value)
       }
     },
   },
@@ -304,8 +299,8 @@ const handleReply = async () => {
     })
     replyModal.value = false
     replyFormState.value.message = ''
-    refresh()
-  } catch (error) {
+    await refresh()
+  } catch {
     toast.add({
       title: 'Error',
       description: 'Failed to send reply',
@@ -316,10 +311,10 @@ const handleReply = async () => {
   }
 }
 
-const handleMarkAsClosed = async (feedback: Feedback) => {
+const handleMarkAsClosed = async (feedbackItem: Feedback) => {
   try {
-    loadingFeedbackId.value = feedback.id
-    await $fetch(`/api/super-admin/feedback/${feedback.id}`, {
+    loadingFeedbackId.value = feedbackItem.id
+    await $fetch(`/api/super-admin/feedback/${feedbackItem.id}`, {
       method: 'PATCH',
       body: {
         status: 'closed',
@@ -330,8 +325,8 @@ const handleMarkAsClosed = async (feedback: Feedback) => {
       description: 'The feedback has been marked as closed',
       color: 'success',
     })
-    refresh()
-  } catch (error) {
+    await refresh()
+  } catch {
     toast.add({
       title: 'Error',
       description: 'Failed to mark feedback as closed',
@@ -356,8 +351,8 @@ const handleDelete = async () => {
       color: 'success',
     })
     showDeleteConfirmation.value = false
-    refresh()
-  } catch (error) {
+    await refresh()
+  } catch {
     toast.add({
       title: 'Error',
       description: 'Failed to delete feedback',

@@ -1,4 +1,3 @@
-import { eq } from 'drizzle-orm'
 import type { InsertProduct, InsertPrice } from '@@/types/database'
 
 export const clearStripeData = async () => {

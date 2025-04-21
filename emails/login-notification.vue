@@ -13,7 +13,7 @@ import {
 import { env } from '@@/env'
 
 interface LoginNotificationProps {
-  userName: string
+  userName?: string
   city?: string
   country?: string
 }
@@ -83,7 +83,7 @@ const footer = {
           We noticed a login to your {{ env.APP_NAME }} account from a new
           location.
         </Text>
-        <Text :style="text" v-if="city && country">
+        <Text v-if="city && country" :style="text">
           Location: {{ city }}, {{ country }}
         </Text>
         <Text :style="text">
@@ -91,12 +91,12 @@ const footer = {
         </Text>
         <Text :style="text">
           If this wasn't you, you should immediately
-          <Link :href="`${env.BASE_URL}`" target="_blank" :style="link"
-            >change your {{ env.APP_NAME }} account password</Link
-          >
+          <Link :href="`${env.BASE_URL}`" target="_blank" :style="link">
+            change your {{ env.APP_NAME }} account password
+          </Link>
         </Text>
         <Text :style="text">
-          Thanks,<br />
+          Thanks,<br>
           {{ env.APP_NAME }} team
         </Text>
         <Img :src="env.LOGO_URL" width="32" alt="Logo" />
@@ -106,8 +106,8 @@ const footer = {
             target="_blank"
             :style="{ ...link, color: '#898989' }"
           >
-            {{ env.APP_NAME }} </Link
-          >, {{ env.APP_DESCRIPTION }}
+            {{ env.APP_NAME }}
+          </Link>, {{ env.APP_DESCRIPTION }}
         </Text>
       </Container>
     </Body>

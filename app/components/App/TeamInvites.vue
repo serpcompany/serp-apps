@@ -157,12 +157,12 @@ const acceptedInvites = computed(() =>
 const pendingColumns = ['Email', 'Role', 'Status', 'Expires At', 'Created At', '']
 const acceptedColumns = ['Email', 'Role', 'Accepted At', 'Accepted By', 'Created At']
 
-const getRowItems = (invite: TeamInviteAccepted) => {
+const getRowItems = (invite: TeamInviteAccepted): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: () => {
-        navigator.clipboard.writeText(invite.email)
+      onSelect: async () => {
+        await navigator.clipboard.writeText(invite.email)
         toast.add({
           title: 'Email copied to clipboard!',
           color: 'success',
@@ -173,12 +173,7 @@ const getRowItems = (invite: TeamInviteAccepted) => {
       label: 'Resend Invite',
       onSelect: async () => {
         try {
-          await $fetch(
-            `/api/teams/${currentTeam.value?.id}/invites/${invite.id}/resend`,
-            {
-              method: 'POST',
-            },
-          )
+          await resendInvite(invite.id)
           toast.add({
             title: 'Invite resent successfully!',
             color: 'success',
@@ -186,6 +181,7 @@ const getRowItems = (invite: TeamInviteAccepted) => {
         } catch (error) {
           toast.add({
             title: 'Failed to resend invite',
+            description: (error as FetchError).statusMessage,
             color: 'error',
           })
         }
@@ -196,7 +192,20 @@ const getRowItems = (invite: TeamInviteAccepted) => {
       label: 'Cancel Invite',
       color: 'error' as const,
       onSelect: async () => {
-        await cancelInvite(invite.id)
+        try {
+          await cancelInvite(invite.id)
+          toast.add({
+            title: 'Invite cancelled successfully',
+            color: 'success',
+          })
+        } catch (error) {
+          toast.add({
+            title: 'Failed to cancel invite',
+            description: (error as FetchError).statusMessage,
+            color: 'error',
+          })
+        }
+
         await fetchTeamInvites()
       },
     },

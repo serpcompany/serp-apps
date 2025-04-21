@@ -13,7 +13,7 @@ interface CheckoutBody {
 
 async function getOrCreateCustomer(
   teamId: string,
-  user: { id: string; email: string },
+  user: { id: string, email: string },
 ) {
   try {
     const customerRecord = await getCustomerByTeamId(teamId)
@@ -28,7 +28,7 @@ async function getOrCreateCustomer(
       userId: user.id,
     })
     return newCustomerId
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to get or create customer',

@@ -28,5 +28,5 @@ export default defineEventHandler(async (event) => {
     text: message,
   })
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

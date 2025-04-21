@@ -1,7 +1,7 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
     <div class="mx-auto w-full max-w-sm space-y-4">
-      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
+      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto">
       <div class="text-center">
         <p class="text-lg font-bold">Sign in to Supersaas</p>
         <p class="text-sm text-neutral-500">
@@ -81,17 +81,17 @@
 </template>
 
 <script setup lang="ts">
+import type { z } from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
+import { loginUserSchema } from '@@/shared/validations/auth'
+
 definePageMeta({
   middleware: ['invite-email'],
 })
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
-import { loginUserSchema } from '@@/shared/validations/auth'
 type Schema = z.output<typeof loginUserSchema>
 
 const loading = ref(false)
 const { login } = useAuth()
-const router = useRouter()
 const inviteEmail = useState<string>('inviteEmail')
 
 const state = reactive<Partial<Schema>>({

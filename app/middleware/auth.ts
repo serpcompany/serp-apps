@@ -1,8 +1,9 @@
 import type { Team } from '@@/types/database'
 import { getInvite } from '~~/server/database/queries/teams'
-export default defineNuxtRouteMiddleware(async (to, from) => {
-  const paramSlug =
-    (Array.isArray(to.params.team) ? to.params.team[0] : to.params.team) || ''
+
+export default defineNuxtRouteMiddleware(async (to, _from) => {
+  const paramSlug
+    = (Array.isArray(to.params.team) ? to.params.team[0] : to.params.team) || ''
   const toast = useToast()
   const { loggedIn } = useUserSession()
   const teams = useState<Team[]>('teams', () => [])
@@ -17,8 +18,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return navigateTo('/dashboard/onboard')
     }
     const lastTeamSlug = getLastUsedTeam()
-    const targetTeam =
-      memberships.find((team) => team.slug === lastTeamSlug) || firstTeam
+    const targetTeam
+      = memberships.find((team) => team.slug === lastTeamSlug) || firstTeam
 
     // Update last used team and redirect
     setLastUsedTeam(targetTeam.slug)
@@ -33,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     })
     if (teamSlug.value) teamSlug.value = ''
     if (teams.value.length) teams.value = []
-    return navigateTo('/auth/login')
+    return await navigateTo('/auth/login')
   }
 
   // Check for invite token, this means the user was not logged in or did not have an account when they clicked the verification link,
@@ -48,16 +49,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // Redirect if token still valid
     try {
       await getInvite(inviteTokenStr)
-      return navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
-    } catch (error) {
+      return await navigateTo(`/api/teams/verify-invite?token=${inviteTokenStr}`)
+    } catch {
       // Invalid token means user already verified it upon submitting registration
     }
   }
 
   // If teams aren't loaded yet, fetch them
-  if (!teams.value?.length) {
+  if (!teams.value.length) {
     teams.value = await useTeam().getMemberships()
-    
+
     // If there are teams and we're coming from registration via invite, skip onboarding
     const fromInvite = useCookie('from-invite')
     if (fromInvite.value === 'true' && teams.value.length) {
@@ -65,24 +66,24 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       // User has teams from accepting invite, redirect to the team page
       return handleTeamRedirect()
     }
-    
+
     if ((paramSlug || teamSlug.value) && !teams.value.length) {
-      return handleTeamRedirect()
+      return await handleTeamRedirect()
     }
   }
 
   // Redirect to onboarding or first available team
   if (
-    to.fullPath === '/dashboard' ||
-    to.fullPath === '/dashboard/' ||
-    (teams.value.length && to.fullPath === '/dashboard/onboard')
+    to.fullPath === '/dashboard'
+    || to.fullPath === '/dashboard/'
+    || (teams.value.length && to.fullPath === '/dashboard/onboard')
   ) {
-    return handleTeamRedirect()
+    return await handleTeamRedirect()
   }
 
   // Validate that the team in the slug belongs to the user
   if (paramSlug && !teams.value.find((team) => team.slug === paramSlug)) {
-    return handleTeamRedirect()
+    return await handleTeamRedirect()
   } else if (paramSlug) {
     teamSlug.value = paramSlug
   }

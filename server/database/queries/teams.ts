@@ -1,4 +1,3 @@
-import { eq, or, and } from 'drizzle-orm'
 import type {
   Team,
   InsertTeam,
@@ -89,7 +88,7 @@ export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
       .returning()
       .get()
     return record
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to update team',
@@ -100,7 +99,7 @@ export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
 export const deleteTeam = async (teamId: string) => {
   try {
     await useDB().delete(tables.teams).where(eq(tables.teams.id, teamId))
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to delete team',
@@ -116,7 +115,7 @@ export const inviteTeamMember = async (payload: InsertTeamInvite) => {
       .returning()
       .get()
     return invite
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to invite team member',
@@ -286,7 +285,7 @@ export const deleteTeamMember = async (teamId: string, memberId: string) => {
           eq(tables.teamMembers.id, memberId),
         ),
       )
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to delete team member',

@@ -40,5 +40,5 @@ export default defineEventHandler(async (event) => {
   // 5. Delete used token
   await deletePasswordResetToken(token)
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from '@@/types/database'
+import type { OAuthAccounts, User } from '@@/types/database'
 import type { SanitizedUser } from '@@/server/utils/auth'
 
 interface TeamMember {
@@ -77,7 +77,7 @@ interface TeamMember {
 }
 
 interface ExtendedUser extends User {
-  oauthAccounts?: any[]
+  oauthAccounts?: OAuthAccounts[]
   teamMembers?: TeamMember[]
 }
 
@@ -93,7 +93,7 @@ const toast = useToast()
 const deleteUser = async () => {
   loading.value = true
   try {
-    const users = await $fetch<SanitizedUser>('/api/super-admin/users', {
+    await $fetch<SanitizedUser>('/api/super-admin/users', {
       method: 'DELETE',
       body: { userId: props.user.id },
     })

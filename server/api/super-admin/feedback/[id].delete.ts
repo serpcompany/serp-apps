@@ -1,4 +1,5 @@
 import { deleteFeedback } from '@@/server/database/queries/admin'
+
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
   if (!user.superAdmin) {
@@ -9,5 +10,5 @@ export default defineEventHandler(async (event) => {
   }
   const { id } = getRouterParams(event)
   await deleteFeedback(id)
-  return sendNoContent(event)
+  sendNoContent(event)
 })

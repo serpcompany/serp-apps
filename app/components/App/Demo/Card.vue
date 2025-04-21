@@ -7,7 +7,7 @@
         <p class="text-sm text-neutral-500">{{ title }}</p>
       </header>
       <div class="p-4">
-        <slot></slot>
+        <slot />
         <p v-if="description" class="text-sm text-neutral-500">
           {{ description }}
         </p>

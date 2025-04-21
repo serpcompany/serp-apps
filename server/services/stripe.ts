@@ -17,7 +17,7 @@ export const stripeService = {
         metadata: { teamId },
       })
       return customer.id
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to create Stripe customer',
@@ -48,7 +48,7 @@ export const stripeService = {
         ],
         mode: 'subscription',
       })
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to create checkout session',
@@ -60,7 +60,7 @@ export const stripeService = {
     try {
       const session = await stripe.checkout.sessions.retrieve(sessionId)
       return session
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to get checkout session',
@@ -72,7 +72,7 @@ export const stripeService = {
     try {
       const subscription = await stripe.subscriptions.retrieve(subscriptionId)
       return subscription
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to get subscription',
@@ -86,7 +86,7 @@ export const stripeService = {
         customer: customerId,
       })
       return session
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Failed to create billing portal session',

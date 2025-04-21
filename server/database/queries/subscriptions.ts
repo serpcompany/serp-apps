@@ -1,4 +1,3 @@
-import { eq, and } from 'drizzle-orm'
 import type { InsertSubscription, Subscription } from '@@/types/database'
 import { createError } from 'h3'
 

@@ -7,7 +7,6 @@ import {
 } from '@@/server/database/queries/teams'
 import { findUserById, verifyUser } from '@@/server/database/queries/users'
 import { z } from 'zod'
-import type { SessionUser } from '#auth-utils'
 
 const querySchema = z.object({
   token: z.string().length(32, 'Invalid token'),
@@ -15,7 +14,7 @@ const querySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   // 1. Validate token with type checking
-  const { token } = await getValidatedQuery(event, querySchema.parse)
+  const { token } = await getValidatedQuery(event, querySchema.parse.bind(querySchema))
 
   // 2. Get and validate invite
   let invite
@@ -30,8 +29,8 @@ export default defineEventHandler(async (event) => {
 
   // 3. Validate user session and permissions
   const session = await getUserSession(event)
-  
-  if (session?.user) {
+
+  if (session.user) {
     if (session.user.email !== invite.email) {
       throw createError({
         statusCode: 403,
@@ -39,8 +38,8 @@ export default defineEventHandler(async (event) => {
       })
     }
   }
-  
-  if (!session?.user || !(await findUserById(session.user.id))) {
+
+  if (!session.user || !(await findUserById(session.user.id))) {
     setCookie(event, 'invite-token', token, {
       maxAge: 60 * 60 * 24, // discard cookie after 1 day
       path: '/',
@@ -69,7 +68,7 @@ export default defineEventHandler(async (event) => {
 
   // 5. Skip verifying user's email if they used an invite link
   if (invite.email === session.user.email) {
-    verifyUser(session.user.id)
+    await verifyUser(session.user.id)
   }
 
   // 6. Process invite acceptance
@@ -83,7 +82,7 @@ export default defineEventHandler(async (event) => {
   if (!team) {
     return sendRedirect(event, '/dashboard', 302)
   }
-  
+
   // 8. Set this team as the last used team
   setCookie(event, 'lastTeamSlug', team.slug, {
     maxAge: 60 * 60 * 24 * 365, // 1 year

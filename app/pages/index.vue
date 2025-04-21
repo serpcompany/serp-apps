@@ -4,7 +4,7 @@
     <header>
       <WebsiteSection class="flex w-full items-center justify-between">
         <NuxtLink to="/" class="flex items-center gap-2">
-          <img src="/logo.png" alt="logo" class="h-6 w-auto md:h-7" />
+          <img src="/logo.png" alt="logo" class="h-6 w-auto md:h-7">
           <p class="font-bold">Supersaas V3</p>
         </NuxtLink>
         <div class="hidden flex-1 items-center justify-center gap-3 md:flex">
@@ -14,9 +14,9 @@
           <UButton label="Docs" color="neutral" variant="ghost" />
         </div>
         <div class="flex items-center gap-3">
-          <AuthState v-slot="{ loggedIn }">
+          <AuthState v-slot="{ loggedIn: isAuthLoggedIn }">
             <UButton
-              v-if="loggedIn"
+              v-if="isAuthLoggedIn"
               color="neutral"
               variant="soft"
               label="Go to App"
@@ -102,12 +102,12 @@
             src="/mock-image-light.jpg"
             alt="Dashboard"
             class="aspect-video w-full rounded-md border border-neutral-200 md:rounded-2xl dark:hidden dark:border-white/10"
-          />
+          >
           <img
             src="/mock-image-dark.jpg"
             alt="Dashboard"
             class="hidden aspect-video w-full rounded-2xl border border-neutral-200 dark:block dark:border-white/10"
-          />
+          >
         </div>
       </WebsiteSection>
     </div>
@@ -241,7 +241,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       color: 'success',
     })
   } catch (error) {
-    const msg = (error as any).data.message.includes(
+    const msg = (error as { data: { message: string } }).data.message.includes(
       'D1_ERROR: UNIQUE constraint failed: subscribers.email: SQLITE_CONSTRAINT',
     )
       ? 'You are already subscribed to our newsletter.'

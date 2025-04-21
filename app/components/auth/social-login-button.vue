@@ -1,6 +1,5 @@
 <template>
   <UButton
-    @click="open"
     :loading="loading"
     :disabled="loading"
     external
@@ -9,6 +8,7 @@
     size="lg"
     :icon="icon"
     variant="subtle"
+    @click="open"
   >
     {{ label }}
   </UButton>

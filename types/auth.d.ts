@@ -78,7 +78,7 @@ declare module '#auth-utils' {
      */
     openInPopup: (
       route: string,
-      size?: { width?: number; height?: number },
+      size?: { width?: number, height?: number },
     ) => void
   }
 

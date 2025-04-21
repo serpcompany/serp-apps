@@ -7,8 +7,8 @@
   </div>
   <USlideover
     v-else
-    side="left"
     v-model:open="model"
+    side="left"
     :ui="{ content: 'max-w-[75%] sm:max-w-[50%]' }"
   >
     <template #content>
@@ -21,6 +21,7 @@
 
 <script lang="ts" setup>
 import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
+
 const model = defineModel<boolean>({ required: true })
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const smallerThanLg = breakpoints.smaller('lg')

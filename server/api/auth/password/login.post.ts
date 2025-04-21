@@ -9,6 +9,7 @@ import {
 import { loginUserSchema } from '@@/shared/validations/auth'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { sendLoginNotification } from '@@/server/utils/auth'
+import type { AuthError } from '@@/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
   // 1. Validate body
@@ -31,11 +32,11 @@ export default defineEventHandler(async (event) => {
 
     // Format the list of providers
     const formattedProviders = providers.map(formatProviderName)
-    const providerList =
-      formattedProviders.length > 1
-        ? formattedProviders.slice(0, -1).join(', ') +
-          ' and ' +
-          formattedProviders.slice(-1)
+    const providerList
+      = formattedProviders.length > 1
+        ? formattedProviders.slice(0, -1).join(', ')
+        + ' and '
+        + formattedProviders.slice(-1)[0]
         : formattedProviders[0]
 
     throw createError({
@@ -69,11 +70,9 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'Email not verified',
-      data: {
-        needsVerification: true,
-        email: user.email,
-      },
-    })
+      needsVerification: true,
+      email: user.email,
+    } as AuthError)
   }
 
   // 6. Check if user is banned
@@ -96,5 +95,5 @@ export default defineEventHandler(async (event) => {
     email: user.email,
   })
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

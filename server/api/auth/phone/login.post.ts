@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const oneTimePassword = await generateNumericCode(6)
+  const oneTimePassword = generateNumericCode(6)
 
   await saveOneTimePassword({
     userId: user.id,
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     {
       method: 'POST',
       headers: {
-        Authorization: `Basic ${Buffer.from(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`).toString('base64')}`,
+        'Authorization': `Basic ${Buffer.from(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`).toString('base64')}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
@@ -56,5 +56,5 @@ export default defineEventHandler(async (event) => {
     },
   )
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

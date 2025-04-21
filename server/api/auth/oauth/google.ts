@@ -20,7 +20,7 @@ export default defineOAuthGoogleEventHandler({
   async onSuccess(event, { user }) {
     try {
       await handleOAuthSuccess(event, mapGoogleUser(user))
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Authentication failed',

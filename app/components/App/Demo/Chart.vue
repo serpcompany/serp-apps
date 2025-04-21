@@ -13,7 +13,7 @@
               :style="{
                 height: `${Math.max((item.value / maxValue) * 200, 1)}px`,
               }"
-            ></div>
+            />
           </UTooltip>
           <div class="mt-2 text-xs text-neutral-600 dark:text-neutral-400">
             {{ formatDate(item.date) }}

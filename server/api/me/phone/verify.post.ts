@@ -50,5 +50,5 @@ export default defineEventHandler(async (event) => {
 
   await setUserSession(event, { user: transformedUser })
 
-  return sendNoContent(event)
+  sendNoContent(event)
 })

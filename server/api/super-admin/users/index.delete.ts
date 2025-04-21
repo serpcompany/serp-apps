@@ -1,4 +1,3 @@
-import { eq } from 'drizzle-orm'
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
   if (!user.superAdmin) {
