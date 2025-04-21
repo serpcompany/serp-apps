@@ -20,6 +20,7 @@ import {
   linkOAuthAccount,
 } from '@@/server/database/queries/users'
 import { sendLoginNotification } from '@@/server/utils/auth'
+import type { H3Event } from 'h3'
 
 export interface OAuthUserData {
   email: string
@@ -30,7 +31,7 @@ export interface OAuthUserData {
 }
 
 export const handleOAuthSuccess = async (
-  event: any,
+  event: H3Event,
   oauthUser: OAuthUserData,
 ) => {
   // 2. Check if user exists

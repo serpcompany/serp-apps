@@ -12,6 +12,7 @@
     </div>
   </AppContainer>
 </template>
+
 <script lang="ts" setup>
 const { currentTeam } = useTeam()
 </script>

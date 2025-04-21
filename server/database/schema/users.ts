@@ -1,8 +1,9 @@
 import { nanoid } from 'nanoid'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { relations } from 'drizzle-orm'
 import { oauthAccounts } from './auth'
 import { teamMembers } from './teams'
+import { relations } from 'drizzle-orm'
+
 export const users = sqliteTable('users', {
   id: text('id')
     .primaryKey()
@@ -26,10 +27,10 @@ export const users = sqliteTable('users', {
   proAccount: integer('proAccount', { mode: 'boolean' })
     .notNull()
     .default(false),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
   lastActive: integer('last_active', { mode: 'timestamp' }).$onUpdate(

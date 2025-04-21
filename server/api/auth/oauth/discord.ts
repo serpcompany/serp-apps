@@ -20,7 +20,7 @@ export default defineOAuthDiscordEventHandler({
   async onSuccess(event, { user }) {
     try {
       await handleOAuthSuccess(event, mapDiscordUser(user))
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Authentication failed',

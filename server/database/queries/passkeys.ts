@@ -1,4 +1,3 @@
-import { eq, and, lt } from 'drizzle-orm'
 import type {
   Passkey,
   InsertPasskey,

@@ -3,6 +3,7 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { users } from './users'
 import { teams } from './teams'
 import { relations } from 'drizzle-orm'
+
 export const posts = sqliteTable('posts', {
   id: text('id')
     .primaryKey()
@@ -16,12 +17,12 @@ export const posts = sqliteTable('posts', {
     .references(() => teams.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   content: text('content').notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
-  ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  ).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
-  ),
+  ).notNull(),
 })
 
 export const postsRelations = relations(posts, ({ one }) => ({

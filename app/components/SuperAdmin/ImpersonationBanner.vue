@@ -11,16 +11,17 @@
       as a super admin. Please proceed with caution.
     </div>
     <UButton
-      @click="stopImpersonation()"
       size="xs"
       color="neutral"
       label="Stop session"
+      @click="stopImpersonation()"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { User } from '@@/types/database'
+
 const props = defineProps<{
   user: User
 }>()

@@ -8,12 +8,12 @@
     </UFormField>
     <UFormField label="Password" name="password" required>
       <UInput
+        ref="passwordInput"
         v-model="state.password"
         :type="copied ? 'text' : 'password'"
         class="w-full"
         size="lg"
         :ui="{ trailing: 'pr-1' }"
-        ref="passwordInput"
       >
         <template #trailing>
           <UTooltip text="Generate Password" :content="{ side: 'right' }">
@@ -38,14 +38,14 @@
     </UFormField>
     <UFormField label="Avatar" name="avatar">
       <AppAvatarUploader
-        :avatar-size="'md'"
         v-model="state.avatarUrl"
+        :avatar-size="'md'"
         @file-selected="handleFileSelected"
       />
     </UFormField>
     <UCheckbox
-      size="lg"
       v-model="state.emailVerified"
+      size="lg"
       label="Auto verify user"
       description="If checked, the user will be automatically verified after registration."
     />
@@ -57,6 +57,7 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { useClipboard } from '@vueuse/core'
+import { FetchError } from 'ofetch'
 
 const emit = defineEmits(['user-created'])
 const loading = ref(false)
@@ -119,8 +120,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     // Emit event to notify parent component
     emit('user-created', response)
-  } catch (error: any) {
-    const errorMessage = error?.data?.message || 'Failed to create user'
+  } catch (error) {
+    const errorMessage = (error instanceof FetchError ? error.data?.message : null) || 'Failed to create user'
     toast.add({
       title: 'Error',
       description: errorMessage,
@@ -144,9 +145,9 @@ function resetForm() {
 }
 
 const passwordInput = ref<HTMLInputElement | null>(null)
-function generatePassword() {
+async function generatePassword() {
   state.password = Math.random().toString(36).substring(2, 15)
-  copy(state.password)
+  await copy(state.password)
   toast.add({
     title: 'Password copied',
     description: `The password has been copied to your clipboard. ${state.password}`,
@@ -164,7 +165,7 @@ const uploadAvatar = async () => {
       body: formData,
     })
     return `/images/${filePath}`
-  } catch (error) {
+  } catch {
     throw new Error('Failed to upload avatar')
   }
 }

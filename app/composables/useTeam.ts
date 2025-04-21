@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { FetchError } from 'ofetch'
 import type { Team } from '@@/types/database'
 
 export const useTeam = () => {
@@ -29,7 +30,7 @@ export const useTeam = () => {
       return teams.value[0] || ({} as Team)
     }
 
-    const team = teams.value?.find((team) => team.slug === teamSlug.value)
+    const team = teams.value.find((team) => team.slug === teamSlug.value)
     if (!team) {
       throw createError('Team not found')
     }
@@ -40,9 +41,7 @@ export const useTeam = () => {
   watch(
     currentTeam,
     (team) => {
-      try {
-        isTeamOwner.value = team?.ownerId === user.value?.id
-      } catch (error) {}
+      isTeamOwner.value = team.ownerId === user.value?.id
     },
     { immediate: true },
   )
@@ -53,7 +52,7 @@ export const useTeam = () => {
       const { data: memberships } = await useFetch<Team[]>(
         '/api/me/memberships',
       )
-      return memberships.value as Team[]
+      return memberships.value!
     } finally {
       loading.value = false
     }
@@ -74,7 +73,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to create team',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error
@@ -101,13 +100,6 @@ export const useTeam = () => {
         color: 'success',
       })
       return updatedTeam
-    } catch (error) {
-      toast.add({
-        title: 'Failed to update team',
-        description: (error as any).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
@@ -122,32 +114,18 @@ export const useTeam = () => {
         title: 'Team deleted successfully',
         color: 'success',
       })
-    } catch (error) {
-      toast.add({
-        title: 'Failed to delete team',
-        description: (error as any).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
   }
 
-  const inviteMember = async (email: string, role: string = 'member') => {
+  const inviteMember = async (email: string, role = 'member') => {
     loading.value = true
     try {
-      await $fetch(`/api/teams/${currentTeam?.value?.id}/members`, {
+      return await $fetch(`/api/teams/${currentTeam.value.id}/members`, {
         method: 'POST',
         body: { email, role },
       })
-    } catch (error) {
-      toast.add({
-        title: 'Failed to invite member',
-        description: (error as any).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
@@ -156,20 +134,9 @@ export const useTeam = () => {
   const cancelInvite = async (inviteId: string) => {
     loading.value = true
     try {
-      await $fetch(`/api/teams/${currentTeam?.value?.id}/invites/${inviteId}`, {
+      return await $fetch(`/api/teams/${currentTeam.value.id}/invites/${inviteId}`, {
         method: 'DELETE',
       })
-      toast.add({
-        title: 'Invite cancelled successfully',
-        color: 'success',
-      })
-    } catch (error) {
-      toast.add({
-        title: 'Failed to cancel invite',
-        description: (error as any).statusMessage,
-        color: 'error',
-      })
-      throw error
     } finally {
       loading.value = false
     }
@@ -179,24 +146,20 @@ export const useTeam = () => {
     loading.value = true
     try {
       await $fetch(
-        `/api/teams/${currentTeam?.value?.id}/invites/${inviteId}/resend`,
+        `/api/teams/${currentTeam.value.id}/invites/${inviteId}/resend`,
         {
           method: 'POST',
         },
       )
-    } catch (error) {
-      toast.add({
-        title: 'Failed to resend invite',
-        description: (error as any).statusMessage,
-        color: 'error',
-      })
+    } finally {
+      loading.value = false
     }
   }
 
   const removeTeamMember = async (memberId: string) => {
     loading.value = true
     try {
-      if (!currentTeam.value?.id) return
+      if (!currentTeam.value.id) return
 
       await $fetch(`/api/teams/${currentTeam.value.id}/members/${memberId}`, {
         method: 'DELETE',
@@ -208,7 +171,7 @@ export const useTeam = () => {
     } catch (error) {
       toast.add({
         title: 'Failed to remove team member',
-        description: (error as any).statusMessage,
+        description: (error as FetchError).statusMessage,
         color: 'error',
       })
       throw error

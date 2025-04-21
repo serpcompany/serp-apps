@@ -28,9 +28,15 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Invitation not found',
     })
   }
+  if (invitation.status === 'accepted') {
+    throw createError({
+      statusCode: 422,
+      statusMessage: 'Invitation has already been accepted',
+    })
+  }
 
   // Update invitation expiry
-  const updatedInvitation = await updateTeamInvite(inviteId, {
+  await updateTeamInvite(inviteId, {
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
   })
 
@@ -55,6 +61,4 @@ export default defineEventHandler(async (event) => {
       html: htmlTemplate,
     })
   }
-
-  return updatedInvitation
 })

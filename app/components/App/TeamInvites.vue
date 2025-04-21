@@ -80,32 +80,25 @@
 
 <script lang="ts" setup>
 import { useDateFormat } from '@vueuse/core'
-const { currentTeam, cancelInvite } = useTeam()
+import type { TeamInvite } from '@@/types/database'
+import type { DropdownMenuItem } from '@nuxt/ui'
+import type { FetchError } from 'ofetch'
+
+const { currentTeam, cancelInvite, resendInvite } = useTeam()
 const toast = useToast()
 
-const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<
-  {
-    id: string
-    teamId: string
-    email: string
-    role: string
-    token: string
-    status: string
-    expiresAt: Date
-    createdAt: Date
-  }[]
->(`/api/teams/${currentTeam.value?.id}/invites`, {
+const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvite[]>(`/api/teams/${currentTeam.value.id}/invites`, {
   key: 'team-invites',
 })
 
 const columns = ['Email', 'Role', 'Status', 'Expires At', 'Created At', '']
 
-const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
+const getRowItems = (invite: TeamInvite): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: () => {
-        navigator.clipboard.writeText(invite.email)
+      onSelect: async () => {
+        await navigator.clipboard.writeText(invite.email)
         toast.add({
           title: 'Email copied to clipboard!',
           color: 'success',
@@ -116,12 +109,7 @@ const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
       label: 'Resend Invite',
       onSelect: async () => {
         try {
-          await $fetch(
-            `/api/teams/${currentTeam.value?.id}/invites/${invite.id}/resend`,
-            {
-              method: 'POST',
-            },
-          )
+          await resendInvite(invite.id)
           toast.add({
             title: 'Invite resent successfully!',
             color: 'success',
@@ -129,6 +117,7 @@ const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
         } catch (error) {
           toast.add({
             title: 'Failed to resend invite',
+            description: (error as FetchError).statusMessage,
             color: 'error',
           })
         }
@@ -139,7 +128,20 @@ const getRowItems = (invite: (typeof teamInvites.value)[0]) => {
       label: 'Cancel Invite',
       color: 'error' as const,
       onSelect: async () => {
-        await cancelInvite(invite.id)
+        try {
+          await cancelInvite(invite.id)
+          toast.add({
+            title: 'Invite cancelled successfully',
+            color: 'success',
+          })
+        } catch (error) {
+          toast.add({
+            title: 'Failed to cancel invite',
+            description: (error as FetchError).statusMessage,
+            color: 'error',
+          })
+        }
+
         await fetchTeamInvites()
       },
     },

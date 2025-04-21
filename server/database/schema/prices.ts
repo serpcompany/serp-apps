@@ -19,10 +19,10 @@ export const prices = sqliteTable('prices', {
   productId: text('product_id')
     .notNull()
     .references(() => products.id, { onDelete: 'cascade' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })

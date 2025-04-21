@@ -9,6 +9,7 @@ import { getCustomerById } from '@@/server/database/queries/customers'
 import { upsertSubscription } from '@@/server/database/queries/subscriptions'
 import { updateUser } from '@@/server/database/queries/users'
 import { stripeService } from '@@/server/services/stripe'
+
 export default defineEventHandler(async (event) => {
   const webhookSecret = env.NUXT_STRIPE_WEBHOOK_SECRET
   const stripeSecretKey = env.NUXT_STRIPE_SECRET_KEY

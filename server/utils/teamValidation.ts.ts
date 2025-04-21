@@ -1,5 +1,5 @@
 // server/utils/teamValidation.ts
-import { H3Event } from 'h3'
+import type { H3Event } from 'h3'
 import { findUserTeams } from '@@/server/database/queries/teams'
 
 export async function validateTeamOwnership(event: H3Event, teamId: string) {

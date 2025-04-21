@@ -2,7 +2,7 @@ import { validateTeamOwnership } from '@@/server/utils/teamValidation.ts'
 import { inviteTeamMemberSchema } from '@@/shared/validations/team'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { findUserByEmail } from '@@/server/database/queries/users'
-import { inviteTeamMember } from '@@/server/database/queries/teams'
+import { inviteTeamMember, isTeamMember } from '@@/server/database/queries/teams'
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid'
 import { env } from '@@/env'
 import { render } from '@vue-email/render'
@@ -25,6 +25,12 @@ export default defineEventHandler(async (event) => {
 
   // 3. Check if user already exists
   const existingUser = await findUserByEmail(body.email)
+  if (existingUser && await isTeamMember(teamId, existingUser.id)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'The user with this email is already a member of this team',
+    })
+  }
 
   // 4. Generate invitation token
   const inviteToken = generateAlphaNumericCode(32)

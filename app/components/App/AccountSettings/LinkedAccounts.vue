@@ -69,9 +69,10 @@
 </template>
 
 <script lang="ts" setup>
-const linkAccountModal = ref(false)
 import { useDateFormat } from '@vueuse/core'
 import type { OAuthAccounts } from '@@/types/database'
+
+const linkAccountModal = ref(false)
 const toast = useToast()
 const loading = ref(false)
 

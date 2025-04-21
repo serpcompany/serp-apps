@@ -2,7 +2,7 @@
   <main class="relative flex min-h-screen items-center justify-center">
     <div class="mx-auto w-full max-w-sm space-y-4">
       <template v-if="!registered">
-        <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
+        <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto">
         <div class="text-center">
           <p class="text-lg font-bold">Get Started with Supersaas</p>
           <p class="text-sm text-neutral-500">
@@ -89,22 +89,21 @@
       </UCard>
     </div>
     <div class="absolute bottom-2 left-1/2 -translate-x-1/2">
-      <NuxtLink to="/auth/all-auth-options" class="text-sm text-neutral-500"
-        >All auth options</NuxtLink
-      >
+      <NuxtLink to="/auth/all-auth-options" class="text-sm text-neutral-500">All auth options</NuxtLink>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
 import middleware from '@@/app/middleware/invite-email'
+
+import type { z } from 'zod'
+import type { FormSubmitEvent } from '#ui/types'
+import { registerUserSchema } from '@@/shared/validations/auth'
+
 definePageMeta({
   middleware: [middleware],
 })
-
-import { z } from 'zod'
-import type { FormSubmitEvent } from '#ui/types'
-import { registerUserSchema } from '@@/shared/validations/auth'
 type Schema = z.output<typeof registerUserSchema>
 
 const registered = ref(false)
@@ -137,7 +136,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         })
         fromInviteCookie.value = 'true'
       }
-      
+
       // Ensure client has session data and navigate to the dashboard
       // See https://github.com/atinux/nuxt-auth-utils/issues/357
       await nextTick()
