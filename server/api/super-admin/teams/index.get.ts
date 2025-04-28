@@ -1,10 +1,10 @@
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
+  const { user } = await requireUserSession(event);
   if (!user.superAdmin) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'You are not authorized to access this resource',
-    })
+      statusMessage: "You are not authorized to access this resource",
+    });
   }
   const teams = await useDB().query.teams.findMany({
     with: {
@@ -15,7 +15,11 @@ export default defineEventHandler(async (event) => {
           status: true,
         },
         with: {
-          price: true,
+          price: {
+            with: {
+              product: true,
+            },
+          },
         },
       },
       members: {
@@ -34,6 +38,6 @@ export default defineEventHandler(async (event) => {
     orderBy: (teams, { desc }) => [desc(teams.createdAt)],
     limit: 20,
     offset: 0,
-  })
-  return teams
-})
+  });
+  return teams;
+});
