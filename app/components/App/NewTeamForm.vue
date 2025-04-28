@@ -94,6 +94,22 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   loading.value = true
   const data = schema.parse(event.data)
   try {
+    // Check for slug confloct
+    const existingTeam = await $fetch<{ id: string; name: string; slug: string } | null>('/api/teams/check-slug', {
+      method: 'POST',
+      body: { slug: data.slug },
+    })
+
+    if (existingTeam) {
+      toast.add({
+        title: 'Team URL already in use',
+        description: `You are already a member of team "${existingTeam.name}" with URL /${existingTeam.slug}. Please choose a different URL.`,
+        color: 'error',
+      })
+      loading.value = false
+      return
+    }
+
     const filePath = selectedFile.value
       ? await uploadLogo()
       : `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(data.name)}`

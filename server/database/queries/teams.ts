@@ -292,3 +292,40 @@ export const deleteTeamMember = async (teamId: string, memberId: string) => {
     })
   }
 }
+
+export const checkSlugConflict = async (userId: string, slug: string) => {
+  try {
+    const existingTeam = await useDB()
+      .select({
+        id: tables.teams.id,
+        name: tables.teams.name,
+        slug: tables.teams.slug,
+      })
+      .from(tables.teams)
+      .leftJoin(
+        tables.teamMembers,
+        and(
+          eq(tables.teams.id, tables.teamMembers.teamId),
+          eq(tables.teamMembers.userId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(tables.teams.slug, slug),
+          or(
+            eq(tables.teams.ownerId, userId),
+            eq(tables.teamMembers.userId, userId),
+          ),
+        ),
+      )
+      .get()
+
+    return existingTeam
+  } catch (error) {
+    console.error(error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to check slug conflict',
+    })
+  }
+}
