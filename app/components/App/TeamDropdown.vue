@@ -19,8 +19,8 @@
     />
   </UDropdownMenu>
   <UDrawer
-    :ui="{ container: 'max-w-xl mx-auto' }"
     v-model:open="newTeamModal"
+    :ui="{ container: 'max-w-xl mx-auto' }"
     title="Create a new team"
     description="A team is a workspace for your organization."
   >
@@ -39,13 +39,13 @@ const teams = useState<Team[]>('teams')
 const { setLastUsedTeam } = useTeamPreferences()
 
 const getAvatarProps = (team?: Team) => ({
-  src: team?.logo as string,
+  src: team?.logo || undefined,
   size: 'xs' as const,
 })
 
-const onTeamCreated = (team: Team) => {
+const onTeamCreated = async (team: Team) => {
   newTeamModal.value = false
-  navigateTo(`/dashboard/${team.slug}`)
+  await navigateTo(`/dashboard/${team.slug}`)
 }
 
 const items = computed(() => {
@@ -54,12 +54,12 @@ const items = computed(() => {
   const allTeams = teams.value.map((team) => ({
     label: team.name,
     avatar: {
-      src: team.logo as string,
+      src: team.logo!,
       size: '2xs' as const,
     },
     type: 'checkbox' as const,
-    checked: team.slug === currentTeam.value?.slug,
-    onSelect: async (e: Event) => {
+    checked: team.slug === currentTeam.value.slug,
+    onSelect: async (_e: Event) => {
       setLastUsedTeam(team.slug)
       await navigateTo(`/dashboard/${team.slug}`, { replace: true })
     },

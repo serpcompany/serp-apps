@@ -27,8 +27,8 @@
           <UForm
             :schema="formSchema"
             :state="formState"
-            @submit="handleSubmit"
             class="space-y-4"
+            @submit="handleSubmit"
           >
             <UFormField
               label="Team Name"
@@ -68,7 +68,7 @@ const formSchema = z.object({
   teamName: z
     .string()
     .min(1, 'Team name is required')
-    .refine((val) => val === currentTeam.value?.name, {
+    .refine((val) => val === currentTeam.value.name, {
       message: 'Team name does not match',
     }),
 })

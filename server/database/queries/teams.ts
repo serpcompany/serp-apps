@@ -1,4 +1,3 @@
-import { eq, or, and } from 'drizzle-orm'
 import type {
   Team,
   InsertTeam,
@@ -89,7 +88,7 @@ export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
       .returning()
       .get()
     return record
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to update team',
@@ -100,7 +99,7 @@ export const updateTeam = async (teamId: string, payload: Partial<Team>) => {
 export const deleteTeam = async (teamId: string) => {
   try {
     await useDB().delete(tables.teams).where(eq(tables.teams.id, teamId))
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to delete team',
@@ -116,7 +115,7 @@ export const inviteTeamMember = async (payload: InsertTeamInvite) => {
       .returning()
       .get()
     return invite
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to invite team member',
@@ -145,8 +144,23 @@ export const getActiveTeamMembers = async (teamId: string) => {
 
 export const getTeamInvites = async (teamId: string) => {
   const invites = await useDB()
-    .select()
+    .select({
+      id: tables.teamInvites.id,
+      teamId: tables.teamInvites.teamId,
+      email: tables.teamInvites.email,
+      role: tables.teamInvites.role,
+      status: tables.teamInvites.status,
+      expiresAt: tables.teamInvites.expiresAt,
+      acceptedAt: tables.teamInvites.acceptedAt,
+      acceptedBy: tables.teamInvites.acceptedBy,
+      createdAt: tables.teamInvites.createdAt,
+      acceptedByEmail: tables.users.email,
+    })
     .from(tables.teamInvites)
+    .leftJoin(
+      tables.users,
+      eq(tables.teamInvites.acceptedBy, tables.users.id)
+    )
     .where(eq(tables.teamInvites.teamId, teamId))
   return invites
 }
@@ -190,10 +204,18 @@ export const getInvite = async (token: string): Promise<TeamInvite> => {
   return invite
 }
 
-export const updateInviteStatus = async (inviteId: string, status: string) => {
+export const updateInviteStatus = async (inviteId: string, status: string, userId?: string) => {
+  const updateData: { status: string; acceptedAt?: Date; acceptedBy?: string } = { status };
+  
+  // If the status is 'accepted', set the acceptedAt timestamp and acceptedBy user ID
+  if (status === 'accepted' && userId) {
+    updateData.acceptedAt = new Date();
+    updateData.acceptedBy = userId;
+  }
+  
   await useDB()
     .update(tables.teamInvites)
-    .set({ status })
+    .set(updateData)
     .where(eq(tables.teamInvites.id, inviteId))
 }
 
@@ -263,10 +285,47 @@ export const deleteTeamMember = async (teamId: string, memberId: string) => {
           eq(tables.teamMembers.id, memberId),
         ),
       )
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to delete team member',
+    })
+  }
+}
+
+export const checkSlugConflict = async (userId: string, slug: string) => {
+  try {
+    const existingTeam = await useDB()
+      .select({
+        id: tables.teams.id,
+        name: tables.teams.name,
+        slug: tables.teams.slug,
+      })
+      .from(tables.teams)
+      .leftJoin(
+        tables.teamMembers,
+        and(
+          eq(tables.teams.id, tables.teamMembers.teamId),
+          eq(tables.teamMembers.userId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(tables.teams.slug, slug),
+          or(
+            eq(tables.teams.ownerId, userId),
+            eq(tables.teamMembers.userId, userId),
+          ),
+        ),
+      )
+      .get()
+
+    return existingTeam
+  } catch (error) {
+    console.error(error)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to check slug conflict',
     })
   }
 }

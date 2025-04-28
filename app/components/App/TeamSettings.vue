@@ -52,13 +52,14 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '#ui/types'
 
+const toast = useToast()
 const { teamSchema, updateTeam, currentTeam, loading } = useTeam()
 const selectedFile = ref<File | null>(null)
 
 const state = reactive({
-  name: currentTeam.value?.name || '',
-  slug: currentTeam.value?.slug || '',
-  logo: currentTeam.value?.logo || '',
+  name: currentTeam.value.name || '',
+  slug: currentTeam.value.slug || '',
+  logo: currentTeam.value.logo || '',
 })
 
 const handleFileSelected = (file: File | null) => {
@@ -84,7 +85,7 @@ const uploadLogo = async () => {
 }
 
 const onSubmit = async (event: FormSubmitEvent<typeof teamSchema>) => {
-  if (!currentTeam.value?.id) return
+  if (!currentTeam.value.id) return
 
   try {
     let filePath = ''
@@ -92,7 +93,7 @@ const onSubmit = async (event: FormSubmitEvent<typeof teamSchema>) => {
     if (selectedFile.value) {
       filePath = await uploadLogo()
     } else if (state.logo) {
-      filePath = currentTeam.value.logo
+      filePath = state.logo
     } else {
       filePath = `https://api.dicebear.com/9.x/glass/svg?seed=${event.data.name}`
     }
@@ -104,7 +105,11 @@ const onSubmit = async (event: FormSubmitEvent<typeof teamSchema>) => {
 
     await updateTeam(currentTeam.value.id, teamData)
   } catch (error) {
-    console.error(error)
+    toast.add({
+      title: 'Failed to update team',
+      description: (error as any).statusMessage,
+      color: 'error',
+    })
   }
 }
 

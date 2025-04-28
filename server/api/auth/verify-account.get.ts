@@ -69,6 +69,6 @@ export default defineEventHandler(async (event) => {
 
   await updateLastActiveTimestamp(user.id)
   await setUserSession(event, { user: sanitizeUser(user) })
-  await deleteEmailVerificationCode(user.id as string)
+  await deleteEmailVerificationCode(user.id)
   return sendRedirect(event, '/dashboard')
 })

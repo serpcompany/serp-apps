@@ -1,14 +1,20 @@
 import type { InsertUser } from '@@/types/database'
 
-export interface SanitizedUser
-  extends Omit<
-    InsertUser,
-    'hashedPassword' | 'createdAt' | 'updatedAt' | 'lastActive' | 'phoneNumber'
-  > {}
+export interface AuthError {
+  statusCode: number
+  statusMessage: string
+  needsVerification?: boolean
+  email?: string
+}
+
+export type SanitizedUser = Omit<
+  InsertUser,
+  'hashedPassword' | 'createdAt' | 'updatedAt' | 'lastActive' | 'phoneNumber'
+>
 
 export const sanitizeUser = (
   user: InsertUser,
-  showBannedData: boolean = false,
+  showBannedData = false,
 ) => {
   if (!showBannedData) {
     delete user.banned

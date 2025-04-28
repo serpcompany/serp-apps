@@ -12,7 +12,7 @@ export default defineTask({
     description: 'Sync Stripe products and prices with local database',
   },
   async run() {
-    const stripe = new Stripe(env.NUXT_STRIPE_SECRET_KEY as string)
+    const stripe = new Stripe(env.NUXT_STRIPE_SECRET_KEY)
     consola.start('Syncing Stripe products and prices...')
     try {
       // Sync Products

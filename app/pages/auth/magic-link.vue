@@ -1,7 +1,7 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
     <div class="mx-auto w-full max-w-sm space-y-4">
-      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
+      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto">
       <template v-if="mode === 'login'">
         <div class="text-center">
           <p class="text-lg font-bold">Sign in to your account</p>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod'
+import type { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema, otpLoginSchema } from '@@/shared/validations/auth'
 
@@ -129,7 +129,7 @@ async function onOtpSubmit(event: FormSubmitEvent<OtpSchema>) {
       body: event.data,
     })
     await refreshSession()
-    navigateTo('/dashboard')
+    await navigateTo('/dashboard')
   } catch (error) {
     toast.add({
       title: 'Failed to verify code',

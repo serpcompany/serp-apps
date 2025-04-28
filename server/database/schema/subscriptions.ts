@@ -1,9 +1,9 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { customers } from './customers'
-import { relations } from 'drizzle-orm'
 import { prices } from './prices'
 import { teams } from './teams'
 import { users } from './users'
+import { relations } from 'drizzle-orm'
 
 export const subscriptions = sqliteTable('subscriptions', {
   id: text('id').primaryKey(),
@@ -24,10 +24,10 @@ export const subscriptions = sqliteTable('subscriptions', {
   trialStart: integer('trial_start', { mode: 'timestamp' }),
   trialEnd: integer('trial_end', { mode: 'timestamp' }),
 
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })

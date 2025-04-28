@@ -1,7 +1,7 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
     <div class="mx-auto w-full max-w-sm space-y-4">
-      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
+      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto">
       <div class="text-center">
         <p class="text-lg font-bold">Sign in to your account</p>
         <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod'
+import type { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { emailSchema } from '@@/shared/validations/auth'
 
@@ -58,7 +58,7 @@ const onSubmit = async (event: FormSubmitEvent<LoginSchema>): Promise<void> => {
       title: 'Logged in successfully',
       color: 'success',
     })
-    await navigateTo(`/dashboard`)
+    await navigateTo('/dashboard')
   }
   loading.value = false
 }

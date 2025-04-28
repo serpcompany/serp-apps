@@ -33,9 +33,9 @@ const route = useRoute()
 const mobileMenu = useState('mobileMenu', () => false)
 const isTeamRoute = computed(() => {
   return (
-    route.path.startsWith('/dashboard/') &&
-    !route.path.startsWith('/dashboard/account') &&
-    !route.path.startsWith('/dashboard/super-admin')
+    route.path.startsWith('/dashboard/')
+    && !route.path.startsWith('/dashboard/account')
+    && !route.path.startsWith('/dashboard/super-admin')
   )
 })
 

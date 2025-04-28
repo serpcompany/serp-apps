@@ -22,12 +22,12 @@ const links = computed(() => [
   {
     label: 'Home',
     icon: 'i-lucide-home',
-    to: `/dashboard/${currentTeam.value?.slug}`,
+    to: `/dashboard/${currentTeam.value.slug}`,
   },
   {
     label: 'Posts',
     icon: 'i-lucide-file-text',
-    to: `/dashboard/${currentTeam.value?.slug}/posts`,
+    to: `/dashboard/${currentTeam.value.slug}/posts`,
   },
   {
     label: 'AI Chat',
@@ -55,17 +55,17 @@ const settings = computed(() => [
   {
     label: 'Workspace Settings',
     icon: 'i-lucide-settings',
-    to: `/dashboard/${currentTeam.value?.slug}/settings`,
+    to: `/dashboard/${currentTeam.value.slug}/settings`,
   },
   {
     label: 'Workspace Members',
     icon: 'i-lucide-users',
-    to: `/dashboard/${currentTeam.value?.slug}/settings/members`,
+    to: `/dashboard/${currentTeam.value.slug}/settings/members`,
   },
   {
     label: 'Billing',
     icon: 'i-lucide-credit-card',
-    to: `/dashboard/${currentTeam.value?.slug}/settings/billing`,
+    to: `/dashboard/${currentTeam.value.slug}/settings/billing`,
   },
 ])
 </script>

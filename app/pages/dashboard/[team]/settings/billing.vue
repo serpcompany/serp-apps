@@ -21,17 +21,17 @@
                   <span class="text-xl font-semibold">{{
                     formatPrice(currentPlan.amount)
                   }}</span>
-                  <span class="text-neutral-500"
-                    >every {{ currentPlan.interval }}</span
-                  >
+                  <span class="text-neutral-500">every {{ currentPlan.interval }}</span>
                 </div>
                 <UBadge
                   :label="currentPlan.status"
+                  :color="getStatusColor(currentPlan.status)"
                   :color="getStatusColor(currentPlan.status)"
                   variant="subtle"
                   class="capitalize"
                 />
                 <span class="text-sm text-neutral-500">
+                  {{ getSubscriptionMessage(currentPlan) }}
                   {{ getSubscriptionMessage(currentPlan) }}
                   {{
                     useDateFormat(
@@ -77,7 +77,9 @@
         :active="currentPlan.id === plan.id"
         :loading="loadingPriceId === plan.id"
         :disabled="disabled"
+        :has-active-subscription="!!activeSubscription"
         @subscribe="handleSubscribe"
+        @manage="handleManageSubscription"
       />
     </div>
   </AppContainer>
@@ -85,6 +87,7 @@
 
 <script lang="ts" setup>
 import type { Subscription, Price } from '@@/types/database'
+
 const { data: plans } = await useFetch('/api/stripe/plans')
 interface ExpandedSubscription extends Subscription {
   expand: {
@@ -96,7 +99,7 @@ const { data: activeSubscription } = await useFetch<ExpandedSubscription>(
   '/api/stripe/subscription',
   {
     query: {
-      teamId: currentTeam.value?.id,
+      teamId: currentTeam.value.id,
     },
   },
 )
@@ -118,6 +121,7 @@ interface BillingPlan {
   amount: number
   interval: string
   priceId: string
+  cancelAt?: Date
   cancelAt?: Date
 }
 
@@ -152,6 +156,7 @@ const currentPlan = computed<BillingPlan>(() => {
     interval: plan.interval,
     priceId: plan.id,
     cancelAt: activeSubscription.value.cancelAt,
+    cancelAt: activeSubscription.value.cancelAt,
   } as BillingPlan
 })
 
@@ -160,7 +165,7 @@ const handleSubscribe = async (priceId: string) => {
     loadingPriceId.value = priceId
     disabled.value = true
 
-    if (!currentTeam.value?.id || !currentTeam.value?.slug) {
+    if (!currentTeam.value.id || !currentTeam.value.slug) {
       throw new Error('Team information is missing')
     }
 
@@ -196,7 +201,7 @@ const handleManageSubscription = async () => {
   try {
     loadingPortal.value = true
 
-    if (!currentTeam.value?.id) {
+    if (!currentTeam.value.id) {
       throw new Error('Team information is missing')
     }
 
@@ -232,6 +237,34 @@ const formatPrice = (price?: number): string => {
     currency: 'USD',
     minimumFractionDigits: 0,
   }).format(price / 100)
+}
+
+const getStatusColor = (status?: string) => {
+  switch (status) {
+    case 'active':
+      return 'success'
+    case 'trialing':
+      return 'primary'
+    case 'canceled':
+    case 'incomplete_expired':
+    case 'unpaid':
+      return 'error'
+    case 'past_due':
+    case 'incomplete':
+      return 'warning'
+    default:
+      return 'neutral'
+  }
+}
+
+const getSubscriptionMessage = (plan: BillingPlan) => {
+  if (plan.cancelAt) {
+    return 'Cancels on'
+  }
+  if (plan.status === 'trialing') {
+    return 'Trial ends on'
+  }
+  return 'Renews on'
 }
 
 const getStatusColor = (status?: string) => {

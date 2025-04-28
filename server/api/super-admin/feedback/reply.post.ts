@@ -3,6 +3,9 @@ import {
   updateFeedback,
   getFeedbackById,
 } from '@@/server/database/queries/admin'
+import { render } from '@vue-email/render'
+import FeedbackReply from '@@/emails/feedback-reply.vue'
+import { env } from '@@/env'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
@@ -22,11 +25,26 @@ export default defineEventHandler(async (event) => {
   }
   await updateFeedback(id, { reply: message, status: 'replied' })
 
-  await sendEmail({
-    to: email,
-    subject: 'Feedback Reply',
-    text: message,
+  const htmlTemplate = await render(FeedbackReply, {
+    userName: feedback.user.name,
+    originalMessage: feedback.message,
+    replyMessage: message,
   })
 
-  return sendNoContent(event)
+  if (env.MOCK_EMAIL) {
+    console.table({
+      email,
+      name: feedback.user.name,
+      originalMessage: feedback.message,
+      replyMessage: message,
+    })
+  } else {
+    await sendEmail({
+      to: email,
+      subject: 'Response to your feedback',
+      html: htmlTemplate,
+    })
+  }
+
+  sendNoContent(event)
 })

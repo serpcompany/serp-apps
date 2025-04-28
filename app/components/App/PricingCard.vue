@@ -17,11 +17,11 @@
       color="neutral"
       block
       :variant="active ? 'solid' : 'outline'"
-      :label="active ? 'Manage plan' : 'Subscribe'"
+      :label="active ? 'Manage plan' : hasActiveSubscription ? 'Switch plan' : 'Subscribe'"
       :loading="loading"
       :disabled="loading"
       size="lg"
-      @click="$emit('subscribe', priceId)"
+      @click="handleClick"
     />
     <ul class="mt-4 space-y-1">
       <li
@@ -51,12 +51,14 @@ interface PricingCardProps {
   priceId: string
   features?: Feature[]
   active?: boolean
+  hasActiveSubscription?: boolean
 }
 
-defineProps<PricingCardProps>()
+const props = defineProps<PricingCardProps>()
 
-defineEmits<{
+const emit = defineEmits<{
   subscribe: [id: string]
+  manage: [id: string]
 }>()
 
 const formatPrice = (price?: number): string => {
@@ -66,5 +68,13 @@ const formatPrice = (price?: number): string => {
     currency: 'USD',
     minimumFractionDigits: 0,
   }).format(price / 100)
+}
+
+const handleClick = () => {
+  if (props.hasActiveSubscription) {
+    emit('manage', props.priceId)
+  } else {
+    emit('subscribe', props.priceId)
+  }
 }
 </script>

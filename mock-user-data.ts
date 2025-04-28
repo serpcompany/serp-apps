@@ -1,4 +1,5 @@
 // mock data
+/* eslint-disable */
 const users = [
   {
     id: 'T3wyDwidxILrDnzoCcOKj',

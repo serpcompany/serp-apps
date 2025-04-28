@@ -59,6 +59,7 @@
 
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types'
+
 const { user, fetch: refreshSession } = useUserSession()
 const selectedFile = ref<File | null>(null)
 const { updateUser, loading, schema } = useUserAccount()

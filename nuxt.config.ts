@@ -8,14 +8,15 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-auth-utils',
     'nuxthub-ratelimit',
+    '@nuxt/eslint',
     '@formkit/auto-animate/nuxt',
     '@nuxtjs/mdc',
   ],
+  devtools: { enabled: true },
+  css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'system',
   },
-  devtools: { enabled: true },
-  css: ['~/assets/css/main.css'],
   runtimeConfig: {
     openaiApiKey: process.env.OPENAI_API_KEY,
     googleApiKey: process.env.GOOGLE_GEMINI_API_KEY,
@@ -32,9 +33,6 @@ export default defineNuxtConfig({
   },
   future: { compatibilityVersion: 4 },
   compatibilityDate: '2024-07-30',
-  auth: {
-    webAuthn: true,
-  },
   nitro: {
     rollupConfig: {
       // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
@@ -44,48 +42,38 @@ export default defineNuxtConfig({
       tasks: true,
     },
   },
-  // Used by the AI Chat to highlight code
-  mdc: {
-    headings: {
-      anchorLinks: false,
-    },
-    highlight: {
-      theme: {
-        default: 'github-dark',
-        light: 'github-light',
-        dark: 'github-dark',
-      },
-      langs: [
-        'ts',
-        'js',
-        'html',
-        'css',
-        'json',
-        'md',
-        'yaml',
-        'bash',
-        'css',
-        'py',
-        'tsx',
-        'jsx',
-        'go',
-        'rust',
-        'java',
-        'kotlin',
-        'swift',
-        'csharp',
-      ],
-    },
-  },
   hub: {
     database: true,
     blob: true,
     kv: true,
-    cache: true,
   },
-  vite: {
-    server: {
-      allowedHosts: ['local.supersaas.dev'],
+  auth: {
+    webAuthn: true,
+  },
+  eslint: {
+    config: {
+      standalone: true,
+      typescript: {
+        strict: false,
+      },
+      stylistic: {
+        indent: 2,
+        semi: false,
+        quotes: 'single',
+        commaDangle: 'always-multiline',
+      },
+    },
+  },
+  nuxtHubRateLimit: {
+    routes: {
+      '/api/auth/*': {
+        maxRequests: 15,
+        intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
+      },
+      '/api/**': {
+        maxRequests: 150,
+        intervalSeconds: 60, // Minimum 60 seconds due to NuxtHub KV TTL limitation
+      },
     },
   },
 })

@@ -32,6 +32,7 @@
 
 <script lang="ts" setup>
 import type { TeamMember } from '@@/types/database'
+
 defineProps<{
   members: TeamMember[]
 }>()

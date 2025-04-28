@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
+
 const { user } = useUserSession()
 const { logout } = useAuth()
 const mobileMenu = useState('mobileMenu')
@@ -63,10 +64,10 @@ const items = ref([
   [
     {
       slot: 'profile',
-      label: user?.value?.name,
+      label: user.value?.name,
       avatar: {
-        src: user?.value?.avatarUrl || '',
-        alt: user?.value?.name,
+        src: user.value?.avatarUrl || '',
+        alt: user.value?.name,
       },
       type: 'label',
       onSelect: () => {

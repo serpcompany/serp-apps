@@ -20,7 +20,7 @@ export default defineOAuthGitHubEventHandler({
   async onSuccess(event, { user }) {
     try {
       await handleOAuthSuccess(event, mapGitHubUser(user))
-    } catch (error) {
+    } catch {
       throw createError({
         statusCode: 500,
         statusMessage: 'Authentication failed',

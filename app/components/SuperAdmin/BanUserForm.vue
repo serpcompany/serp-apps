@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 import { getLocalTimeZone, today } from '@internationalized/date'
 import { z } from 'zod'
-import type { User } from '@@/types/database'
+import type { User, OAuthAccounts } from '@@/types/database'
 import { useDateFormat } from '@vueuse/core'
 
 interface TeamMember {
@@ -67,7 +67,7 @@ interface TeamMember {
 }
 
 interface ExtendedUser extends User {
-  oauthAccounts?: any[]
+  oauthAccounts?: OAuthAccounts[]
   teamMembers?: TeamMember[]
 }
 

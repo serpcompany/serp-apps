@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { OneTimePasswordTypes } from '../../../constants'
 import { users } from './users'
 import { relations } from 'drizzle-orm'
@@ -13,10 +13,10 @@ export const oauthAccounts = sqliteTable('oauth_accounts', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })
@@ -64,10 +64,10 @@ export const webAuthnCredentials = sqliteTable('webauthn_credentials', {
   transports: text('transports', { mode: 'json' })
     .notNull()
     .$type<WebAuthnCredential['transports']>(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$onUpdate(
     () => new Date(),
   ),
 })

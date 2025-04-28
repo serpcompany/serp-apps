@@ -1,5 +1,5 @@
-import { eq, and } from 'drizzle-orm'
 import type { User, InsertUser } from '@@/types/database'
+import { H3Error } from 'h3'
 
 export const findUserByEmail = async (email: string): Promise<User | null> => {
   try {
@@ -268,9 +268,9 @@ export const unlinkAccount = async (userId: string, providerId: string) => {
           eq(tables.oauthAccounts.id, providerId),
         ),
       )
-  } catch (error: any) {
+  } catch (error) {
     console.error(error)
-    if (error.statusCode) {
+    if (error instanceof H3Error && error.statusCode) {
       throw error
     }
     throw createError({

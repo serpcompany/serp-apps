@@ -184,17 +184,17 @@ const columns = [
 const actions = [
   {
     label: 'Send Password Reset Email',
-    onSelect: () => {
+    onSelect: async () => {
       if (selectedUser.value) {
-        sendForgotPasswordEmail(selectedUser.value)
+        await sendForgotPasswordEmail(selectedUser.value)
       }
     },
   },
   {
     label: 'Impersonate User',
-    onSelect: () => {
+    onSelect: async () => {
       if (selectedUser.value) {
-        startImpersonationSession(selectedUser.value)
+        await startImpersonationSession(selectedUser.value)
       }
     },
   },
@@ -228,19 +228,19 @@ const getTeamOwnerName = (ownerId: string) => {
   return owner?.name || 'Unknown'
 }
 
-function handleUserCreated() {
-  refresh()
+async function handleUserCreated() {
+  await refresh()
   newUserModal.value = false
 }
 
-function handleUserBanned() {
-  refresh()
+async function handleUserBanned() {
+  await refresh()
   banUserModal.value = false
 }
 
-function handleUserDeleted() {
+async function handleUserDeleted() {
   showDeleteUserConfirmation.value = false
-  refresh()
+  await refresh()
 }
 
 const sendForgotPasswordEmail = async (user: User) => {
@@ -255,7 +255,7 @@ const sendForgotPasswordEmail = async (user: User) => {
       description: 'The password reset email has been sent to the user',
       color: 'success',
     })
-  } catch (error) {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'Failed to send password reset email',
@@ -278,7 +278,7 @@ const liftBan = async (user: User) => {
       description: 'The user has been unbanned',
       color: 'success',
     })
-    refresh()
+    await refresh()
   } catch (error) {
     console.error(error)
     toast.add({
