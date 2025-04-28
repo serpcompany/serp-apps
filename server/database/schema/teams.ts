@@ -53,7 +53,9 @@ export const teamInvites = sqliteTable('team_invites', {
   token: text('token').notNull(),
   status: text('status').notNull().default('pending'),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
+  acceptedAt: integer('accepted_at', { mode: 'timestamp' }),
+  acceptedBy: text('accepted_by').references(() => users.id),
+  createdAt: integer('created_at', { mode: 'timestamp' }).$default(
     () => new Date(),
   ),
 })

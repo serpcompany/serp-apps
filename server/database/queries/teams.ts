@@ -144,8 +144,23 @@ export const getActiveTeamMembers = async (teamId: string) => {
 
 export const getTeamInvites = async (teamId: string) => {
   const invites = await useDB()
-    .select()
+    .select({
+      id: tables.teamInvites.id,
+      teamId: tables.teamInvites.teamId,
+      email: tables.teamInvites.email,
+      role: tables.teamInvites.role,
+      status: tables.teamInvites.status,
+      expiresAt: tables.teamInvites.expiresAt,
+      acceptedAt: tables.teamInvites.acceptedAt,
+      acceptedBy: tables.teamInvites.acceptedBy,
+      createdAt: tables.teamInvites.createdAt,
+      acceptedByEmail: tables.users.email,
+    })
     .from(tables.teamInvites)
+    .leftJoin(
+      tables.users,
+      eq(tables.teamInvites.acceptedBy, tables.users.id)
+    )
     .where(eq(tables.teamInvites.teamId, teamId))
   return invites
 }
@@ -189,10 +204,18 @@ export const getInvite = async (token: string): Promise<TeamInvite> => {
   return invite
 }
 
-export const updateInviteStatus = async (inviteId: string, status: string) => {
+export const updateInviteStatus = async (inviteId: string, status: string, userId?: string) => {
+  const updateData: { status: string; acceptedAt?: Date; acceptedBy?: string } = { status };
+  
+  // If the status is 'accepted', set the acceptedAt timestamp and acceptedBy user ID
+  if (status === 'accepted' && userId) {
+    updateData.acceptedAt = new Date();
+    updateData.acceptedBy = userId;
+  }
+  
   await useDB()
     .update(tables.teamInvites)
-    .set({ status })
+    .set(updateData)
     .where(eq(tables.teamInvites.id, inviteId))
 }
 
