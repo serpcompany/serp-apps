@@ -71,8 +71,8 @@
           </tr>
         </tbody>
       </table>
-      <div v-else class="flex h-64 flex-col items-center justify-center gap-3">
-        <UIcon name="i-lucide-inbox" class="size-10" />
+      <div v-else class="flex h-32 flex-col items-center justify-center gap-3">
+        <UIcon name="i-lucide-inbox" class="size-8" />
         <p class="text-sm text-neutral-500">No pending invitations found</p>
       </div>
     </div>
