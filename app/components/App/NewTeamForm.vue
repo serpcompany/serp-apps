@@ -36,6 +36,7 @@
         class="w-full"
         size="lg"
       />
+      <div v-if="slugAutoAdjustedMessage" class="text-warning text-xs mt-1">{{ slugAutoAdjustedMessage }}</div>
     </UFormField>
 
     <UButton
@@ -56,6 +57,7 @@ import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import type { Team } from '@@/types/database'
 import { FetchError } from 'ofetch'
+import { watch, nextTick, ref } from 'vue'
 
 const toast = useToast()
 const teams = useState<Team[]>('teams')
@@ -90,11 +92,107 @@ const state = reactive({
   logo: '',
 })
 
+let userEditedSlug = false
+let programmaticallyUpdatingSlug = false
+let lastAutoSlug = ''
+const slugAutoAdjustedMessage = ref('')
+
+// Helper to generate slug from name
+function generateSlug(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // remove special chars except space and dash
+    .replace(/\s+/g, '-')         // replace spaces with dash
+    .replace(/-+/g, '-')           // collapse multiple dashes
+    .replace(/^-+|-+$/g, '');      // trim leading/trailing dashes
+}
+
+// Helper to check slug uniqueness and increment if needed
+async function getAvailableSlug(baseSlug: string): Promise<string> {
+  let slug = baseSlug
+  let suffix = 1
+  let wasTaken = false
+  while (true) {
+    try {
+      const existingTeam = await $fetch<{ id: string; name: string; slug: string } | null>('/api/teams/check-slug', {
+        method: 'POST',
+        body: { slug },
+      })
+      if (!existingTeam) {
+        // If the slug was taken and we had to increment, show a message
+        if (wasTaken) {
+          slugAutoAdjustedMessage.value = `\"${baseSlug}\" is taken so we have just made it unique, you can adjust the Team URL however you want to an available name.`
+        }
+        return slug
+      }
+      wasTaken = true
+      slug = `${baseSlug}-${suffix}`
+      suffix++
+    } catch (e) {
+      // If API fails, just return the current slug
+      return slug
+    }
+  }
+}
+
+watch(
+  () => state.name,
+  async (newName) => {
+    if (!userEditedSlug) {
+      const baseSlug = generateSlug(newName)
+      if (!baseSlug) {
+        programmaticallyUpdatingSlug = true
+        state.slug = ''
+        lastAutoSlug = ''
+        slugAutoAdjustedMessage.value = ''
+        programmaticallyUpdatingSlug = false
+        return
+      }
+      // Only check for available slug if name is not empty
+      programmaticallyUpdatingSlug = true
+      state.slug = baseSlug
+      lastAutoSlug = baseSlug
+      slugAutoAdjustedMessage.value = ''
+      await nextTick() // ensure reactivity
+      const availableSlug = await getAvailableSlug(baseSlug)
+      if (!userEditedSlug) {
+        state.slug = availableSlug
+        lastAutoSlug = availableSlug
+        await nextTick()
+        // Trigger input event on the slug input to ensure UI/validation updates
+        const slugInput = document.querySelector('input[name="slug"]') as HTMLInputElement | null
+        if (slugInput) {
+          slugInput.dispatchEvent(new Event('input', { bubbles: true }))
+        }
+      }
+      programmaticallyUpdatingSlug = false
+    }
+  }
+)
+
+watch(
+  () => state.slug,
+  (newSlug, oldSlug) => {
+    if (programmaticallyUpdatingSlug) return
+    // If the slug is cleared, re-enable auto-generation
+    if (newSlug === '') {
+      userEditedSlug = false
+      slugAutoAdjustedMessage.value = ''
+      return
+    }
+    // Only set userEditedSlug if the new slug does NOT match the last auto-generated value
+    if (newSlug !== lastAutoSlug) {
+      userEditedSlug = true
+      slugAutoAdjustedMessage.value = ''
+    }
+  }
+)
+
 const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   loading.value = true
   const data = schema.parse(event.data)
   try {
-    // Check for slug confloct
+    // Check for slug conflict
     const existingTeam = await $fetch<{ id: string; name: string; slug: string } | null>('/api/teams/check-slug', {
       method: 'POST',
       body: { slug: data.slug },
