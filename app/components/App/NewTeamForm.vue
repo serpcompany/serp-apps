@@ -121,14 +121,14 @@ async function getAvailableSlug(baseSlug: string): Promise<string> {
       if (!existingTeam) {
         // If the slug was taken and we had to increment, show a message
         if (wasTaken) {
-          slugAutoAdjustedMessage.value = `\"${baseSlug}\" is taken so we have just made it unique, you can adjust the Team URL however you want to an available name.`
+          slugAutoAdjustedMessage.value = `"${baseSlug}" is taken so we have just made it unique, you can adjust the Team URL however you want to an available name.`
         }
         return slug
       }
       wasTaken = true
       slug = `${baseSlug}-${suffix}`
       suffix++
-    } catch (e) {
+    } catch {
       // If API fails, just return the current slug
       return slug
     }
@@ -172,7 +172,7 @@ watch(
 
 watch(
   () => state.slug,
-  (newSlug, oldSlug) => {
+  (newSlug) => {
     if (programmaticallyUpdatingSlug) return
     // If the slug is cleared, re-enable auto-generation
     if (newSlug === '') {

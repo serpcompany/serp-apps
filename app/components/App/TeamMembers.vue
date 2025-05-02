@@ -113,38 +113,43 @@ const getRowItems = (member: TeamMember): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: async () => {
-        await navigator.clipboard.writeText(member.email)
-        toast.add({
-          title: 'Email copied to clipboard!',
-          color: 'success',
-        })
+      onSelect: () => {
+        void navigator.clipboard.writeText(member.email)
+          .then(() => {
+            toast.add({
+              title: 'Email copied to clipboard!',
+              color: 'success',
+            })
+          })
       },
     },
     {
       label: 'Copy User ID',
-      onSelect: async () => {
-        await navigator.clipboard.writeText(member.userId)
-        toast.add({
-          title: 'User ID copied to clipboard!',
-          color: 'success',
-        })
+      onSelect: () => {
+        void navigator.clipboard.writeText(member.userId)
+          .then(() => {
+            toast.add({
+              title: 'User ID copied to clipboard!',
+              color: 'success',
+            })
+          })
       },
     },
     { type: 'separator' },
     {
       label: 'Remove from team',
       color: 'error' as const,
-      onSelect: async () => {
-        try {
-          await removeTeamMember(member.id)
-          await refreshMembers()
-        } catch {
-          toast.add({
-            title: 'Failed to remove member',
-            color: 'error',
+      onSelect: () => {
+        void removeTeamMember(member.id)
+          .then(() => {
+            return refreshMembers()
           })
-        }
+          .catch(() => {
+            toast.add({
+              title: 'Failed to remove member',
+              color: 'error',
+            })
+          })
       },
     },
   ]

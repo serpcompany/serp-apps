@@ -161,52 +161,54 @@ const getRowItems = (invite: TeamInviteAccepted): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: async () => {
-        await navigator.clipboard.writeText(invite.email)
-        toast.add({
-          title: 'Email copied to clipboard!',
-          color: 'success',
+      onSelect: () => {
+        void navigator.clipboard.writeText(invite.email).then(() => {
+          toast.add({
+            title: 'Email copied to clipboard!',
+            color: 'success',
+          })
         })
       },
     },
     {
       label: 'Resend Invite',
-      onSelect: async () => {
-        try {
-          await resendInvite(invite.id)
-          toast.add({
-            title: 'Invite resent successfully!',
-            color: 'success',
+      onSelect: () => {
+        void resendInvite(invite.id)
+          .then(() => {
+            toast.add({
+              title: 'Invite resent successfully!',
+              color: 'success',
+            })
           })
-        } catch (error) {
-          toast.add({
-            title: 'Failed to resend invite',
-            description: (error as FetchError).statusMessage,
-            color: 'error',
+          .catch((error) => {
+            toast.add({
+              title: 'Failed to resend invite',
+              description: (error as FetchError).statusMessage,
+              color: 'error',
+            })
           })
-        }
       },
     },
     { type: 'separator' },
     {
       label: 'Cancel Invite',
       color: 'error' as const,
-      onSelect: async () => {
-        try {
-          await cancelInvite(invite.id)
-          toast.add({
-            title: 'Invite cancelled successfully',
-            color: 'success',
+      onSelect: () => {
+        void cancelInvite(invite.id)
+          .then(() => {
+            toast.add({
+              title: 'Invite cancelled successfully',
+              color: 'success',
+            })
+            return fetchTeamInvites()
           })
-        } catch (error) {
-          toast.add({
-            title: 'Failed to cancel invite',
-            description: (error as FetchError).statusMessage,
-            color: 'error',
+          .catch((error) => {
+            toast.add({
+              title: 'Failed to cancel invite',
+              description: (error as FetchError).statusMessage,
+              color: 'error',
+            })
           })
-        }
-
-        await fetchTeamInvites()
       },
     },
   ]
