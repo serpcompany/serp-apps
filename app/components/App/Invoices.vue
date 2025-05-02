@@ -93,7 +93,7 @@ const columns: TableColumn<Invoice>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-      const status = row.getValue('status') as string
+      const status = row.getValue('status')
       const color = {
         paid: 'success',
         pending: 'warning',
