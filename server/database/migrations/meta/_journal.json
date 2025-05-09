@@ -5,85 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1745820914632,
-      "tag": "0000_medical_sunfire",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1742809007514,
-      "tag": "0001_small_dust",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1742809168138,
-      "tag": "0002_tiny_changeling",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1742933942335,
-      "tag": "0003_long_penance",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1742934231910,
-      "tag": "0004_nervous_surge",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1742950169767,
-      "tag": "0005_cool_namora",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1742974310426,
-      "tag": "0006_faithful_nightmare",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1742979918072,
-      "tag": "0007_crazy_magdalene",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "6",
-      "when": 1743005455535,
-      "tag": "0008_narrow_sir_ram",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "6",
-      "when": 1743005880058,
-      "tag": "0009_windy_the_leader",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "6",
-      "when": 1744287975770,
-      "tag": "0010_black_silver_samurai",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "6",
-      "when": 1744288902865,
-      "tag": "0011_hesitant_snowbird",
+      "when": 1746798543590,
+      "tag": "0000_funny_makkari",
       "breakpoints": true
     }
   ]

@@ -34,8 +34,8 @@ export function svgToPng(svg: SVGElement | string, options = {}) {
     const height = svgRect.height * settings.scale
 
     // Serialize SVG to string if needed
-    const svgString =
-      typeof svg === 'string'
+    const svgString
+      = typeof svg === 'string'
         ? svg
         : new XMLSerializer().serializeToString(svgElement)
 

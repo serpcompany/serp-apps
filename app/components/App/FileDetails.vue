@@ -21,7 +21,7 @@
           :src="getFileUrl(file)"
           class="h-full w-full object-cover"
           :alt="file.fileName"
-        />
+        >
         <video
           v-else-if="file.type.startsWith('video/')"
           :src="getFileUrl(file)"
@@ -121,7 +121,7 @@
 import { useDateFormat } from '@vueuse/core'
 import { getFileIcon } from '~/utils/fileicons'
 
-type File = {
+interface File {
   id: string
   userId: {
     id: string

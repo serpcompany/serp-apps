@@ -53,9 +53,9 @@
   >
     <template #body>
       <div class="flex items-center justify-end gap-2">
-        <UButton color="neutral" @click="showDeleteConfirmationModal = false"
-          >Cancel</UButton
-        >
+        <UButton color="neutral" @click="showDeleteConfirmationModal = false">
+          Cancel
+        </UButton>
         <UButton color="error" @click="handleDeleteBoard">Delete</UButton>
       </div>
     </template>
@@ -66,9 +66,7 @@
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Board, Task } from '~/types/tasks'
 
-const emit = defineEmits<{
-  (e: 'delete', boardId: string): void
-}>()
+const emit = defineEmits<(e: 'delete', boardId: string) => void>()
 
 const props = defineProps<{
   board: Board
@@ -98,8 +96,8 @@ const items = ref<DropdownMenuItem[]>([
   },
 ])
 
-const { createTask, deleteTask, duplicateTask, toggleTaskCompletion } =
-  useTasks()
+const { createTask, deleteTask, duplicateTask, toggleTaskCompletion }
+  = useTasks()
 
 const isAddingTask = ref(false)
 const handleTaskCreated = async (task: {

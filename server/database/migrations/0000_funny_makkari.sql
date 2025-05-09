@@ -19,6 +19,27 @@ CREATE TABLE `subscribers` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `subscribers_email_unique` ON `subscribers` (`email`);--> statement-breakpoint
+CREATE TABLE `conversations` (
+	`id` text PRIMARY KEY NOT NULL,
+	`userId` text NOT NULL,
+	`teamId` text NOT NULL,
+	`title` text DEFAULT 'New Conversation' NOT NULL,
+	`model` text DEFAULT 'openai' NOT NULL,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `messages` (
+	`id` text PRIMARY KEY NOT NULL,
+	`conversationId` text NOT NULL,
+	`role` text DEFAULT 'user' NOT NULL,
+	`content` text NOT NULL,
+	`created_at` integer,
+	FOREIGN KEY (`conversationId`) REFERENCES `conversations`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `email_verification_codes` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`userId` text NOT NULL,
@@ -83,6 +104,20 @@ CREATE TABLE `customers` (
 	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `files` (
+	`id` text PRIMARY KEY NOT NULL,
+	`userId` text NOT NULL,
+	`teamId` text NOT NULL,
+	`pathname` text NOT NULL,
+	`fileName` text NOT NULL,
+	`size` integer,
+	`type` text NOT NULL,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `images` (
@@ -219,4 +254,74 @@ CREATE TABLE `subscriptions` (
 	FOREIGN KEY (`price_id`) REFERENCES `prices`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `url_analytics` (
+	`id` text PRIMARY KEY NOT NULL,
+	`urlId` text NOT NULL,
+	`userId` text NOT NULL,
+	`teamId` text NOT NULL,
+	`country` text,
+	`city` text,
+	`device` text,
+	`device_type` text,
+	`os` text,
+	`browser` text,
+	`browser_version` text,
+	`referrer` text,
+	`referrer_domain` text,
+	`ip` text,
+	`user_agent` text,
+	`created_at` integer,
+	FOREIGN KEY (`urlId`) REFERENCES `urls`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `urls` (
+	`id` text PRIMARY KEY NOT NULL,
+	`userId` text NOT NULL,
+	`teamId` text NOT NULL,
+	`shortcode` text NOT NULL,
+	`url` text NOT NULL,
+	`comments` text,
+	`clicks` integer DEFAULT 0 NOT NULL,
+	`tags` text,
+	`expires_at` integer,
+	`logo` text,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `urls_shortcode_unique` ON `urls` (`shortcode`);--> statement-breakpoint
+CREATE TABLE `boards` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`userId` text NOT NULL,
+	`teamId` text NOT NULL,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `tasks` (
+	`id` text PRIMARY KEY NOT NULL,
+	`createdById` text NOT NULL,
+	`teamId` text NOT NULL,
+	`assignedToId` text NOT NULL,
+	`boardId` text NOT NULL,
+	`title` text NOT NULL,
+	`description` text,
+	`priority` text DEFAULT 'low' NOT NULL,
+	`completed` integer DEFAULT false NOT NULL,
+	`due_date` integer,
+	`created_at` integer,
+	`updated_at` integer,
+	FOREIGN KEY (`createdById`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`teamId`) REFERENCES `teams`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`assignedToId`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`boardId`) REFERENCES `boards`(`id`) ON UPDATE no action ON DELETE cascade
 );

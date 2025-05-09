@@ -22,9 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-const emit = defineEmits<{
-  (e: 'on-select', message: string): void
-}>()
+const emit = defineEmits<(e: 'on-select', message: string) => void>()
 
 const handleSelect = (message: string) => {
   emit('on-select', message)

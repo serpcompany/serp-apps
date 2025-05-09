@@ -12,4 +12,4 @@ export default defineEventHandler(async (event) => {
   }
 
   return await checkSlugConflict(user.id, slug)
-}) 
+})

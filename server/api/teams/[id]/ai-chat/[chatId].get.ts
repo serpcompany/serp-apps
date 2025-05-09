@@ -3,7 +3,7 @@ import { getConversation } from '@@/server/database/queries/ai-chat'
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
   const { id, chatId } = getRouterParams(event)
-  const teamId = id as string
+  const teamId = id
 
   const conversation = await getConversation(chatId, user.id, teamId)
 

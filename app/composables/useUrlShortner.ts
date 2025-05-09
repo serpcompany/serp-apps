@@ -30,8 +30,8 @@ export const useUrlShortner = () => {
   }
 
   async function svgToPng(svg: SVGElement | string): Promise<string> {
-    const svgString =
-      typeof svg === 'string' ? svg : new XMLSerializer().serializeToString(svg)
+    const svgString
+      = typeof svg === 'string' ? svg : new XMLSerializer().serializeToString(svg)
     const svgBlob = new Blob([svgString], { type: 'image/svg+xml' })
     const svgUrl = URL.createObjectURL(svgBlob)
 

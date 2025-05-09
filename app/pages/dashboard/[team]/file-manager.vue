@@ -57,7 +57,7 @@
                     :src="getFileUrl(file)"
                     class="h-12 w-12 rounded object-cover"
                     :alt="file.fileName"
-                  />
+                  >
                   <div
                     v-else
                     class="flex h-12 w-12 items-center justify-center rounded bg-neutral-100 dark:bg-neutral-800"

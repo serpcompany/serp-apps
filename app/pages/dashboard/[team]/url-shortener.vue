@@ -81,7 +81,7 @@
           <UButton type="submit" :loading="loading" label="Create Link" />
         </UForm>
         <div class="h-full w-full space-y-4">
-          <div v-html="qrCode"></div>
+          <div v-html="qrCode" />
           <div class="flex items-center gap-2">
             <UButton
               icon="i-lucide-download"

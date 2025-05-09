@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { url, comments, tags, expiresAt, logo, shortcode } =
-    await readBody(event)
+  const { url, comments, tags, expiresAt, logo, shortcode }
+    = await readBody(event)
   if (!url) {
     throw createError({
       statusCode: 400,

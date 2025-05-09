@@ -1,1 +1,0 @@
-ALTER TABLE `files` ADD `fileName` text NOT NULL;

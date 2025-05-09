@@ -72,7 +72,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'submit', value: { message: string; model: string }): void
+  (e: 'submit', value: { message: string, model: string }): void
   (e: 'stop'): void
 }>()
 

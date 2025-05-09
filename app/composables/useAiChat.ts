@@ -1,6 +1,4 @@
 import type {
-  InsertConversation,
-  InsertMessage,
   Conversation,
 } from '@@/types/database'
 
@@ -39,7 +37,7 @@ export const useAiChat = () => {
       ?.icon
   })
 
-  const startChat = async ({ message, model }: { message: string; model: string }) => {
+  const startChat = async ({ message, model }: { message: string, model: string }) => {
     try {
       loading.value = true
       const newChat = await $fetch<Conversation>(

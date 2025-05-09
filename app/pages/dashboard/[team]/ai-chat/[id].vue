@@ -85,8 +85,8 @@ const { data: conversationWithMessages } = await useFetch<Conversation>(
   `/api/teams/${currentTeam.value.id}/ai-chat/${route.params.id}`,
 )
 
-const { messages, input, handleSubmit, error, reload, stop, isLoading } =
-  useChat({
+const { messages, input, handleSubmit, stop, isLoading }
+  = useChat({
     api: `/api/teams/${currentTeam.value.id}/ai-chat/chat`,
     body,
     initialMessages: conversationWithMessages.value?.messages.map(

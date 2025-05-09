@@ -340,7 +340,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
         color: 'success',
       })
     } else {
-      const post = await createPost(payload)
+      await createPost(payload)
       toast.add({
         title: 'Post created',
         description: 'Your post has been created successfully',

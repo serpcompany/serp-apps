@@ -1,7 +1,7 @@
 <template>
   <main class="flex min-h-screen items-center justify-center">
     <UContainer class="mx-auto w-full max-w-sm space-y-4">
-      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto" />
+      <img src="/logo.png" alt="logo" class="mx-auto h-10 w-auto">
       <div class="text-center">
         <p class="text-lg font-bold">Sign in to Supersaas</p>
         <p class="text-sm text-neutral-500">

@@ -1,5 +1,5 @@
 import { eq, and, desc } from 'drizzle-orm'
-import { InsertUrl, Url } from '~~/types/database'
+import type { InsertUrl, Url } from '~~/types/database'
 
 export const createUrl = async (url: InsertUrl) => {
   const newUrl = await useDB().insert(tables.urls).values(url).returning().get()
@@ -65,7 +65,6 @@ export const getUrlStats = async (urlId: string) => {
   })
   return stats
 }
-
 
 export const getUrlByShortcode = async (shortcode: string) => {
   const url = await useDB().query.urls.findFirst({

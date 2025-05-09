@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Subscription } from "@@/types/database";
+import type { Subscription } from '@@/types/database'
 // How data comes
 // "subscription": {
 //             "id": "sub_1RImWnRwvHLaOt8mNwbuSMpq",
@@ -78,33 +78,33 @@ import type { Subscription } from "@@/types/database";
 //             }
 //         },
 defineProps<{
-  subscription: Subscription;
-}>();
+  subscription: Subscription
+}>()
 
 const formatPrice = (price?: number): string => {
-  if (!price) return "$0";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  if (!price) return '$0'
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 0,
-  }).format(price / 100);
-};
+  }).format(price / 100)
+}
 
 const getStatusColor = (status?: string) => {
   switch (status) {
-    case "active":
-      return "success";
-    case "trialing":
-      return "primary";
-    case "canceled":
-    case "incomplete_expired":
-    case "unpaid":
-      return "error";
-    case "past_due":
-    case "incomplete":
-      return "warning";
+    case 'active':
+      return 'success'
+    case 'trialing':
+      return 'primary'
+    case 'canceled':
+    case 'incomplete_expired':
+    case 'unpaid':
+      return 'error'
+    case 'past_due':
+    case 'incomplete':
+      return 'warning'
     default:
-      return "neutral";
+      return 'neutral'
   }
-};
+}
 </script>

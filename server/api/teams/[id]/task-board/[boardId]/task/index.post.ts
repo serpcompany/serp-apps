@@ -1,6 +1,6 @@
 import { isTeamMember } from '@@/server/database/queries/teams'
 import { createTask } from '@@/server/database/queries/tasks'
-import { InsertTask } from '~~/types/database'
+import type { InsertTask } from '~~/types/database'
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
@@ -27,8 +27,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { title, description, priority, assignedTo, dueDate } =
-    await readBody(event)
+  const { title, description, priority, assignedTo, dueDate }
+    = await readBody(event)
 
   const formattedDueDate = new Date(dueDate)
 

@@ -62,8 +62,9 @@
 
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
+import type { UIMessage } from '@ai-sdk/vue'
+
 const { copy, copied } = useClipboard()
-import { type UIMessage } from '@ai-sdk/vue'
 
 defineProps<{
   message: UIMessage

@@ -193,15 +193,13 @@ const taskSchema = z.object({
 type TaskSchema = z.output<typeof taskSchema>
 
 // Props & Emits
-const emit = defineEmits<{
-  (e: 'task-created', task: {
-    title: string
-    description: string
-    priority: Priority
-    assignedTo: string
-    dueDate: string
-  }): void
-}>()
+const emit = defineEmits<(e: 'task-created', task: {
+  title: string
+  description: string
+  priority: Priority
+  assignedTo: string
+  dueDate: string
+}) => void>()
 
 // State
 const showAddTask = ref(false)

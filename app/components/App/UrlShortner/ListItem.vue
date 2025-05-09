@@ -54,7 +54,7 @@
           />
           <template #content>
             <div class="p-2">
-              <div v-html="qrCode" class="h-32 w-32"></div>
+              <div v-html="qrCode" class="h-32 w-32" />
               <UButton
                 label="Download"
                 icon="i-lucide-download"
@@ -99,8 +99,7 @@ const {
 } = useUrlShortner()
 
 const fullUrl = computed(() => {
-  // return `${host}/l/${props.url.shortcode}`
-  return `link.supersaas.dev/l/${props.url.shortcode}`
+  return `${host}/l/${props.url.shortcode}`
 })
 
 const qrCode = computed(() => {

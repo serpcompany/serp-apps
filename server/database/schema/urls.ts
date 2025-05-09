@@ -4,7 +4,7 @@ import { users } from './users'
 import { teams } from './teams'
 import { relations } from 'drizzle-orm'
 
-export const generateAlphaNumericCode = (length: number = 6) => {
+export const generateAlphaNumericCode = (length = 6) => {
   return customAlphabet(
     '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
     length,

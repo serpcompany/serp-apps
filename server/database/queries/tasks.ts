@@ -1,5 +1,6 @@
 import { eq, and, desc } from 'drizzle-orm'
-import { InsertTask, Task, InsertBoard, Board } from '~~/types/database'
+import type { InsertTask, Task, Board } from '~~/types/database'
+import { InsertBoard } from '~~/types/database'
 
 export const createBoard = async (
   boardName: string,

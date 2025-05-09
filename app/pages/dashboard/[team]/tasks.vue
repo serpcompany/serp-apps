@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Board, Task } from '~/types/tasks'
 const nuxtApp = useNuxtApp()
 const { currentTeam } = useTeam()
 await useFetch(`/api/teams/${currentTeam.value.id}`, {

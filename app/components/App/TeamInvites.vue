@@ -80,7 +80,7 @@
     <!-- Accepted Invitations Table -->
     <p v-if="acceptedInvites.length" class="mt-8 text-sm font-semibold">Accepted Invitations</p>
     <div
-      v-if="acceptedInvites.length" 
+      v-if="acceptedInvites.length"
       class="mt-2 overflow-x-auto rounded-lg border border-neutral-200 dark:divide-white/10 dark:border-white/10"
     >
       <table
@@ -136,7 +136,7 @@ import type { TeamInvite } from '@@/types/database'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { FetchError } from 'ofetch'
 
-type TeamInviteAccepted = TeamInvite & {acceptedByEmail?: string }
+type TeamInviteAccepted = TeamInvite & { acceptedByEmail?: string }
 
 const { currentTeam, cancelInvite, resendInvite } = useTeam()
 const toast = useToast()
@@ -147,11 +147,11 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvi
 
 // Split invites into pending and accepted
 const pendingInvites = computed(() =>
-  teamInvites.value?.filter(invite => invite.status !== 'accepted') || []
+  teamInvites.value?.filter((invite) => invite.status !== 'accepted') || [],
 )
 
 const acceptedInvites = computed(() =>
-  teamInvites.value?.filter(invite => invite.status === 'accepted') || []
+  teamInvites.value?.filter((invite) => invite.status === 'accepted') || [],
 )
 
 const pendingColumns = ['Email', 'Role', 'Status', 'Expires At', 'Created At', '']

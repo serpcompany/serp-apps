@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   })
   const { user } = await requireUserSession(event)
   const { id } = getRouterParams(event)
-  const teamId = id as string
+  const teamId = id
 
   const hasAccess = await isTeamMember(teamId, user.id)
   if (!hasAccess) {

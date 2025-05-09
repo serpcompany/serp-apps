@@ -4,7 +4,7 @@ import { users } from './users'
 import { teams } from './teams'
 import { relations } from 'drizzle-orm'
 
-const generateAlphaNumericCode = (length: number = 6) => {
+const generateAlphaNumericCode = (length = 6) => {
   return customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', length)()
 }
 
@@ -56,7 +56,7 @@ export const conversationsRelations = relations(conversations, ({ one, many }) =
     fields: [conversations.teamId],
     references: [teams.id],
   }),
-  messages: many(messages)
+  messages: many(messages),
 }))
 
 export const messagesRelations = relations(messages, ({ one }) => ({

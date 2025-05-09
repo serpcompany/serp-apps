@@ -30,4 +30,4 @@ export default defineEventHandler(async (event) => {
 
   const message = await createMessage(conversationId, content, role)
   return message
-}) 
+})

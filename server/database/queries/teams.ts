@@ -159,7 +159,7 @@ export const getTeamInvites = async (teamId: string) => {
     .from(tables.teamInvites)
     .leftJoin(
       tables.users,
-      eq(tables.teamInvites.acceptedBy, tables.users.id)
+      eq(tables.teamInvites.acceptedBy, tables.users.id),
     )
     .where(eq(tables.teamInvites.teamId, teamId))
   return invites
@@ -205,14 +205,14 @@ export const getInvite = async (token: string): Promise<TeamInvite> => {
 }
 
 export const updateInviteStatus = async (inviteId: string, status: string, userId?: string) => {
-  const updateData: { status: string; acceptedAt?: Date; acceptedBy?: string } = { status };
-  
+  const updateData: { status: string, acceptedAt?: Date, acceptedBy?: string } = { status }
+
   // If the status is 'accepted', set the acceptedAt timestamp and acceptedBy user ID
   if (status === 'accepted' && userId) {
-    updateData.acceptedAt = new Date();
-    updateData.acceptedBy = userId;
+    updateData.acceptedAt = new Date()
+    updateData.acceptedBy = userId
   }
-  
+
   await useDB()
     .update(tables.teamInvites)
     .set(updateData)

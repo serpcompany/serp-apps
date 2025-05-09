@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { type UIMessage } from '@ai-sdk/vue'
+import type { UIMessage } from '@ai-sdk/vue'
 import {
   ScrollAreaRoot,
   ScrollAreaScrollbar,
@@ -33,14 +33,6 @@ import {
   ScrollAreaViewport,
 } from 'reka-ui'
 import { ref, watch, onMounted, nextTick } from 'vue'
-
-interface Message {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  createdAt?: Date
-  updatedAt?: Date
-}
 
 const props = defineProps<{
   messages: UIMessage[]
@@ -61,13 +53,13 @@ const scrollToBottom = async () => {
 watch(
   () => props.messages,
   () => {
-    scrollToBottom()
+    void scrollToBottom()
   },
   { deep: true },
 )
 
 // Initial scroll when component is mounted
 onMounted(() => {
-  scrollToBottom()
+  void scrollToBottom()
 })
 </script>

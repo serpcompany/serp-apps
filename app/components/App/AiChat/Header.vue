@@ -18,7 +18,7 @@
           <h1 :key="title" class="flex-1 truncate font-bold">{{ title }}</h1>
         </Transition>
       </div>
-      <slot name="actions"></slot>
+      <slot name="actions" />
     </div>
   </header>
 </template>

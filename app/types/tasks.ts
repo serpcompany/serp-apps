@@ -40,4 +40,4 @@ export interface CreateBoardInput {
   name: string
   teamId: string
   userId: string
-} 
+}

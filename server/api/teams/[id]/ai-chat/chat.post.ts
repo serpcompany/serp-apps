@@ -77,7 +77,7 @@ export default defineLazyEventHandler(async () => {
           status: 400,
         })
       }
-      selectedModel = modelProviders[model]!()
+      selectedModel = modelProviders[model]()
     } else {
       // Default to OpenAI
       selectedModel = openai(model)
