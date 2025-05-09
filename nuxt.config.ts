@@ -17,6 +17,34 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'system',
   },
+  // Used by the AI Chat to highlight code
+  mdc: {
+    headings: {
+      anchorLinks: false,
+    },
+    highlight: {
+      langs: [
+        'ts',
+        'js',
+        'html',
+        'css',
+        'json',
+        'md',
+        'yaml',
+        'bash',
+        'css',
+        'py',
+        'tsx',
+        'jsx',
+        'go',
+        'rust',
+        'java',
+        'kotlin',
+        'swift',
+        'csharp',
+      ],
+    },
+  },
   runtimeConfig: {
     openaiApiKey: process.env.OPENAI_API_KEY,
     googleApiKey: process.env.GOOGLE_GEMINI_API_KEY,
@@ -46,6 +74,7 @@ export default defineNuxtConfig({
     database: true,
     blob: true,
     kv: true,
+    cache: true,
   },
   auth: {
     webAuthn: true,
@@ -63,6 +92,20 @@ export default defineNuxtConfig({
         commaDangle: 'always-multiline',
       },
     },
+  },
+  fonts: {
+    families: [
+      {
+        name: 'Geist',
+        provider: 'google',
+        weights: ['400', '500', '600', '700', '800'],
+      },
+      {
+        name: 'Cal Sans',
+        provider: 'google',
+        weights: ['400'],
+      },
+    ],
   },
   nuxtHubRateLimit: {
     routes: {

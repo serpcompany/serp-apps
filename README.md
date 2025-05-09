@@ -9,8 +9,7 @@ Here you'll find real-world examples of how to effectively leverage the template
 So, I will be making a few apps here
 
 - AI Chat App
-- An AI image generator with Fal.ai
 - A link shortner
-- Websockets implementation
+- Websockets implementation mmaybe
 - Product analytics using some third party services
 - Maybe some realtime stuff like Notifications

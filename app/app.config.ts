@@ -4,6 +4,9 @@ export default defineAppConfig({
       loading: 'i-lucide-loader-circle',
     },
     button: {
+      defaultVariants: {
+        color: 'neutral',
+      },
       slots: {
         base: 'cursor-pointer',
       },
