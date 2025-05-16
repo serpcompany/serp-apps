@@ -20,6 +20,8 @@ Coming soon:
 ⏳ Payments
 ⏳ Super Admin
 
+These will be finished very soon (Working on this right now)
+
 ## Setup
 
 Make sure to install the dependencies:
