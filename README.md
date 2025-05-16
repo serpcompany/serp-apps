@@ -8,17 +8,18 @@ Note: I decided to keep this as a separate repo rather than a branch to avoid a 
 
 Here's what I have completed so far:
 
-✅ Pages, Components, UI and layouts
-✅ Database setup  
-✅ Authentication
-✅ API Routes
-✅ Image Upload
-✅ CRUD app demo (posts)
+- [x] Pages, Components, UI and layouts
+- [x] Database setup
+- [x] Authentication
+- [x] API Routes
+- [x] Image Upload
+- [x] CRUD app demo (posts)
 
 Coming soon:
-⏳ Account settings page
-⏳ Payments
-⏳ Super Admin
+
+- [ ] Account settings page
+- [ ] Payments
+- [ ] Super Admin
 
 These will be finished very soon (Working on this right now)
 
