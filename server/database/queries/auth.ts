@@ -1,0 +1,82 @@
+import type { InsertEmailVerificationCodes } from '@@/types/database';
+import { generateAlphaNumericCode } from '@@/server/utils/nanoid';
+
+export const saveEmailVerificationCode = async (payload: InsertEmailVerificationCodes) => {
+  try {
+    const record = await useDB().insert(tables.emailVerificationCodes).values(payload).returning().get();
+    return record;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to create verification code');
+  }
+};
+
+export const findEmailVerificationCode = async (code: string) => {
+  const record = await useDB().query.emailVerificationCodes.findFirst({
+    where: eq(tables.emailVerificationCodes.code, code)
+  });
+  return record;
+};
+
+export const deleteExpiredEmailVerificationCodes = async (userId: string) => {
+  try {
+    // Calculate the timestamp for 30 minutes ago
+    const thirtyMinutesAgo = new Date(Date.now() - 1000 * 60 * 30);
+
+    await useDB()
+      .delete(tables.emailVerificationCodes)
+      .where(
+        and(
+          eq(tables.emailVerificationCodes.userId, userId),
+          lt(tables.emailVerificationCodes.expiresAt, thirtyMinutesAgo)
+        )
+      );
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to delete expired verification codes');
+  }
+};
+
+export const deleteEmailVerificationCode = async (userId: string) => {
+  try {
+    await useDB().delete(tables.emailVerificationCodes).where(eq(tables.emailVerificationCodes.userId, userId));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to delete verification code');
+  }
+};
+
+export const createPasswordResetToken = async (userId: string) => {
+  try {
+    const token = generateAlphaNumericCode(32);
+    const record = await useDB()
+      .insert(tables.passwordResetTokens)
+      .values({
+        userId,
+        code: token,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 30) // 30 minutes
+      })
+      .returning()
+      .get();
+    return record;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to create password reset token');
+  }
+};
+
+export const findPasswordResetToken = async (code: string) => {
+  const record = await useDB().query.passwordResetTokens.findFirst({
+    where: eq(tables.passwordResetTokens.code, code)
+  });
+  return record;
+};
+
+export const deletePasswordResetToken = async (token: string) => {
+  try {
+    await useDB().delete(tables.passwordResetTokens).where(eq(tables.passwordResetTokens.code, token));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to delete password reset token');
+  }
+};

@@ -1,0 +1,114 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+You are an expert in Vue 3, Nuxt 3, Typescript, Node.js, Vite, Vue Router, VueUse, Nuxt UI, and Tailwind CSS. You possess deep knowledge of best practices and performance optimization techniques across these technologies.
+
+Code Style and Structure
+- Write clean, maintainable, and technically accurate Typescript code.
+- Prioritize functional and declarative programming patterns; avoid using classes.
+- Emphasize iteration and modularization to follow DRY principles and minimize code duplication.
+- Always use Composition API with Script setup syntax: `<script setup lang="ts">`.
+- Use composables for reusable client-side logic or state across components.
+- Prioritize readability and simplicity over premature optimization.
+- Leave NO to-do’s, placeholders, or missing pieces in your code.
+- Ask clarifying questions when necessary.
+- Always use pnpm as the package manager.
+
+Nuxt 3 Specifics
+- Nuxt 3 provides auto-imports, so there’s no need to manually import `ref`, `useState`, `useRouter`, or similar Vue or Nuxt functions.
+- For color mode handling, use the built-in `@nuxtjs/color-mode` with the `useColorMode()` function.
+- Utilize VueUse functions for any functionality it provides to enhance reactivity, performance, and avoid writing unnecessary custom code.
+- Use the Server API (within the `server/api` directory) to handle server-side operations like database interactions, authentication, or processing sensitive data that must remain confidential.
+- Use `useRuntimeConfig().public` for client-side configuration and environment variables, and `useRuntimeConfig()` for the rest.
+- For SEO use `useHead` and `useSeoMeta`.
+- Use `app.config.ts` for app theme configuration.
+- Throw errors using the `createError` function:
+  - On the client-side: Pass a string error message as the parameter.
+    Example: `throw createError('User not found')`
+  - On the server-side: Pass an object with `statusMessage` and `statusCode` properties.
+    Example: `throw createError({ statusCode: 404, statusMessage: 'User not found' })`
+- Dont use pinia, since Nuxt has a built composable useState
+`// Create a reactive state and set default value
+const count = useState('counter', () => Math.round(Math.random() * 100))`
+
+Data Fetching
+- Use `useFetch` for standard data fetching in components setup function that benefit from SSR, caching, and reactively updating based on URL changes. 
+- Use `$fetch` for client-side requests within event handlers or functions or when SSR optimization is not needed.
+- Use `useAsyncData` when implementing complex data fetching logic like combining multiple API calls or custom caching and error handling in component setup.
+
+Naming Conventions
+- Name composables as `use[ComposableName]`.
+- Use **PascalCase** for component files (e.g., `components/MyComponent.vue`).
+- Use **camelCase** for all other files and functions (e.g., `pages/myPage.vue`, `server/api/myEndpoint.ts`).
+- Prefer named exports for functions to maintain consistency and readability.
+
+UI and Styling
+- Use Nuxt UI version 3 components (prefixed with 'U', e.g., <UButton>, <UInput>, <UModal>, <UForm>).
+- Apply inline Tailwind CSS classes for styling.
+- Implement responsive design using Tailwind's mobile-first approach.
+- Use the `<Icon name="i-heroicons-[icon]">` for icons.
+
+
+Nuxt UI Forms 
+
+Here's how a form works in Nuxt UI 
+
+```vue
+<script setup lang="ts">
+import * as z from 'zod'
+import type { FormSubmitEvent } from '@nuxt/ui'
+
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Must be at least 8 characters')
+})
+
+type Schema = z.output<typeof schema>
+
+const state = reactive<Partial<Schema>>({
+  email: undefined,
+  password: undefined
+})
+
+const toast = useToast()
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
+  console.log(event.data)
+}
+</script>
+
+<template>
+  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+    <UFormField label="Email" name="email">
+      <UInput v-model="state.email" />
+    </UFormField>
+
+    <UFormField label="Password" name="password">
+      <UInput v-model="state.password" type="password" />
+    </UFormField>
+
+    <UButton type="submit">
+      Submit
+    </UButton>
+  </UForm>
+</template>
+```
+
+SEO Best Practices
+- Use semantic HTML elements appropriately.
+- Ensure proper heading hierarchy (H1, H2, H3, etc.) on each page.
+- Use `<NuxtLink>` for internal linking to leverage prefetching.
+- Use lazy loading for images and iframes that do not need to be immediately accessible
+
+Note - the new Nuxt 4 folder structure is a bit different 
+
+There's a new /app folder which has all the frontend and client stuff
+
+/app/pages
+/app/composables
+/app/middleware
+/app/plugins
+/app/assets
+/app/layouts
