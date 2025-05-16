@@ -1,12 +1,24 @@
 # Supersaas Essentials (Single User variant)
 
-This is a single user variant of the Supersaas Starter Kit, the original repo can be found [here](https://github.com/SupersaasHQ/essentials-v3)
+This is a single user version of the Supersaas Starter Kit (original repo [here](https://github.com/SupersaasHQ/essentials-v3)).
 
-This version does not include the teams feature, and is focused on being a simple, single user SaaS application.
+This version does not include the teams feature, orgs, member invirations etc, while maintaining all the other features from the original. This version will stay up-to-date with any new improvements made to the main repo.
 
-This is 1 to 1 on feature parity with the original repo, and will always stay in sync with the latest features and improvements.
+Note: I decided to keep this as a separate repo rather than a branch to avoid a messy commit history and merge conflicts. This will keep things nice and tidy!
 
-I did not include this in the original repo as a separate branch to avoid cluttering it with a lot of commits, conflicts, etc.
+Here's what I have completed so far:
+
+✅ Pages, Components, UI and layouts
+✅ Database setup  
+✅ Authentication
+✅ API Routes
+✅ Image Upload
+✅ CRUD app demo (posts)
+
+Coming soon:
+⏳ Account settings page
+⏳ Payments
+⏳ Super Admin
 
 ## Setup
 
