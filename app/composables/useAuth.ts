@@ -65,7 +65,7 @@ export const useAuth = () => {
         body: { email }
       });
       toast.add({
-        title: 'If the email is correct, you will receive a password reset link.',
+        title: 'We have sent a password reset link to your email',
         color: 'success'
       });
       return { success: true };

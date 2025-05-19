@@ -10,6 +10,7 @@ export const useUserAccount = () => {
   });
 
   const passwordSchema = z.object({
+    currentPassword: z.string().min(1),
     password: z.string().min(8)
   });
 
@@ -35,12 +36,12 @@ export const useUserAccount = () => {
     }
   };
 
-  const updatePassword = async (password: string) => {
+  const updatePassword = async ({ currentPassword, password }: { currentPassword: string; password: string }) => {
     loading.value = true;
     try {
       await $fetch('/api/me/update-password', {
         method: 'POST',
-        body: { password }
+        body: { currentPassword, password }
       });
       toast.add({
         title: 'Your password has been updated successfully',
@@ -49,7 +50,7 @@ export const useUserAccount = () => {
     } catch (error) {
       console.error(error);
       toast.add({
-        title: 'Failed to update your password',
+        title: error.data.message,
         color: 'error'
       });
     } finally {

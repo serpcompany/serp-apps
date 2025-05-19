@@ -34,10 +34,20 @@ export const postSchema = z.object({
 });
 
 export const updateUserPasswordSchema = z.object({
-  password: z.string().min(8)
+  password: z.string().min(8),
+  currentPassword: z.string().min(8)
 });
 
 export const updateUserSchema = insertUserSchema.pick({
   name: true,
   avatarUrl: true
+});
+
+export const linkPasskeySchema = z.object({
+  userName: z.string().email(),
+  displayName: z.string().trim().optional()
+});
+
+export const deletePasskeySchema = z.object({
+  credentialId: z.string()
 });

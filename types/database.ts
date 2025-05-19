@@ -24,3 +24,15 @@ export type Post = typeof tables.posts.$inferSelect;
 export type InsertPost = typeof tables.posts.$inferInsert;
 export const insertPostSchema = createInsertSchema(tables.posts);
 export const selectPostSchema = createSelectSchema(tables.posts);
+
+// OAuth Accounts
+export type OAuthAccount = typeof tables.oauthAccounts.$inferSelect;
+export type InsertOAuthAccount = typeof tables.oauthAccounts.$inferInsert;
+export const insertOAuthAccountSchema = createInsertSchema(tables.oauthAccounts);
+export const selectOAuthAccountSchema = createSelectSchema(tables.oauthAccounts);
+
+// Passkeys
+export type Passkey = typeof tables.webAuthnCredentials.$inferSelect;
+export type InsertPasskey = typeof tables.webAuthnCredentials.$inferInsert;
+export type WebAuthnChallenge = typeof tables.webAuthnChallenges.$inferSelect;
+export type InsertWebAuthnChallenge = typeof tables.webAuthnChallenges.$inferInsert;

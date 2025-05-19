@@ -1,4 +1,5 @@
 import type { User, InsertUser } from '@@/types/database';
+import { H3Error } from 'h3';
 
 export const findUserByEmail = async (email: string): Promise<User | undefined> => {
   const user = await useDB().query.users.findFirst({
@@ -164,5 +165,59 @@ export const updateUserPassword = async (userId: string, hashedPassword: string)
   } catch (error) {
     console.error(error);
     throw new Error('Failed to update user password');
+  }
+};
+
+export const findLinkedAccountsByUserId = async (userId: string) => {
+  try {
+    const linkedAccounts = await useDB()
+      .select()
+      .from(tables.oauthAccounts)
+      .where(eq(tables.oauthAccounts.userId, userId));
+    return linkedAccounts;
+  } catch (error) {
+    console.error(error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to find linked accounts by user ID'
+    });
+  }
+};
+
+export const unlinkAccount = async (userId: string, providerId: string) => {
+  try {
+    // Get user to check if they have a password set
+    const user = await findUserById(userId);
+    if (!user) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'User not found'
+      });
+    }
+
+    // Get all linked accounts for the user
+    const linkedAccounts = await findLinkedAccountsByUserId(userId);
+
+    // If user has no password and only one linked account, prevent unlinking
+    if (!user.hashedPassword && linkedAccounts.length <= 1) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Cannot unlink the only authentication method. Please set a password first.'
+      });
+    }
+
+    // Proceed with unlinking if checks pass
+    await useDB()
+      .delete(tables.oauthAccounts)
+      .where(and(eq(tables.oauthAccounts.userId, userId), eq(tables.oauthAccounts.id, providerId)));
+  } catch (error) {
+    console.error(error);
+    if (error instanceof H3Error && error.statusCode) {
+      throw error;
+    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to unlink account'
+    });
   }
 };

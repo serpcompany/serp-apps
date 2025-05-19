@@ -8,24 +8,12 @@
           Enter your email below to reset your password.
         </p>
       </div>
-      <UForm
-        :schema="emailSchema"
-        :state="state"
-        class="mt-8 space-y-4"
-        @submit="onSubmit"
-      >
+      <UForm :schema="emailSchema" :state="state" class="mt-8 space-y-4" @submit="onSubmit">
         <UFormField label="Email" name="email">
           <UInput v-model="state.email" class="w-full" size="lg" />
         </UFormField>
 
-        <UButton
-          type="submit"
-          :loading="loading"
-          block
-          color="neutral"
-          class="cursor-pointer"
-          size="lg"
-        >
+        <UButton type="submit" :loading="loading" block color="neutral" class="cursor-pointer" size="lg">
           Send reset instructions
         </UButton>
       </UForm>
@@ -43,7 +31,7 @@ const loading = ref(false);
 const { forgotPassword } = useAuth();
 
 const state = reactive<Partial<PasswordResetSchema>>({
-  email: undefined,
+  email: undefined
 });
 
 const onSubmit = async (event: FormSubmitEvent<PasswordResetSchema>) => {
