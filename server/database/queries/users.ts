@@ -151,3 +151,18 @@ export const linkOAuthAccount = async (userId: string, provider: string, provide
     });
   }
 };
+
+export const updateUserPassword = async (userId: string, hashedPassword: string) => {
+  try {
+    const record = await useDB()
+      .update(tables.users)
+      .set({ hashedPassword })
+      .where(eq(tables.users.id, userId))
+      .returning()
+      .get();
+    return record;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to update user password');
+  }
+};

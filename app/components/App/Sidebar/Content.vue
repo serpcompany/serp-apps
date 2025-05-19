@@ -19,10 +19,5 @@ const items = [
     label: 'Posts',
     to: '/dashboard/posts'
   },
-  {
-    icon: 'i-lucide-message-square',
-    label: 'AI Chat',
-    to: '/dashboard/ai-chat'
-  },
 ];
 </script>
