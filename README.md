@@ -14,10 +14,10 @@ Here's what I have completed so far:
 - [x] API Routes
 - [x] Image Upload
 - [x] CRUD app demo (posts)
+- [x] Account settings page
 
 Coming soon:
 
-- [ ] Account settings page
 - [ ] Payments
 - [ ] Super Admin
 
