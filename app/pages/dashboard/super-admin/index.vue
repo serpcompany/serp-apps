@@ -1,12 +1,6 @@
 <template>
   <AppContainer title="Users">
     <template #actions>
-      <UButton
-        :label="isEmailsMasked ? 'Unmask emails' : 'Mask Emails'"
-        @click="maskEmails"
-        variant="soft"
-        color="neutral"
-      />
       <UButton label="Create a new user" @click="newUserModal = true" />
     </template>
 
@@ -39,9 +33,7 @@
                 {{ user.name }}
               </div>
             </td>
-            <td class="p-2">
-              {{ isEmailsMasked ? maskEmail(user.email) : user.email }}
-            </td>
+            <td class="p-2">{{ user.email }}</td>
             <td class="p-2">{{ user.emailVerified ? 'Yes' : 'No' }}</td>
             <td class="p-2">
               <SuperAdminUserBanStatus
@@ -58,7 +50,7 @@
             <td class="p-2">
               <SuperAdminUserTeamAffiliations
                 :team-members="user.teamMembers"
-                :get-team-owner-name="getTeamOwnerName"
+                :users="users"
               />
             </td>
             <td class="p-2">
@@ -121,7 +113,7 @@
         <SuperAdminDeleteUserForm
           v-if="selectedUser"
           :user="selectedUser"
-          :get-team-owner-name="getTeamOwnerName"
+          :users="users"
           @user-deleted="handleUserDeleted"
           @cancel="showDeleteUserConfirmation = false"
         />
@@ -220,12 +212,6 @@ const actions = [
 const formatDate = (date: string | Date | undefined) => {
   if (!date) return 'NA'
   return useDateFormat(date, 'MMM D, YYYY').value
-}
-
-const getTeamOwnerName = (ownerId: string) => {
-  if (!ownerId) return 'Unknown'
-  const owner = users.value?.find((user) => user.id === ownerId)
-  return owner?.name || 'Unknown'
 }
 
 async function handleUserCreated() {
