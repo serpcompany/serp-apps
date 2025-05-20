@@ -83,12 +83,18 @@ interface ExtendedUser extends User {
 
 const props = defineProps<{
   user: ExtendedUser
-  getTeamOwnerName: (ownerId: string) => string
+  users?: User[]
 }>()
 
 const emit = defineEmits(['user-deleted', 'cancel'])
 const loading = ref(false)
 const toast = useToast()
+
+function getTeamOwnerName(ownerId: string): string {
+  if (!ownerId || !props.users?.length) return 'Unknown'
+  const owner = props.users.find((user) => user.id === ownerId)
+  return owner?.name || 'Unknown'
+}
 
 const deleteUser = async () => {
   loading.value = true
