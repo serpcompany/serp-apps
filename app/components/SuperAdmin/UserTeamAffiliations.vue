@@ -17,7 +17,7 @@
                 {{ teamMember.role }}
               </span>
             </div>
-            <div v-if="teamMember.role !== 'owner'" class="p-2">
+            <div v-if="teamMember.role !== 'owner'" class="pl-2.5 p-2 pb-0">
               <div class="flex items-center gap-2">
 
                 <UIcon name="i-fluent-arrow-enter-24-filled" class="flex-shrink-0 scale-x-[-1] text-sm" />
