@@ -7,18 +7,16 @@
     <template #content>
       <div class="w-72 p-4">
         <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
-          <div
-            v-for="member in members"
-            :key="member.id"
-            class="flex items-center gap-2 py-2 text-sm first:pt-0 last:pb-0"
-          >
-            <UAvatar
-              :src="member.user.avatarUrl"
-              size="md"
-              :alt="member.user.name"
-            />
-            <div>
-              <p>{{ member.user.name }}</p>
+          <div v-for="member in members" :key="member.id"
+            class="flex items-center gap-2 py-2 text-sm first:pt-0 last:pb-0">
+            <UAvatar :src="member.user.avatarUrl" size="md" :alt="member.user.name" />
+            <div class="flex-1">
+              <div class="flex items-center gap-1">
+                <p class="font-medium flex-1">{{ member.user.name }}</p>
+                <p class="text-xs text-neutral-500 capitalize">
+                  {{ member.role }}
+                </p>
+              </div>
               <p class="text-xs text-neutral-500">
                 {{ member.user.email }}
               </p>
