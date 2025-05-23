@@ -50,7 +50,10 @@ export default defineNuxtConfig({
     config: {
       standalone: true,
       typescript: {
+        // Disables strict rules - recommended are still enabled
         strict: false,
+        // Enables type-checking - this has a significant performance impact
+        tsconfigPath: './tsconfig.json',
       },
       stylistic: {
         indent: 2,

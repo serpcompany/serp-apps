@@ -102,9 +102,9 @@ function generateSlug(name: string) {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '') // remove special chars except space and dash
-    .replace(/\s+/g, '-')         // replace spaces with dash
-    .replace(/-+/g, '-')           // collapse multiple dashes
-    .replace(/^-+|-+$/g, '');      // trim leading/trailing dashes
+    .replace(/\s+/g, '-') // replace spaces with dash
+    .replace(/-+/g, '-') // collapse multiple dashes
+    .replace(/^-+|-+$/g, '') // trim leading/trailing dashes
 }
 
 // Helper to check slug uniqueness and increment if needed
@@ -114,21 +114,21 @@ async function getAvailableSlug(baseSlug: string): Promise<string> {
   let wasTaken = false
   while (true) {
     try {
-      const existingTeam = await $fetch<{ id: string; name: string; slug: string } | null>('/api/teams/check-slug', {
+      const existingTeam = await $fetch<{ id: string, name: string, slug: string } | null>('/api/teams/check-slug', {
         method: 'POST',
         body: { slug },
       })
       if (!existingTeam) {
         // If the slug was taken and we had to increment, show a message
         if (wasTaken) {
-          slugAutoAdjustedMessage.value = `\"${baseSlug}\" is taken so we have just made it unique, you can adjust the Team URL however you want to an available name.`
+          slugAutoAdjustedMessage.value = `"${baseSlug}" is taken so we have just made it unique, you can adjust the Team URL however you want to an available name.`
         }
         return slug
       }
       wasTaken = true
       slug = `${baseSlug}-${suffix}`
       suffix++
-    } catch (e) {
+    } catch {
       // If API fails, just return the current slug
       return slug
     }
@@ -160,19 +160,19 @@ watch(
         lastAutoSlug = availableSlug
         await nextTick()
         // Trigger input event on the slug input to ensure UI/validation updates
-        const slugInput = document.querySelector('input[name="slug"]') as HTMLInputElement | null
+        const slugInput = document.querySelector('input[name="slug"]')
         if (slugInput) {
           slugInput.dispatchEvent(new Event('input', { bubbles: true }))
         }
       }
       programmaticallyUpdatingSlug = false
     }
-  }
+  },
 )
 
 watch(
   () => state.slug,
-  (newSlug, oldSlug) => {
+  (newSlug) => {
     if (programmaticallyUpdatingSlug) return
     // If the slug is cleared, re-enable auto-generation
     if (newSlug === '') {
@@ -185,7 +185,7 @@ watch(
       userEditedSlug = true
       slugAutoAdjustedMessage.value = ''
     }
-  }
+  },
 )
 
 const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
@@ -193,7 +193,7 @@ const onSubmit = async (event: FormSubmitEvent<typeof schema>) => {
   const data = schema.parse(event.data)
   try {
     // Check for slug conflict
-    const existingTeam = await $fetch<{ id: string; name: string; slug: string } | null>('/api/teams/check-slug', {
+    const existingTeam = await $fetch<{ id: string, name: string, slug: string } | null>('/api/teams/check-slug', {
       method: 'POST',
       body: { slug: data.slug },
     })

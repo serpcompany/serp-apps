@@ -80,7 +80,7 @@
     <!-- Accepted Invitations Table -->
     <p v-if="acceptedInvites.length" class="mt-8 text-sm font-semibold">Accepted Invitations</p>
     <div
-      v-if="acceptedInvites.length" 
+      v-if="acceptedInvites.length"
       class="mt-2 overflow-x-auto rounded-lg border border-neutral-200 dark:divide-white/10 dark:border-white/10"
     >
       <table
@@ -136,7 +136,7 @@ import type { TeamInvite } from '@@/types/database'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { FetchError } from 'ofetch'
 
-type TeamInviteAccepted = TeamInvite & {acceptedByEmail?: string }
+type TeamInviteAccepted = TeamInvite & { acceptedByEmail?: string }
 
 const { currentTeam, cancelInvite, resendInvite } = useTeam()
 const toast = useToast()
@@ -147,11 +147,11 @@ const { data: teamInvites, refresh: fetchTeamInvites } = await useFetch<TeamInvi
 
 // Split invites into pending and accepted
 const pendingInvites = computed(() =>
-  teamInvites.value?.filter(invite => invite.status !== 'accepted') || []
+  teamInvites.value?.filter((invite) => invite.status !== 'accepted') || [],
 )
 
 const acceptedInvites = computed(() =>
-  teamInvites.value?.filter(invite => invite.status === 'accepted') || []
+  teamInvites.value?.filter((invite) => invite.status === 'accepted') || [],
 )
 
 const pendingColumns = ['Email', 'Role', 'Status', 'Expires At', 'Created At', '']
@@ -161,52 +161,54 @@ const getRowItems = (invite: TeamInviteAccepted): DropdownMenuItem[] => {
   return [
     {
       label: 'Copy Email',
-      onSelect: async () => {
-        await navigator.clipboard.writeText(invite.email)
-        toast.add({
-          title: 'Email copied to clipboard!',
-          color: 'success',
+      onSelect: () => {
+        void navigator.clipboard.writeText(invite.email).then(() => {
+          toast.add({
+            title: 'Email copied to clipboard!',
+            color: 'success',
+          })
         })
       },
     },
     {
       label: 'Resend Invite',
-      onSelect: async () => {
-        try {
-          await resendInvite(invite.id)
-          toast.add({
-            title: 'Invite resent successfully!',
-            color: 'success',
+      onSelect: () => {
+        void resendInvite(invite.id)
+          .then(() => {
+            toast.add({
+              title: 'Invite resent successfully!',
+              color: 'success',
+            })
           })
-        } catch (error) {
-          toast.add({
-            title: 'Failed to resend invite',
-            description: (error as FetchError).statusMessage,
-            color: 'error',
+          .catch((error) => {
+            toast.add({
+              title: 'Failed to resend invite',
+              description: (error as FetchError).statusMessage,
+              color: 'error',
+            })
           })
-        }
       },
     },
     { type: 'separator' },
     {
       label: 'Cancel Invite',
       color: 'error' as const,
-      onSelect: async () => {
-        try {
-          await cancelInvite(invite.id)
-          toast.add({
-            title: 'Invite cancelled successfully',
-            color: 'success',
+      onSelect: () => {
+        void cancelInvite(invite.id)
+          .then(() => {
+            toast.add({
+              title: 'Invite cancelled successfully',
+              color: 'success',
+            })
+            return fetchTeamInvites()
           })
-        } catch (error) {
-          toast.add({
-            title: 'Failed to cancel invite',
-            description: (error as FetchError).statusMessage,
-            color: 'error',
+          .catch((error) => {
+            toast.add({
+              title: 'Failed to cancel invite',
+              description: (error as FetchError).statusMessage,
+              color: 'error',
+            })
           })
-        }
-
-        await fetchTeamInvites()
       },
     },
   ]
