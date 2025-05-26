@@ -1,4 +1,4 @@
-import type { InsertEmailVerificationCodes } from '@@/types/database';
+import type { InsertEmailVerificationCodes, InsertOneTimePasswords } from '@@/types/database';
 import { generateAlphaNumericCode } from '@@/server/utils/nanoid';
 
 export const saveEmailVerificationCode = async (payload: InsertEmailVerificationCodes) => {
@@ -8,6 +8,16 @@ export const saveEmailVerificationCode = async (payload: InsertEmailVerification
   } catch (error) {
     console.error(error);
     throw new Error('Failed to create verification code');
+  }
+};
+
+export const saveOneTimePassword = async (payload: InsertOneTimePasswords) => {
+  try {
+    const record = await useDB().insert(tables.oneTimePasswords).values(payload).returning().get();
+    return record;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to create one time password');
   }
 };
 
@@ -78,5 +88,21 @@ export const deletePasswordResetToken = async (token: string) => {
   } catch (error) {
     console.error(error);
     throw new Error('Failed to delete password reset token');
+  }
+};
+
+export const findOneTimePassword = async (code: string) => {
+  const record = await useDB().query.oneTimePasswords.findFirst({
+    where: eq(tables.oneTimePasswords.code, code)
+  });
+  return record;
+};
+
+export const deleteOneTimePassword = async (code: string) => {
+  try {
+    await useDB().delete(tables.oneTimePasswords).where(eq(tables.oneTimePasswords.code, code));
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to delete one time password');
   }
 };

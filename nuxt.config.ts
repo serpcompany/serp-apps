@@ -2,7 +2,7 @@ import vue from '@vitejs/plugin-vue';
 import './env';
 
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   modules: ['@nuxt/ui', '@nuxt/eslint', '@vueuse/nuxt', 'nuxt-auth-utils', '@nuxthub/core'],
 

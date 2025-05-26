@@ -51,3 +51,8 @@ export const linkPasskeySchema = z.object({
 export const deletePasskeySchema = z.object({
   credentialId: z.string()
 });
+
+export const otpSchema = z.object({
+  email: z.string().email(),
+  code: z.string().length(6)
+});

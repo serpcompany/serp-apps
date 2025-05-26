@@ -13,6 +13,12 @@ export type InsertEmailVerificationCodes = typeof tables.emailVerificationCodes.
 export const insertEmailVerificationCodesSchema = createInsertSchema(tables.emailVerificationCodes);
 export const selectEmailVerificationCodesSchema = createSelectSchema(tables.emailVerificationCodes);
 
+// One Time Passwords
+export type OneTimePasswords = typeof tables.oneTimePasswords.$inferSelect;
+export type InsertOneTimePasswords = typeof tables.oneTimePasswords.$inferInsert;
+export const insertOneTimePasswordsSchema = createInsertSchema(tables.oneTimePasswords);
+export const selectOneTimePasswordsSchema = createSelectSchema(tables.oneTimePasswords);
+
 // Password Reset Tokens
 export type PasswordResetTokens = typeof tables.passwordResetTokens.$inferSelect;
 export type InsertPasswordResetTokens = typeof tables.passwordResetTokens.$inferInsert;
