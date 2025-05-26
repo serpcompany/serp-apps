@@ -1,5 +1,4 @@
-import type { User as DrizzleUser } from './database'
-
+import type { User as DrizzleUser } from './database';
 
 declare module '#auth-utils' {
   interface User extends DrizzleUser {
@@ -19,5 +18,30 @@ declare module '#auth-utils' {
     createdAt: Date;
     updatedAt: Date;
     lastActive: Date | null;
+    _impersonated?: boolean;
   }
+}
+
+interface UserSession {
+  /**
+   * Session ID
+   */
+  id?: string;
+  /**
+   * User session data, available on client and server
+   */
+  user?: SessionUser;
+  /**
+   * Private session data, only available on server/ code
+   */
+  secure?: SecureSessionData;
+  /**
+   * Extra session data, available on client and server
+   */
+  superAdmin?: boolean;
+  [key: string]: unknown;
+}
+
+interface SecureSessionData {
+  originalAdminSession: UserSessionRequired;
 }

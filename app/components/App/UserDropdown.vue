@@ -45,7 +45,7 @@
       </div>
     </template>
   </UDropdownMenu>
-  <!-- <UModal
+  <UModal
     v-model:open="feedbackModal"
     title="Need help?"
     description="Have a question or need assistance? We're here to help!"
@@ -53,7 +53,7 @@
     <template #body>
       <AppFeedbackForm @close="feedbackModal = false" />
     </template>
-  </UModal> -->
+  </UModal>
 </template>
 
 <script setup lang="ts">

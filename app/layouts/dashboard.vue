@@ -8,5 +8,5 @@
 </template>
 
 <script lang="ts" setup>
-const mobileMenu = useState('mobileMenu', () => false);
+useState('mobileMenu', () => false);
 </script>

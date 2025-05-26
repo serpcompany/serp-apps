@@ -18,5 +18,3 @@
 <script lang="ts" setup>
 const mobileMenu = useState('mobileMenu', () => false);
 </script>
-
-<style></style>

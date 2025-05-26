@@ -4,7 +4,13 @@
       <template #header>
         <div class="flex items-center justify-between">
           <h2 class="font-medium">Passkey Manager</h2>
-          <UButton size="lg" color="neutral" :loading="creating" :disabled="creating" @click="modal = true">
+          <UButton
+            size="lg"
+            color="neutral"
+            :loading="creating"
+            :disabled="creating"
+            @click="modal = true"
+          >
             Add Passkey
           </UButton>
         </div>
@@ -22,9 +28,15 @@
           <p>No passkeys linked to your account.</p>
         </div>
         <ul class="divide-y divide-neutral-100 dark:divide-neutral-800">
-          <li v-for="passkey in passkeys" :key="passkey.id" class="flex items-center justify-between p-4">
+          <li
+            v-for="passkey in passkeys"
+            :key="passkey.id"
+            class="flex items-center justify-between p-4"
+          >
             <div class="flex items-center gap-2">
-              <div class="flex h-12 w-12 items-center justify-center rounded-md bg-neutral-100 dark:bg-white/10">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-md bg-neutral-100 dark:bg-white/10"
+              >
                 <UIcon name="i-lucide-fingerprint" class="text-xl" />
               </div>
 
@@ -33,22 +45,32 @@
             <UButton
               color="error"
               variant="soft"
-              icon="i-ph-trash"
+              icon="i-lucide-trash-2"
               :loading="deleting === passkey.id"
               :disabled="deleting === passkey.id"
               @click="deletePasskey(passkey.id)"
+              :ui="{ leadingIcon: 'size-4' }"
             >
-              Delete
+              Unlink Passkey
             </UButton>
           </li>
         </ul>
       </div>
     </UCard>
-    <UDrawer v-model:open="modal" title="Register a new passkey" :ui="{ container: 'max-w-xl mx-auto' }">
+    <UDrawer
+      v-model:open="modal"
+      title="Register a new passkey"
+      :ui="{ container: 'max-w-xl mx-auto' }"
+    >
       <template #body>
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="handleCreatePasskey">
           <UFormField label="Name" name="name" size="lg">
-            <UInput v-model="state.name" placeholder="Example: My MacBook" class="w-full" size="lg" />
+            <UInput
+              v-model="state.name"
+              placeholder="Example: My MacBook"
+              class="w-full"
+              size="lg"
+            />
           </UFormField>
           <UButton
             type="submit"

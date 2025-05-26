@@ -63,3 +63,14 @@ export type InsertProduct = typeof tables.products.$inferInsert;
 export type Product = typeof tables.products.$inferSelect;
 export const insertProductSchema = createInsertSchema(tables.products);
 export const selectProductSchema = createSelectSchema(tables.products);
+
+// Admin
+export type Feedback = typeof tables.feedback.$inferSelect;
+export type InsertFeedback = typeof tables.feedback.$inferInsert;
+export const insertFeedbackSchema = createInsertSchema(tables.feedback);
+export const selectFeedbackSchema = createSelectSchema(tables.feedback);
+
+export type Subscriber = typeof tables.subscribers.$inferSelect;
+export type InsertSubscriber = typeof tables.subscribers.$inferInsert;
+export const insertSubscriberSchema = createInsertSchema(tables.subscribers);
+export const selectSubscriberSchema = createSelectSchema(tables.subscribers);

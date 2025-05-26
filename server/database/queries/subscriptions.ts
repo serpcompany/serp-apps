@@ -37,7 +37,7 @@ export const getSubscriptionByUserId = async (userId: string): Promise<Subscript
     console.error(error);
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to get subscription by team ID'
+      statusMessage: 'Failed to get subscription by user ID'
     });
   }
 };
