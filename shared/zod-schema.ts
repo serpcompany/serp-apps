@@ -56,3 +56,7 @@ export const otpSchema = z.object({
   email: z.string().email(),
   code: z.string().length(6)
 });
+
+export const checkoutSchema = z.object({
+  priceId: z.string().min(1)
+});

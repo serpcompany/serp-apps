@@ -53,6 +53,9 @@ importers:
       nuxt-auth-utils:
         specifier: 0.5.20
         version: 0.5.20(@simplewebauthn/browser@13.1.0)(@simplewebauthn/server@13.1.1)(magicast@0.3.5)
+      stripe:
+        specifier: ^18.1.1
+        version: 18.1.1(@types/node@22.15.18)
       use-email:
         specifier: ^0.0.9
         version: 0.0.9
@@ -5252,6 +5255,15 @@ packages:
 
   strip-literal@3.0.0:
     resolution: {integrity: sha512-TcccoMhJOM3OebGhSBEmp3UZ2SfDMZUEBdRA/9ynfLi8yYajyWX3JiXArcJt4Umh4vISpspkQIY8ZZoCqjbviA==}
+
+  stripe@18.1.1:
+    resolution: {integrity: sha512-hlF0ripc2nJrihpsJZQDl3xirS7tpdpS7DlmSNLEDRW8j7Qr215y5DHOI3+aEY/lq6PG8y4GR1RZPtEoIoAs/g==}
+    engines: {node: '>=12.*'}
+    peerDependencies:
+      '@types/node': '>=12.x.x'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
 
   structured-clone-es@1.0.0:
     resolution: {integrity: sha512-FL8EeKFFyNQv5cMnXI31CIMCsFarSVI2bF0U0ImeNE3g/F1IvJQyqzOXxPBRXiwQfyBTlbNe88jh1jFW0O/jiQ==}
@@ -11785,6 +11797,12 @@ snapshots:
   strip-literal@3.0.0:
     dependencies:
       js-tokens: 9.0.1
+
+  stripe@18.1.1(@types/node@22.15.18):
+    dependencies:
+      qs: 6.14.0
+    optionalDependencies:
+      '@types/node': 22.15.18
 
   structured-clone-es@1.0.0: {}
 

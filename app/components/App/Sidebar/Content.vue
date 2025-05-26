@@ -19,5 +19,10 @@ const items = [
     label: 'Posts',
     to: '/dashboard/posts'
   },
+  {
+    icon: 'i-lucide-credit-card',
+    label: 'Billing',
+    to: '/dashboard/billing'
+  },
 ];
 </script>

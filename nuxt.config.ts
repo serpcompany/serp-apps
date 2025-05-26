@@ -2,7 +2,7 @@ import vue from '@vitejs/plugin-vue';
 import './env';
 
 export default defineNuxtConfig({
-  devtools: { enabled: false },
+  devtools: { enabled: true },
 
   modules: ['@nuxt/ui', '@nuxt/eslint', '@vueuse/nuxt', 'nuxt-auth-utils', '@nuxthub/core'],
 
@@ -37,11 +37,13 @@ export default defineNuxtConfig({
     blob: true
   },
   nitro: {
-    preset: 'cloudflare-pages',
+    experimental: {
+      tasks: true
+    },
     rollupConfig: {
       // @ts-expect-error - Rollup plugin type definitions are incomplete for vue plugin
       plugins: [vue()]
     }
   },
-  compatibilityDate: '2024-11-27'
+  compatibilityDate: '2025-01-28',
 });

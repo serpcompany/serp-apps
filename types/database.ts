@@ -42,3 +42,24 @@ export type Passkey = typeof tables.webAuthnCredentials.$inferSelect;
 export type InsertPasskey = typeof tables.webAuthnCredentials.$inferInsert;
 export type WebAuthnChallenge = typeof tables.webAuthnChallenges.$inferSelect;
 export type InsertWebAuthnChallenge = typeof tables.webAuthnChallenges.$inferInsert;
+
+// Stripe
+export type InsertPrice = typeof tables.prices.$inferInsert;
+export type Price = typeof tables.prices.$inferSelect;
+export const insertPriceSchema = createInsertSchema(tables.prices);
+export const selectPriceSchema = createSelectSchema(tables.prices);
+
+export type InsertSubscription = typeof tables.subscriptions.$inferInsert;
+export type Subscription = typeof tables.subscriptions.$inferSelect;
+export const insertSubscriptionSchema = createInsertSchema(tables.subscriptions);
+export const selectSubscriptionSchema = createSelectSchema(tables.subscriptions);
+
+export type InsertCustomer = typeof tables.customers.$inferInsert;
+export type Customer = typeof tables.customers.$inferSelect;
+export const insertCustomerSchema = createInsertSchema(tables.customers);
+export const selectCustomerSchema = createSelectSchema(tables.customers);
+
+export type InsertProduct = typeof tables.products.$inferInsert;
+export type Product = typeof tables.products.$inferSelect;
+export const insertProductSchema = createInsertSchema(tables.products);
+export const selectProductSchema = createSelectSchema(tables.products);
