@@ -54,7 +54,7 @@ type LoginSchema = z.output<typeof emailSchema>;
 type OtpSchema = z.output<typeof otpSchema>;
 
 const toast = useToast();
-const { fetch: refreshSession } = useUserSession();
+const { magicLinkLogin, verifyMagicLinkOtp } = useAuth();
 
 const mode = ref<'login' | 'otp'>('login');
 const loading = ref(false);
@@ -78,18 +78,11 @@ const otpCode = computed({
 async function onLoginSubmit(event: FormSubmitEvent<LoginSchema>) {
   try {
     loading.value = true;
-    await $fetch('/api/auth/magic-link/login', {
-      method: 'POST',
-      body: event.data
-    });
+    await magicLinkLogin(event.data.email);
     mode.value = 'otp';
     otpState.email = event.data.email;
   } catch (error) {
-    toast.add({
-      title: 'Failed to send verification code',
-      description: (error as any).data.message,
-      color: 'error'
-    });
+    // Error is already handled in the composable
   } finally {
     loading.value = false;
   }
@@ -98,18 +91,9 @@ async function onLoginSubmit(event: FormSubmitEvent<LoginSchema>) {
 async function onOtpSubmit(event: FormSubmitEvent<OtpSchema>) {
   try {
     loading.value = true;
-    await $fetch('/api/auth/magic-link/verify-otp', {
-      method: 'POST',
-      body: event.data
-    });
-    await refreshSession();
-    await navigateTo('/dashboard');
+    await verifyMagicLinkOtp(event.data);
   } catch (error) {
-    toast.add({
-      title: 'Failed to verify code',
-      description: (error as any).data.message,
-      color: 'error'
-    });
+    // Error is already handled in the composable
   } finally {
     loading.value = false;
   }

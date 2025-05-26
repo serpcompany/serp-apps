@@ -15,11 +15,13 @@ import { env } from '@@/env'
 interface EmailVerificationProps {
   otp?: string
   verificationCode?: string
+  userName?: string
 }
 
 withDefaults(defineProps<EmailVerificationProps>(), {
   otp: '',
   verificationCode: '',
+  userName: '',
 })
 
 const main = {
@@ -86,17 +88,18 @@ const code = {
     <Body :style="main">
       <Container :style="container">
         <Heading :style="h1"> Your login link </Heading>
-        <Link
-          :href="`${env.BASE_URL}/auth/verify/magic-link?code=${verificationCode}`"
-          target="_blank"
-          :style="{ ...link, display: 'block', marginBottom: '16px' }"
-        >
-          Click here to login to {{ env.APP_NAME }}
-        </Link>
         <Text :style="{ ...text, marginBottom: '14px' }">
-          Or, copy and paste this temporary login code:
+          Hi {{ userName || 'there' }},
         </Text>
-        <code :style="code">{{ otp }}</code>
+        <Text :style="{ ...text, marginBottom: '14px' }">
+          Here's your login code for {{ env.APP_NAME }}:
+        </Text>
+        <div style="font-size: 32px; font-weight: bold; letter-spacing: 4px; text-align: center; margin: 20px 0;">
+          {{ otp }}
+        </div>
+        <Text :style="{ ...text, marginBottom: '14px' }">
+          This code will expire in 15 minutes.
+        </Text>
         <Text
           :style="{
             ...text,
@@ -105,7 +108,7 @@ const code = {
             marginBottom: '16px',
           }"
         >
-          If you didn't try to login, you can safely ignore this email.
+          If you didn't request this code, you can safely ignore this email.
         </Text>
         <Text
           :style="{

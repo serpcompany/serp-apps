@@ -3,12 +3,14 @@ import { render } from '@vue-email/render';
 import { sendEmail } from '@@/server/services/email';
 import LoginNotificationTemplate from '@@/emails/login-notification.vue';
 import EmailVerificationTemplate from '@@/emails/email-verification.vue';
-import { generateAlphaNumericCode } from '@@/server/utils/nanoid';
-import { saveEmailVerificationCode } from '@@/server/database/queries/auth';
+import MagicLinkTemplate from '@@/emails/magic-link.vue';
+import { generateAlphaNumericCode, generateNumericCode } from '@@/server/utils/nanoid';
+import { saveEmailVerificationCode, saveOneTimePassword } from '@@/server/database/queries/auth';
 import { updateLastActiveTimestamp } from '@@/server/database/queries/users';
 import { sanitizeUser } from '@@/server/utils/auth';
 import { env } from '@@/env';
 import type { User } from '@@/types/database';
+import { OneTimePasswordTypes } from '@@/server/database/schema/auth';
 
 // Define the template props types based on the email templates
 interface LoginNotificationProps {
@@ -19,6 +21,11 @@ interface LoginNotificationProps {
 
 interface EmailVerificationProps {
   verificationCode?: string;
+}
+
+interface MagicLinkProps {
+  otpCode: string;
+  userName?: string;
 }
 
 /**
@@ -89,6 +96,46 @@ export async function sendEmailVerification(userId: string, email: string, name:
   });
 
   return emailVerificationCode;
+}
+
+/**
+ * Send magic link OTP to a user
+ */
+export async function sendMagicLinkOtp(userId: string, email: string, name: string) {
+  const otpCode = generateNumericCode(6);
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 15); // 15 minutes
+
+  await saveOneTimePassword({
+    userId,
+    identifier: email,
+    code: otpCode,
+    type: OneTimePasswordTypes.login,
+    expiresAt
+  });
+
+  const templateProps: MagicLinkProps = {
+    otpCode,
+    userName: name
+  };
+
+  const htmlTemplate = await render(MagicLinkTemplate, templateProps);
+
+  if (env.MOCK_EMAIL) {
+    console.table({
+      email,
+      name,
+      otpCode
+    });
+    return otpCode;
+  }
+
+  await sendEmail({
+    subject: `Your login code for ${env.APP_NAME}`,
+    to: email,
+    html: htmlTemplate
+  });
+
+  return otpCode;
 }
 
 /**

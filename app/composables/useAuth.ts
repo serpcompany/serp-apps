@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 import { FetchError } from 'ofetch';
-import { emailPasswordLoginSchema, emailPasswordRegisterSchema } from '@@/shared/zod-schema';
+import { emailPasswordLoginSchema, emailPasswordRegisterSchema, otpSchema } from '@@/shared/zod-schema';
 
 export const useAuth = () => {
   const { fetch: refreshSession, clear } = useUserSession();
@@ -128,12 +128,62 @@ export const useAuth = () => {
     }
   };
 
+  const magicLinkLogin = async (email: string) => {
+    try {
+      await $fetch('/api/auth/magic-link/login', {
+        method: 'POST',
+        body: { email }
+      });
+      toast.add({
+        title: 'Verification code sent',
+        description: 'Please check your email for the code',
+        color: 'success'
+      });
+      return { success: true };
+    } catch (error) {
+      if (error instanceof FetchError) {
+        toast.add({
+          title: 'Error',
+          description: error.data.message,
+          color: 'error'
+        });
+      }
+      throw error;
+    }
+  };
+
+  const verifyMagicLinkOtp = async (data: z.output<typeof otpSchema>) => {
+    try {
+      await $fetch('/api/auth/magic-link/verify-otp', {
+        method: 'POST',
+        body: data
+      });
+      await refreshSession();
+      toast.add({
+        title: 'Logged in successfully',
+        color: 'success'
+      });
+      await navigateTo('/dashboard');
+    } catch (error) {
+      if (error instanceof FetchError) {
+        toast.add({
+          title: 'Error',
+          description: error.data.message,
+          color: 'error'
+        });
+      }
+      throw error;
+    }
+  };
+
   return {
     login,
     register,
     logout,
     forgotPassword,
     resetPassword,
-    resendVerification
+    resendVerification,
+    magicLinkLogin,
+    verifyMagicLinkOtp
   };
 };
