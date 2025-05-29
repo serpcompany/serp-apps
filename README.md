@@ -15,13 +15,11 @@ Here's what I have completed so far:
 - [x] Image Upload
 - [x] CRUD app demo (posts)
 - [x] Account settings page
+- [x] Payments
+- [x] Super Admin
 
-Coming soon:
+Almost all of the tasks are now completed
 
-- [ ] Payments
-- [ ] Super Admin
-
-These will be finished very soon (Working on this right now)
 
 ## Setup
 
