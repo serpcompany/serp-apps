@@ -11,6 +11,6 @@ export default defineEventHandler(async (event) => {
 
   const { id } = getRouterParams(event)
   const { status } = await readBody(event)
-  const updatedFeedback = await updateFeedback(id, status)
+  const updatedFeedback = await updateFeedback(id, { status: status })
   return updatedFeedback
 })
