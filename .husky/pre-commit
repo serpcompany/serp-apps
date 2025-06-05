@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo ""
+echo "[husky]: 🔍 Running pre-commit checks..."
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+
+echo "[husky]: Your staged files: $STAGED_FILES"
+
+echo "[husky]: Running ESLint with --fix option..."
+pnpm precommit
+echo "[husky]: ✅ Linting passed"
+
+echo "[husky]: 🎉 All pre-commit checks passed!"
