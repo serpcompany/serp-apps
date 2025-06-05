@@ -6,6 +6,7 @@ export const stripe = new Stripe(env.NUXT_STRIPE_SECRET_KEY)
 export interface CreateCheckoutSessionParams {
   customerId: string
   priceId: string
+  credits: number
 }
 
 export const stripeService = {
@@ -24,7 +25,7 @@ export const stripeService = {
     }
   },
 
-  async createCheckoutSession({ customerId, priceId }: CreateCheckoutSessionParams) {
+  async createCheckoutSession({ customerId, priceId, credits }: CreateCheckoutSessionParams) {
     try {
       return await stripe.checkout.sessions.create({
         customer: customerId,
@@ -41,7 +42,11 @@ export const stripeService = {
             quantity: 1,
           },
         ],
-        mode: 'subscription',
+        mode: 'payment',
+        metadata: {
+          type: 'credits_purchase',
+          credits: credits.toString(),
+        },
       })
     } catch {
       throw createError({
