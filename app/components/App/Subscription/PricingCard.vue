@@ -45,7 +45,7 @@ interface PricingCardProps {
   title: string
   description?: string
   unitAmount?: number
-  interval?: string
+  interval?: string | null
   loading?: boolean
   disabled?: boolean
   priceId: string
