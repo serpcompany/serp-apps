@@ -40,7 +40,7 @@
               <UIcon name="i-lucide-package" class="h-5 w-5" />
             </div>
             <div class="flex-1">
-              <p class="text-sm font-medium">{{ plan.interval ?? 'Ad hoc' }}</p>
+              <p class="text-sm font-medium">{{ plan.type === 'recurring' ? plan.interval : 'Ad hoc' }}</p>
               <p class="text-xs text-neutral-500 dark:text-white/50">
                 {{ plan.id }}
               </p>
@@ -50,7 +50,7 @@
                 {{ formatPrice(plan.unitAmount) }}
               </p>
               <p class="text-xs text-neutral-500 dark:text-white/50">
-                per {{ plan.interval ?? 'purchase' }}
+                per {{ plan.type === 'recurring' ? plan.interval : plan.credits + ' credits' }}
               </p>
             </div>
           </div>
