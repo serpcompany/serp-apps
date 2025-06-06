@@ -6,7 +6,7 @@ export const stripe = new Stripe(env.NUXT_STRIPE_SECRET_KEY)
 export interface CreateCheckoutSessionParams {
   customerId: string
   priceId: string
-  credits: number
+  credits?: number
 }
 
 export const stripeService = {
@@ -42,11 +42,17 @@ export const stripeService = {
             quantity: 1,
           },
         ],
-        mode: 'payment',
-        metadata: {
-          type: 'credits_purchase',
-          credits: credits.toString(),
-        },
+        ...(credits !== undefined
+          ? { mode: 'payment',
+              metadata: {
+                type: 'credits_purchase',
+                credits: credits.toString(),
+              },
+            }
+          : {
+              mode: 'subscription',
+            }
+        ),
       })
     } catch {
       throw createError({
