@@ -16,6 +16,7 @@
         v-for="product in uniqueProducts"
         :key="product.id"
         :title="product.name"
+        :description="product.description"
       >
         <template #actions>
           <UButton
@@ -39,7 +40,7 @@
               <UIcon name="i-lucide-package" class="h-5 w-5" />
             </div>
             <div class="flex-1">
-              <p class="text-sm font-medium capitalize">{{ plan.interval }}</p>
+              <p class="text-sm font-medium">{{ plan.interval ?? 'Ad hoc' }}</p>
               <p class="text-xs text-neutral-500 dark:text-white/50">
                 {{ plan.id }}
               </p>
@@ -49,30 +50,23 @@
                 {{ formatPrice(plan.unitAmount) }}
               </p>
               <p class="text-xs text-neutral-500 dark:text-white/50">
-                per {{ plan.interval }}
+                per {{ plan.interval ?? 'purchase' }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="mt-4">
-          <p class="text-sm text-neutral-500 dark:text-white/50">
-            {{ product.description }}
-          </p>
-
-          <!-- Product features -->
-          <div v-if="product.features && product.features.length" class="mt-2">
-            <ul class="text-sm text-neutral-600 dark:text-white/70">
-              <li
-                v-for="feature in product.features"
-                :key="feature.name"
-                class="flex items-center gap-1.5"
-              >
-                <UIcon name="i-lucide-check" class="h-4 w-4 text-emerald-500" />
-                {{ feature.name }}
-              </li>
-            </ul>
-          </div>
+        <div v-if="product.features && product.features.length" class="mt-4">
+          <ul class="text-sm text-neutral-600 dark:text-white/70">
+            <li
+              v-for="feature in product.features"
+              :key="feature.name"
+              class="flex items-center gap-1.5"
+            >
+              <UIcon name="i-lucide-check" class="h-4 w-4 text-emerald-500" />
+              {{ feature.name }}
+            </li>
+          </ul>
         </div>
       </SuperAdminPlanCard>
     </div>
@@ -91,7 +85,7 @@ const uniqueProducts = computed(() => {
 
   const productMap = new Map()
   plans.value.forEach((plan) => {
-    if (plan.product && !productMap.has(plan.product.id)) {
+    if (!productMap.has(plan.product.id)) {
       productMap.set(plan.product.id, plan.product)
     }
   })
