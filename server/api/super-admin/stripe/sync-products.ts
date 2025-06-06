@@ -58,6 +58,8 @@ export default defineEventHandler(async (_event) => {
     for (const price of validPrices) {
       const productId
         = typeof price.product === 'string' ? price.product : price.product.id
+
+      const credits = 'credits' in price.metadata ? parseInt(price.metadata.credits) : null
       await createStripePrice({
         id: price.id,
         type: price.type,
@@ -65,6 +67,7 @@ export default defineEventHandler(async (_event) => {
         unitAmount: price.unit_amount ?? 0,
         interval: price.recurring?.interval,
         intervalCount: price.recurring?.interval_count,
+        credits,
         productId,
         description: price.nickname,
         active: price.active,
