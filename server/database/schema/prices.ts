@@ -16,7 +16,7 @@ export const prices = sqliteTable('prices', {
   trialPeriodDays: integer('trial_period_days'),
   credits: integer('credits'),
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
-  metadata: text('metadata', { mode: 'json' }),
+  metadata: text('metadata', { mode: 'json' }).$type<Record<string, string>>().notNull(),
   productId: text('product_id')
     .notNull()
     .references(() => products.id, { onDelete: 'cascade' }),
