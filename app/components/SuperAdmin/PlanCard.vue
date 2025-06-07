@@ -2,16 +2,19 @@
   <div class="rounded-xl bg-[#fbfaf9] p-1.5 dark:bg-neutral-950">
     <div class="card-shadow rounded-md bg-white dark:bg-neutral-900">
       <header
-        class="border-b border-neutral-100 px-4 py-2 dark:border-white/10 flex items-center justify-between"
+        class="px-4 py-2"
       >
-        <p class="text-toned">{{ title }}</p>
-        <slot name="actions" />
-      </header>
-      <div class="p-4">
-        <slot />
+        <div class="flex items-center justify-between">
+          <p class="text-toned">{{ title }}</p>
+          <slot name="actions" />
+        </div>
         <p v-if="description" class="text-sm text-muted">
           {{ description }}
         </p>
+      </header>
+      <USeparator />
+      <div class="p-4">
+        <slot />
       </div>
     </div>
   </div>

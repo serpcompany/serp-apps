@@ -3,7 +3,10 @@
     title="Billing"
     description="Manage your billing information and subscription plans."
   >
-    <AppSubscriptionBilling v-if="PURCHASE_METHOD === 'subscription'" />
+    <UContainer>
+      <AppSubscriptionBilling v-if="PURCHASE_METHOD === 'subscription'" />
+      <AppOneTimeBilling v-else />
+    </UContainer>
   </AppContainer>
 </template>
 

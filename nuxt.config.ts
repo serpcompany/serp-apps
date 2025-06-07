@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     'nuxthub-ratelimit',
     '@nuxt/eslint',
   ],
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   colorMode: {
     preference: 'system',
