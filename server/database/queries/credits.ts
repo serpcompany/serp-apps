@@ -1,20 +1,18 @@
 export async function addCreditsToUser(userId: string, credits: number, description?: string, stripeSessionId?: string) {
   try {
-    await useDB().transaction(async (tx) => {
-      await tx
-        .update(tables.users)
-        .set({
-          credits: sql`${tables.users.credits} + ${credits}`,
-        })
-        .where(eq(tables.users.id, userId))
-
-      await tx.insert(tables.creditsTransactions).values({
-        userId,
-        amount: credits,
-        type: 'purchase',
-        description: description || `Purchased ${credits} credits`,
-        stripeSessionId,
+    await useDB()
+      .update(tables.users)
+      .set({
+        credits: sql`${tables.users.credits} + ${credits}`,
       })
+      .where(eq(tables.users.id, userId))
+
+    await useDB().insert(tables.creditsTransactions).values({
+      userId,
+      amount: credits,
+      type: 'purchase',
+      description: description || `Purchased ${credits} credits`,
+      stripeSessionId,
     })
 
     console.log(`Successfully added ${credits} credits to user ${userId}`)
@@ -27,36 +25,31 @@ export async function addCreditsToUser(userId: string, credits: number, descript
 
 export async function deductCreditsFromUser(userId: string, credits: number, description: string) {
   try {
-    const result = await useDB().transaction(async (tx) => {
-      const user = await tx
-        .select({ credits: tables.users.credits })
-        .from(tables.users)
-        .where(eq(tables.users.id, userId))
-        .limit(1)
+    const user = await useDB()
+      .select({ credits: tables.users.credits })
+      .from(tables.users)
+      .where(eq(tables.users.id, userId))
+      .limit(1)
 
-      if (!user[0] || user[0].credits < credits) {
-        throw new Error('Insufficient credits')
-      }
+    if (!user[0] || user[0].credits < credits) {
+      throw new Error('Insufficient credits')
+    }
 
-      await tx
-        .update(tables.users)
-        .set({
-          credits: sql`${tables.users.credits} - ${credits}`,
-        })
-        .where(eq(tables.users.id, userId))
-
-      await tx.insert(tables.creditsTransactions).values({
-        userId,
-        amount: -credits,
-        type: 'usage',
-        description,
+    await useDB()
+      .update(tables.users)
+      .set({
+        credits: sql`${tables.users.credits} - ${credits}`,
       })
+      .where(eq(tables.users.id, userId))
 
-      return true
+    await useDB().insert(tables.creditsTransactions).values({
+      userId,
+      amount: -credits,
+      type: 'usage',
+      description,
     })
 
     console.log(`Successfully deducted ${credits} credits from user ${userId}`)
-    return result
   } catch (error) {
     console.error('Error deducting credits:', error)
     throw error
