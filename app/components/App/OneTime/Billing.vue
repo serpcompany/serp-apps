@@ -61,7 +61,6 @@
 <script setup lang="ts">
 import type { Price, Product } from '@@/types/database'
 
-const { user } = useUserSession()
 interface Plan extends Price {
   product: Product
 }
@@ -107,7 +106,7 @@ const toast = useToast()
 const loadingPriceId = ref<string | null>(null)
 const disabled = ref(false)
 const route = useRoute()
-const { fetch: refreshSession } = useUserSession()
+const { user, fetch: refreshSession } = useUserSession()
 const loadingPortal = ref(false)
 const loadingHistory = ref(false)
 
