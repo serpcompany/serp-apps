@@ -71,18 +71,22 @@ export async function getUserCredits(userId: string) {
   }
 }
 
-export async function getUserCreditHistory(userId: string, limit = 50) {
+export async function getUserCreditHistory(userId: string, page: number, limit: number) {
   try {
     const transactions = await useDB()
-      .select()
-      .from(tables.creditsTransactions)
-      .where(eq(tables.creditsTransactions.userId, userId))
-      .orderBy(desc(tables.creditsTransactions.createdAt))
-      .limit(limit)
+      .query
+      .creditsTransactions
+      .findMany({
+        where: eq(tables.creditsTransactions.userId, userId),
+        orderBy: [desc(tables.creditsTransactions.createdAt)],
+        limit,
+        offset: (page - 1) * limit,
+      })
 
-    return transactions
+    const total = await useDB().$count(tables.creditsTransactions, eq(tables.creditsTransactions.userId, userId))
+    return { transactions, total }
   } catch (error) {
-    console.error('Error getting credit history:', error)
-    return []
+    console.error('Error getting credits history:', error)
+    throw error
   }
 }
