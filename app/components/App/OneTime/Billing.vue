@@ -15,10 +15,9 @@
       <UButton
         color="neutral"
         variant="outline"
+        icon="i-lucide-history"
         label="View Credits History"
-        :loading="loadingHistory"
-        :disabled="loadingHistory"
-        @click="handleCreditsHistory"
+        to="/dashboard/billing/history"
       />
     </div>
   </UCard>
@@ -100,7 +99,6 @@ const { user, fetch: refreshSession } = useUserSession()
 const toast = useToast()
 const loadingPriceId = ref<string | null>(null)
 const disabled = ref(false)
-const loadingHistory = ref(false)
 
 const handlePurchase = async (priceId: string, credits: number) => {
   try {
@@ -133,8 +131,6 @@ const handlePurchase = async (priceId: string, credits: number) => {
     disabled.value = false
   }
 }
-
-const handleCreditsHistory = () => {}
 
 onMounted(async () => {
   if (route.query.success === 'true') {
