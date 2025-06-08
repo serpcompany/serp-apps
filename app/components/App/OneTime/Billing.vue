@@ -11,14 +11,7 @@
           Get more credits to continue using Serp Apps uninterrupted.
         </p>
       </div>
-      <UButton
-        color="neutral"
-        variant="outline"
-        label="Manage Subscription"
-        :loading="loadingPortal"
-        :disabled="loadingPortal"
-        @click="handleManageSubscription"
-      />
+
       <UButton
         color="neutral"
         variant="outline"
@@ -102,12 +95,11 @@ const getBasePriceForComparison = (productId: string) => {
   }
 }
 
+const route = useRoute()
+const { user, fetch: refreshSession } = useUserSession()
 const toast = useToast()
 const loadingPriceId = ref<string | null>(null)
 const disabled = ref(false)
-const route = useRoute()
-const { user, fetch: refreshSession } = useUserSession()
-const loadingPortal = ref(false)
 const loadingHistory = ref(false)
 
 const handlePurchase = async (priceId: string, credits: number) => {
@@ -139,32 +131,6 @@ const handlePurchase = async (priceId: string, credits: number) => {
   } finally {
     loadingPriceId.value = null
     disabled.value = false
-  }
-}
-
-const handleManageSubscription = async () => {
-  try {
-    loadingPortal.value = true
-
-    const portalUrl = await $fetch('/api/stripe/portal', {
-      method: 'POST',
-    })
-
-    if (!portalUrl) {
-      throw new Error('No portal URL returned from the server')
-    }
-
-    window.location.href = portalUrl
-  } catch (error) {
-    toast.add({
-      title: 'Failed to access billing portal',
-      description:
-        error instanceof Error ? error.message : 'An unexpected error occurred',
-      color: 'error',
-    })
-    console.error('Billing portal error:', error)
-  } finally {
-    loadingPortal.value = false
   }
 }
 
