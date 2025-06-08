@@ -1,68 +1,74 @@
 <template>
   <UCard
-    class="max-w-sm group relative transition-all duration-300 hover:shadow-xl hover:scale-105"
+    class="relative overflow-hidden h-full ring-accented group transition-all duration-300"
     :class="{
-      'border-2 border-primary-300 dark:border-primary-700 hover:border-primary-300 dark:hover:border-primary-600 bg-primary-50 dark:bg-primary-950': isRecommended,
+      'ring-2 ring-primary bg-primary-50 dark:bg-primary-950': isRecommended,
+      'hover:ring-primary hover:shadow-xl hover:-translate-y-1': !disabled,
+    }"
+    :ui="{
+      body: 'p-6 sm:p-8 flex flex-col h-full',
     }"
   >
     <div
       v-if="isRecommended"
-      class="absolute -top-3 left-1/2 transform -translate-x-1/2"
+      class="absolute -right-8 top-6 rotate-45  bg-primary px-8 py-1 text-sm font-medium text-gray-800"
     >
-      <UBadge color="primary" variant="solid" size="sm">
-        Best Value
-      </UBadge>
+      Best Value
     </div>
 
-    <div class="text-center">
-      <h2 v-if="name" class="text-2xl font-bold text-toned">
-        {{ name }}
-      </h2>
-      <p v-if="description" class="text-sm text-muted mt-1">
-        {{ description }}
-      </p>
+    <div class="flex-grow">
+      <div class="text-center">
+        <h2 v-if="name" class="text-2xl font-bold">
+          {{ name }}
+        </h2>
+        <p v-if="description" class="text-sm text-muted mt-2">
+          {{ description }}
+        </p>
+      </div>
 
-      <div class="mt-8 mb-4">
-        <span class="text-xl font-medium">
+      <div class="my-8 flex items-baseline justify-center gap-x-2">
+        <span class="text-5xl font-bold tracking-tight text-highlighted">
           {{ formatNumber(credits) }}
         </span>
-        <span class="text-sm text-muted uppercase tracking-wide">
+        <span class="text-lg font-semibold leading-6 tracking-wide text-toned">
           Credits
         </span>
       </div>
+
+      <div class="text-center space-y-4">
+        <h3 class="text-4xl font-bold text-highlighted">
+          {{ formatPrice(unitAmount) }}
+        </h3>
+
+        <p class="text-sm text-toned">
+          ({{ formatPrice(pricePerCredit, 3) }} per credit)
+        </p>
+      </div>
     </div>
 
-    <div class="text-center mb-8">
-      <h3 class="text-4xl font-bold text-gray-900 dark:text-white">
-        {{ formatPrice(unitAmount) }}
-      </h3>
+    <div class="mt-8 space-y-3">
+      <div class="flex justify-center h-7">
+        <UBadge v-if="savingsPercentage > 0" class="font-bold rounded-full" color="success" variant="subtle" size="md">
+          Save {{ savingsPercentage }}%
+        </UBadge>
+      </div>
 
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        ({{ formatPrice(pricePerCredit, 3) }} per credit)
-      </p>
-
-      <UBadge v-if="savingsPercentage > 0" class="mt-6 font-bold rounded-full" color="success" trailing-icon="i-lucide-percent" size="md" variant="soft">
-        Save {{ savingsPercentage }}
-      </UBadge>
-    </div>
-
-    <div class="space-y-2">
       <UButton
         block
         class="font-semibold"
         icon="i-lucide-credit-card"
         size="lg"
-        :color="isRecommended ? 'primary' : 'neutral'"
+        color="primary"
         :loading="loading"
-        :disabled="loading || disabled"
+        :disabled="disabled"
         @click="$emit('purchase', priceId, credits)"
       >
         {{ buttonLabel }}
       </UButton>
 
-      <div class="flex items-center justify-center gap-1 text-muted">
+      <div class="flex items-center justify-center gap-1.5 text-muted">
         <UIcon name="i-lucide-shield-check" class="size-4" />
-        <span class="text-sm">
+        <span class="text-xs font-medium">
           Secure Payment
         </span>
       </div>
@@ -88,9 +94,9 @@ defineEmits<{
   purchase: [id: string, credits: number]
 }>()
 
-const formatPrice = (price: number, minimumFractionDigits = 0): string => {
+const formatPrice = (price: number, minimumFractionDigits = 2): string => {
   if (!price) {
-    return '$0'
+    return '$0.00'
   }
 
   return new Intl.NumberFormat('en-US', {
@@ -102,10 +108,10 @@ const formatPrice = (price: number, minimumFractionDigits = 0): string => {
 
 const formatNumber = (num: number) => {
   if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M'
+    return (num / 1000000).toFixed(1).replace('.0', '') + 'M'
   }
   if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K'
+    return (num / 1000).toFixed(0) + 'K'
   }
   return num.toLocaleString()
 }

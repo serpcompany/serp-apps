@@ -30,7 +30,7 @@
     </div>
   </UCard>
 
-  <div class="mt-4 space-y-16">
+  <div class="mt-4 sm:mt-6 lg:mt-8 space-y-4 sm:space-y-6 lg:space-y-8">
     <AppOneTimeProduct
       v-for="product in products"
       :key="product.id"

@@ -2,38 +2,31 @@
   <UCard
     variant="soft"
   >
-    <template #header>
-      <div class="space-y-4">
-        <div class="space-y-2">
-          <h3 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-            {{ title }}
-          </h3>
+    <div class="mx-auto max-w-4xl text-center pt-4 sm:pt-6 lg:pt-8 mb-12 lg:mb-16">
+      <h2 class="text-4xl font-bold tracking-tight text-highlighted sm:text-5xl">
+        {{ title }}
+      </h2>
 
-          <p v-if="description" class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-            {{ description }}
-          </p>
-        </div>
+      <p v-if="description" class="mt-2 text-lg leading-8 text-toned">
+        {{ description }}
+      </p>
 
-        <div v-if="features && features.length > 0" class="space-y-3">
-          <h4 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">
-            What's Included
-          </h4>
-          <ul class="space-y-2">
-            <li
-              v-for="feature in features"
-              :key="feature.name"
-              class="flex items-start gap-3 text-gray-700 dark:text-gray-300"
-            >
-              <UIcon
-                name="i-lucide-check-circle"
-                class="text-green-500 h-4 w-4 mt-0.5 flex-shrink-0"
-              />
-              <span class="text-sm leading-relaxed">{{ feature.name }}</span>
-            </li>
-          </ul>
-        </div>
+      <div v-if="features && features.length" class="mt-10">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-muted">
+          What's Included
+        </h3>
+
+        <ul
+          role="list"
+          class="mt-4 flex flex-col items-center justify-center gap-4 leading-6 sm:flex-row sm:gap-6 lg:gap-8"
+        >
+          <li v-for="feature in features" :key="feature.name" class="flex items-center gap-x-2">
+            <UIcon name="i-lucide-check-circle" class="h-5 w-5 text-primary-500 shrink-0" />
+            {{ feature.name }}
+          </li>
+        </ul>
       </div>
-    </template>
+    </div>
 
     <slot />
   </UCard>
