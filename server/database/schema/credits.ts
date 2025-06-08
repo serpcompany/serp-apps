@@ -13,5 +13,5 @@ export const creditsTransactions = sqliteTable('credits_transactions', {
   stripeSessionId: text('stripe_session_id'),
   stripePaymentIntentId: text('stripe_payment_intent_id'),
   metadata: text('metadata', { mode: 'json' }),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 })
