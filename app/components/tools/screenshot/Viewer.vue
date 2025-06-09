@@ -1,5 +1,5 @@
 <template>
-  <UCard>
+  <UCard variant="subtle">
     <div class="flex flex-col items-center gap-4">
       <slot name="header">
         <h3 class="text-lg font-semibold">Your Screenshot</h3>
