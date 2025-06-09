@@ -1,4 +1,9 @@
-export async function addCreditsToUser(userId: string, credits: number, description?: string, stripeSessionId?: string) {
+export async function addCreditsToUser(
+  userId: string,
+  credits: number,
+  type: 'purchase' | 'refund' | 'bonus' = 'purchase',
+  description?: string,
+  stripeSessionId?: string) {
   try {
     await useDB()
       .update(tables.users)
@@ -7,11 +12,24 @@ export async function addCreditsToUser(userId: string, credits: number, descript
       })
       .where(eq(tables.users.id, userId))
 
+    if (!description) {
+      switch (type) {
+        case 'purchase':
+          description = `Purchased ${credits} credits`
+          break
+        case 'refund':
+          description = `Refunded ${credits} credits`
+          break
+        case 'bonus':
+          description = `Received ${credits} bonus credits`
+      }
+    }
+
     await useDB().insert(tables.creditsTransactions).values({
       userId,
       amount: credits,
-      type: 'purchase',
-      description: description || `Purchased ${credits} credits`,
+      type,
+      description,
       stripeSessionId,
     })
 
@@ -25,22 +43,16 @@ export async function addCreditsToUser(userId: string, credits: number, descript
 
 export async function deductCreditsFromUser(userId: string, credits: number, description: string) {
   try {
-    const user = await useDB()
-      .select({ credits: tables.users.credits })
-      .from(tables.users)
-      .where(eq(tables.users.id, userId))
-      .limit(1)
-
-    if (!user[0] || user[0].credits < credits) {
-      throw new Error('Insufficient credits')
-    }
-
-    await useDB()
+    const result = await useDB()
       .update(tables.users)
       .set({
         credits: sql`${tables.users.credits} - ${credits}`,
       })
-      .where(eq(tables.users.id, userId))
+      .where(and(eq(tables.users.id, userId), gte(tables.users.credits, credits)))
+
+    if (result.meta.changes === 0) {
+      throw new Error('Insufficient credits')
+    }
 
     await useDB().insert(tables.creditsTransactions).values({
       userId,
