@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import type { ScreenshotEventData } from '@/components/tools/screenshot/Form.vue'
 
-const { user } = useUserSession()
+const { user, fetch: refreshUser } = useUserSession()
 
 const howItWorks = [
   {
@@ -84,7 +84,7 @@ const titlePrefix = computed(() => {
   return 'Your screenshot for'
 })
 
-const handleScreenshot = (data: ScreenshotEventData) => {
+const handleScreenshot = async (data: ScreenshotEventData) => {
   if (mediaUrl.value) {
     URL.revokeObjectURL(mediaUrl.value)
     mediaUrl.value = null
@@ -97,6 +97,8 @@ const handleScreenshot = (data: ScreenshotEventData) => {
   url.value = data.url
   isFullPage.value = data.fullPage
   isScrollingAnimation.value = data.scrollingAnimation
+
+  await refreshUser()
 }
 
 const revokeMedia = () => {
