@@ -4,15 +4,26 @@
     :padding="false"
   >
     <UContainer class="py-4 sm:py-6 lg:py-8">
-      <UButton
-        icon="i-lucide-arrow-left"
-        to="/dashboard/billing"
-        color="neutral"
-        variant="outline"
-        class="mb-8"
-      >
-        Back to Billing
-      </UButton>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div class="order-last sm:order-first">
+          <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Credits History
+          </h1>
+          <p class="mt-1 text-gray-500 dark:text-gray-400">
+            A complete log of all your credit transactions.
+          </p>
+        </div>
+        <div>
+          <UButton
+            icon="i-lucide-arrow-left"
+            to="/dashboard/billing"
+            color="neutral"
+            variant="outline"
+          >
+            Back to Billing
+          </UButton>
+        </div>
+      </div>
 
       <AppCreditsHistory
         :transactions="data?.transactions ?? []"
