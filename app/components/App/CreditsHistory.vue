@@ -108,8 +108,10 @@ const columns: TableColumn<CreditTransaction>[] = [
     header: () => h('div', { class: 'text-right' }, 'Amount'),
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue('amount'))
+      const amountText = `${amount < 0 ? '-' : '+'} ${Math.abs(amount)}`
+      const textClass = `${amount < 0 ? 'text-error' : 'text-success'} text-right font-semibold`
 
-      return h('div', { class: 'text-right font-medium' }, amount)
+      return h('div', { class: textClass }, amountText)
     },
   },
 ]
