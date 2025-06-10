@@ -8,6 +8,7 @@ import {
 import { getCustomerById } from '@@/server/database/queries/customers'
 import { upsertSubscription } from '@@/server/database/queries/subscriptions'
 import { updateUser } from '@@/server/database/queries/users'
+import { addCreditsToUser } from '@@/server/database/queries/credits'
 import { stripeService } from '@@/server/services/stripe'
 
 export default defineEventHandler(async (event) => {
@@ -68,12 +69,6 @@ export default defineEventHandler(async (event) => {
     return 'OK'
   }
   const data = stripeEvent.data.object
-  if (!data) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid event data',
-    })
-  }
   console.log('Received event', type)
   try {
     switch (type) {
@@ -184,6 +179,13 @@ const handleSubscriptionEvent = async (data: Stripe.Subscription) => {
 
 const handleCheckoutSessionEvent = async (data: Stripe.Checkout.Session) => {
   console.log('handleCheckoutSessionEvent', data)
+
+  if (data.mode === 'payment' && data.metadata?.type === 'credits_purchase') {
+    console.log('A Credits purchase event')
+    await handleCreditsCheckoutSession(data)
+    return
+  }
+
   if (data.mode !== 'subscription') {
     return // Only handle subscription checkouts
   }
@@ -248,5 +250,35 @@ const handleCheckoutSessionEvent = async (data: Stripe.Checkout.Session) => {
     await updateUser(userId, {
       proAccount: subscription.status === 'active',
     })
+  }
+}
+
+const handleCreditsCheckoutSession = async (data: Stripe.Checkout.Session) => {
+  if (data.payment_status !== 'paid') {
+    console.log('handleCreditsCheckoutSession payment_status is not paid: ', data.payment_status)
+    return
+  }
+
+  const existingCustomer = await getCustomerById(data.customer as string)
+  if (!existingCustomer) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Customer not found',
+    })
+  }
+
+  const userId = existingCustomer.userId
+  if (!userId) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'User not found',
+    })
+  }
+
+  const credits = parseInt(data.metadata?.credits || '0')
+  if (credits > 0) {
+    // Add credits to user account
+    await addCreditsToUser(userId, credits)
+    console.log(`Added ${credits} credits to user ${userId}`)
   }
 }

@@ -31,5 +31,10 @@ const links = computed(() => [
     to: '/dashboard/posts',
   },
   ...serpLinks,
+  {
+    label: 'Billing',
+    icon: 'i-lucide-credit-card',
+    to: '/dashboard/billing',
+  },
 ])
 </script>

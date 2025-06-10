@@ -48,3 +48,5 @@ export const SerpTools = [
   //   description: 'Check and monitor backlinks to your website.',
   // },
 ]
+
+export const PURCHASE_METHOD: 'one_time' | 'subscription' = 'one_time'

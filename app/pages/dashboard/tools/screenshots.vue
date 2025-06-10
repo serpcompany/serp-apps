@@ -1,8 +1,16 @@
 <template>
-  <AppContainer title="Screenshots Generator">
-    <UContainer>
+  <AppContainer title="Screenshots Generator" :padding="false">
+    <UContainer class="py-4 sm:py-6 lg:py-8">
       <div class="flex flex-col gap-6 md:gap-8">
-        <h1 class="text-3xl md:text-4xl font-bold">Website Screenshot Tool</h1>
+        <div class="flex items-center justify-between gap-4 mb-8">
+          <h1 class="text-3xl font-bold tracking-tight text-highlighted">
+            Screenshots Generator
+          </h1>
+
+          <UBadge color="neutral" variant="subtle" size="lg">
+            Credits: <span class="font-bold">{{ user?.credits }}</span>
+          </UBadge>
+        </div>
         <ToolsScreenshotForm @screenshot-generated="handleScreenshot" @clear-screenshot="revokeMedia" />
         <ToolsScreenshotViewer
           v-if="mediaUrl"
@@ -37,6 +45,8 @@
 
 <script setup lang="ts">
 import type { ScreenshotEventData } from '@/components/tools/screenshot/Form.vue'
+
+const { user, fetch: refreshUser } = useUserSession()
 
 const howItWorks = [
   {
@@ -74,7 +84,7 @@ const titlePrefix = computed(() => {
   return 'Your screenshot for'
 })
 
-const handleScreenshot = (data: ScreenshotEventData) => {
+const handleScreenshot = async (data: ScreenshotEventData) => {
   if (mediaUrl.value) {
     URL.revokeObjectURL(mediaUrl.value)
     mediaUrl.value = null
@@ -87,6 +97,8 @@ const handleScreenshot = (data: ScreenshotEventData) => {
   url.value = data.url
   isFullPage.value = data.fullPage
   isScrollingAnimation.value = data.scrollingAnimation
+
+  await refreshUser()
 }
 
 const revokeMedia = () => {

@@ -26,6 +26,7 @@ export const users = sqliteTable('users', {
   proAccount: integer('proAccount', { mode: 'boolean' })
     .notNull()
     .default(false),
+  credits: integer('credits').notNull().default(0),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),

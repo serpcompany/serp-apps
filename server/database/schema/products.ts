@@ -9,11 +9,11 @@ export const products = sqliteTable('products', {
   description: text('description'),
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
   image: text('image'),
-  metadata: text('metadata', { mode: 'json' }),
+  metadata: text('metadata', { mode: 'json' }).$type<Record<string, string>>().notNull(),
   product_orders: integer('product_orders', { mode: 'number' })
     .notNull()
     .default(0),
-  features: text('features', { mode: 'json' }),
+  features: text('features', { mode: 'json' }).$type<{ name?: string }[]>().notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$default(
     () => new Date(),
   ),
