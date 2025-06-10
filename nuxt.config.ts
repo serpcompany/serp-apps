@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     },
   },
   future: { compatibilityVersion: 4 },
-  compatibilityDate: '2024-09-19',
+  compatibilityDate: '2025-03-01',
   nitro: {
     rollupConfig: {
       plugins: [vue()],
@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     database: true,
     blob: true,
     kv: true,
+    workers: true,
   },
   auth: {
     webAuthn: true,
