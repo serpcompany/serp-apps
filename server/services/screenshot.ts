@@ -73,7 +73,7 @@ export async function generateScreenshot(url: string, fullPage: boolean = false,
   } catch (error) {
     if (error instanceof FetchError && error.response) {
       console.error('Error generating screenshot: ', error.statusCode, error.statusText)
-      console.error('Error details: ', await error.response?.json())
+      console.error('Error details: ', await error.response.json())
     }
 
     throw createError({

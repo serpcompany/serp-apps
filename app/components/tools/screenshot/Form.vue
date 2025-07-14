@@ -1,5 +1,5 @@
 <template>
-  <UCard>
+  <UCard variant="subtle">
     <div class="mb-6">
       <h2 class="text-xl font-bold mb-1">Generate Screenshot</h2>
       <p class="text-muted text-sm">
@@ -42,6 +42,7 @@
       <UButton
         type="submit"
         :loading="isSubmitting"
+        :disabled="!toolUsageAllowed"
         :icon="buttonIcon"
         :label="buttonLabel"
         class="mt-2"
@@ -50,12 +51,9 @@
       />
 
       <UAlert
-        v-if="isSubmitting"
-        color="info"
-        description="This may take a few seconds... Please wait."
-        icon="i-lucide-info"
-        variant="outline"
-        :title="alertTitle"
+        v-if="isSubmitting || !toolUsageAllowed"
+        v-bind="alert"
+        variant="subtle"
       />
     </UForm>
   </UCard>
@@ -63,7 +61,7 @@
 
 <script setup lang="ts">
 import * as z from 'zod'
-import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui'
+import type { FormSubmitEvent } from '@nuxt/ui'
 
 export type ScreenshotEventData = {
   url: string
@@ -77,7 +75,7 @@ const emit = defineEmits<{
   (e: 'clearScreenshot'): void
 }>()
 
-const captureOptions: RadioGroupItem[] = [
+const captureOptions = [
   {
     label: 'Visible Part',
     value: 'visible',
@@ -94,6 +92,14 @@ const captureOptions: RadioGroupItem[] = [
     description: 'Generates a scrolling animation of the entire page.',
   },
 ]
+
+const { user } = useUserSession()
+const toolUsageAllowed = computed(() => {
+  // Selected tool credits cost can be used to compare  against user credits
+  // const selection = captureOptions.find((option) => option.value === state.captureOption)
+
+  return user.value ? (user.value.credits >= 1) : false
+})
 
 const schema = z.object({
   url: z.string()
@@ -133,9 +139,29 @@ const buttonLabel = computed(() =>
   scrollingAnimation.value ? 'Generate Scrolling Animation' : 'Generate Screenshot',
 )
 
-const alertTitle = computed(() =>
-  scrollingAnimation.value ? 'Generating your scrolling animation!' : 'Generating your screenshot!',
-)
+const alert = computed(() => {
+  if (!toolUsageAllowed.value) {
+    const color = 'warning' as const
+    return {
+      title: 'Insufficient Credits!',
+      description: 'You do not have enough credits to use this tool.',
+      icon: 'i-lucide-triangle-alert',
+      color,
+      actions: [{
+        label: 'Purchase Credits',
+        color,
+        to: '/dashboard/billing',
+      }],
+    }
+  }
+
+  return {
+    title: scrollingAnimation.value ? 'Generating your scrolling animation!' : 'Generating your screenshot!',
+    description: 'This may take a few seconds... Please wait.',
+    icon: 'i-lucide-info',
+    color: 'info' as const,
+  }
+})
 
 const isSubmitting = ref(false)
 const toast = useToast()

@@ -6,6 +6,7 @@ import {
 
 interface CheckoutBody {
   priceId: string
+  credits?: number
 }
 
 async function getOrCreateCustomer(userId: string, userEmail: string) {
@@ -46,6 +47,7 @@ export default defineEventHandler(async (event) => {
     const session = await stripeService.createCheckoutSession({
       customerId,
       priceId: body.priceId,
+      credits: body.credits,
     })
 
     return session.url

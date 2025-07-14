@@ -10,12 +10,13 @@ export const prices = sqliteTable('prices', {
   description: text('description'),
   currency: text('currency').notNull(),
   unitAmount: integer('unit_amount').notNull(),
-  type: text('type').notNull(),
-  interval: text('interval').notNull(),
-  intervalCount: integer('interval_count').notNull(),
+  type: text('type', { enum: ['one_time', 'recurring'] }).notNull(),
+  interval: text('interval'),
+  intervalCount: integer('interval_count'),
   trialPeriodDays: integer('trial_period_days'),
+  credits: integer('credits'),
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
-  metadata: text('metadata', { mode: 'json' }),
+  metadata: text('metadata', { mode: 'json' }).$type<Record<string, string>>().notNull(),
   productId: text('product_id')
     .notNull()
     .references(() => products.id, { onDelete: 'cascade' }),
