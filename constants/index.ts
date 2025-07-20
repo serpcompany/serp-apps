@@ -17,6 +17,12 @@ export const SerpTools = [
     description: 'Capture and analyze screenshots of your website.',
     path: '/tools/screenshots',
   },
+  {
+    icon: 'i-lucide-images',
+    title: 'Bulk AI Images Generator',
+    description: 'Create hundreds of unique visuals from a single prompt or a CSV file.',
+    path: '/tools/bulk-ai-images',
+  },
   // {
   //   icon: 'i-lucide-search',
   //   title: 'Keyword Finder',
