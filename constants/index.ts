@@ -13,7 +13,7 @@ export enum OneTimePasswordTypes {
 export const SerpTools = [
   {
     icon: 'i-lucide-scan-eye',
-    title: 'Website Screenshots',
+    title: 'Website Screenshot',
     description: 'Capture and analyze screenshots of your website.',
     path: '/tools/screenshots',
   },

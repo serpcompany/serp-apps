@@ -1,6 +1,6 @@
 <template>
   <ToolsContainer
-    title="Screenshots Generator"
+    title="Website Screenshot Generator"
     :credits="user?.credits || 0"
     :how-it-works="howItWorks"
   >
