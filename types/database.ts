@@ -12,13 +12,13 @@ export type Post = typeof tables.posts.$inferSelect
 export type InsertPost = typeof tables.posts.$inferInsert
 export type Feedback = typeof tables.feedback.$inferSelect
 export type InsertFeedback = typeof tables.feedback.$inferInsert
-export type EmailVerificationCodes =
-  typeof tables.emailVerificationCodes.$inferSelect
-export type InsertEmailVerificationCodes =
-  typeof tables.emailVerificationCodes.$inferInsert
+export type EmailVerificationCodes
+  = typeof tables.emailVerificationCodes.$inferSelect
+export type InsertEmailVerificationCodes
+  = typeof tables.emailVerificationCodes.$inferInsert
 export type PasswordResetTokens = typeof tables.passwordResetTokens.$inferSelect
-export type InsertPasswordResetTokens =
-  typeof tables.passwordResetTokens.$inferInsert
+export type InsertPasswordResetTokens
+  = typeof tables.passwordResetTokens.$inferInsert
 export type OneTimePasswords = typeof tables.oneTimePasswords.$inferSelect
 export type InsertOneTimePasswords = typeof tables.oneTimePasswords.$inferInsert
 export type Image = typeof tables.images.$inferSelect
@@ -26,8 +26,8 @@ export type InsertImage = typeof tables.images.$inferInsert
 export type Passkey = typeof tables.webAuthnCredentials.$inferSelect
 export type InsertPasskey = typeof tables.webAuthnCredentials.$inferInsert
 export type WebAuthnChallenge = typeof tables.webAuthnChallenges.$inferSelect
-export type InsertWebAuthnChallenge =
-  typeof tables.webAuthnChallenges.$inferInsert
+export type InsertWebAuthnChallenge
+  = typeof tables.webAuthnChallenges.$inferInsert
 export type Product = typeof tables.products.$inferSelect
 export type InsertProduct = typeof tables.products.$inferInsert
 export type Price = typeof tables.prices.$inferSelect
