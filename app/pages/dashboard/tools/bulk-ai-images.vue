@@ -1,22 +1,14 @@
 <template>
   <ToolsContainer
-    title="Bulk AI Image Generator"
-    :credits="user?.credits || 0"
+    :title="tool.title"
     :how-it-works="howItWorks"
   >
-    <UCard variant="subtle">
-      <div class="mb-6">
-        <h2 class="text-xl font-bold mb-1">Generate AI Images</h2>
-        <p class="text-muted text-sm">
-          Bulk Images generator is a powerful tool that allows you to create multiple images using AI with a single prompt, or multiple prompts from a csv file.
-        </p>
-      </div>
-    </UCard>
+    <ToolsBulkImageForm />
   </ToolsContainer>
 </template>
 
 <script setup lang="ts">
-const { user } = useUserSession()
+const { tool } = useTool('bulk_ai_images')
 
 const howItWorks = [
   {
