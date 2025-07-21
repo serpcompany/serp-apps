@@ -1,3 +1,5 @@
+import type { Tool } from '~~/types/tool'
+
 export enum UserRole {
   MEMBER = 'member',
   ADMIN = 'admin',
@@ -10,18 +12,26 @@ export enum OneTimePasswordTypes {
   forgotPassword = 'FORGOT_PASSWORD',
 }
 
-export const SerpTools = [
+export const SerpTools: Tool[] = [
   {
     icon: 'i-lucide-scan-eye',
     title: 'Website Screenshot',
     description: 'Capture and analyze screenshots of your website.',
     path: '/tools/screenshots',
+    type: 'website_screenshot',
+    cost: {
+      viewport: 2,
+      fullPage: 4,
+      animated: 6,
+    },
   },
   {
     icon: 'i-lucide-images',
     title: 'Bulk AI Images Generator',
     description: 'Create hundreds of unique visuals from a single prompt or a CSV file.',
     path: '/tools/bulk-ai-images',
+    type: 'bulk_ai_images',
+    cost: 4,
   },
   // {
   //   icon: 'i-lucide-search',
