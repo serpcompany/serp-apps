@@ -1,7 +1,6 @@
 <template>
   <ToolsContainer
-    title="Website Screenshot Generator"
-    :credits="user?.credits || 0"
+    :title="tool.title"
     :how-it-works="howItWorks"
   >
     <ToolsScreenshotForm @screenshot-generated="handleScreenshot" @clear-screenshot="revokeMedia" />
@@ -27,7 +26,7 @@
 <script setup lang="ts">
 import type { ScreenshotEventData } from '@/components/tools/screenshot/Form.vue'
 
-const { user, fetch: refreshUser } = useUserSession()
+const { tool, refreshUserCredits } = useTool('website_screenshot')
 
 const howItWorks = [
   {
@@ -79,7 +78,7 @@ const handleScreenshot = async (data: ScreenshotEventData) => {
   isFullPage.value = data.fullPage
   isScrollingAnimation.value = data.scrollingAnimation
 
-  await refreshUser()
+  await refreshUserCredits()
 }
 
 const revokeMedia = () => {

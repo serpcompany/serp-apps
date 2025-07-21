@@ -34,6 +34,7 @@
         v-model="state.captureOption"
         legend="Capture Options"
         orientation="vertical"
+        value-key="mode"
         variant="card"
         :items="captureOptions"
         :ui="{ fieldset: 'gap-x-4 gap-y-2 md:flex-row', item: 'flex-1' }"
@@ -61,7 +62,9 @@
 
 <script setup lang="ts">
 import * as z from 'zod'
+import { SCREENSHOT_MODES } from '~~/types/tool'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import type { ScreenshotMode } from '~~/types/tool'
 
 export type ScreenshotEventData = {
   url: string
@@ -75,31 +78,23 @@ const emit = defineEmits<{
   (e: 'clearScreenshot'): void
 }>()
 
-const captureOptions = [
+const captureOptions: { label: string, mode: ScreenshotMode, description: string }[] = [
   {
     label: 'Visible Part',
-    value: 'visible',
+    mode: 'visible',
     description: 'Captures the visible part of the page.',
   },
   {
     label: 'Full Page',
-    value: 'fullPage',
+    mode: 'fullPage',
     description: 'Captures the entire page.',
   },
   {
     label: 'Full Page Scrolling Animation',
-    value: 'scrollingAnimation',
+    mode: 'scrollingAnimation',
     description: 'Generates a scrolling animation of the entire page.',
   },
 ]
-
-const { user } = useUserSession()
-const toolUsageAllowed = computed(() => {
-  // Selected tool credits cost can be used to compare  against user credits
-  // const selection = captureOptions.find((option) => option.value === state.captureOption)
-
-  return user.value ? (user.value.credits >= 1) : false
-})
 
 const schema = z.object({
   url: z.string()
@@ -116,7 +111,7 @@ const schema = z.object({
     }, {
       message: 'Please enter a valid URL (e.g. example.com)',
     }),
-  captureOption: z.enum(['visible', 'fullPage', 'scrollingAnimation']).default('visible'),
+  captureOption: z.enum(SCREENSHOT_MODES).default('visible'),
 })
 
 type Schema = z.output<typeof schema>
@@ -139,20 +134,11 @@ const buttonLabel = computed(() =>
   scrollingAnimation.value ? 'Generate Scrolling Animation' : 'Generate Screenshot',
 )
 
+const { isToolUsageAllowed, insufficientCreditsAlert } = useTool('website_screenshot')
+const toolUsageAllowed = computed(() => isToolUsageAllowed({ mode: state.captureOption }))
 const alert = computed(() => {
   if (!toolUsageAllowed.value) {
-    const color = 'warning' as const
-    return {
-      title: 'Insufficient Credits!',
-      description: 'You do not have enough credits to use this tool.',
-      icon: 'i-lucide-triangle-alert',
-      color,
-      actions: [{
-        label: 'Purchase Credits',
-        color,
-        to: '/dashboard/billing',
-      }],
-    }
+    return insufficientCreditsAlert.value
   }
 
   return {
