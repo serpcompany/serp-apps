@@ -1,8 +1,8 @@
 import { SerpTools } from '~~/constants'
-import type { ToolType } from '~~/types/tool'
+import type { ToolType, ToolModeMap } from '~~/types/tool'
 
-type CostCalculationOptions = {
-  mode?: string
+type CostCalculationOptions<T extends ToolType> = {
+  mode?: ToolModeMap[T]
   count?: number
 }
 
@@ -10,7 +10,7 @@ type CostCalculationOptions = {
  * A composable to manage tool usage logic, primarily to check if sufficient credits available for tool use.
  * @param toolType The unique identifier for the tool.
  */
-export const useTool = (toolType: ToolType) => {
+export const useTool = <T extends ToolType>(toolType: T) => {
   const tool = SerpTools.find((t) => t.type === toolType)
   if (!tool) {
     throw new Error(`useTool Error: Tool with value "${toolType}" was not found.`)
@@ -19,7 +19,7 @@ export const useTool = (toolType: ToolType) => {
   const { user, fetch: refreshUser } = useUserSession()
   const availableCredits = computed(() => user.value?.credits ?? 0)
 
-  const getRequiredCredits = (options: CostCalculationOptions): number => {
+  const getRequiredCredits = (options: CostCalculationOptions<T> = {}): number => {
     const { cost } = tool
 
     if (typeof cost === 'number') {
@@ -27,15 +27,14 @@ export const useTool = (toolType: ToolType) => {
     }
 
     if (typeof cost === 'object' && options.mode) {
-      return cost[options.mode] ?? 0
+      return cost[options.mode]
     }
 
     return 0
   }
 
-  const isToolUsageAllowed = (options: CostCalculationOptions = {}): boolean => {
+  const isToolUsageAllowed = (options: CostCalculationOptions<T> = {}): boolean => {
     const requiredCredits = getRequiredCredits(options)
-
     return requiredCredits === 0 || availableCredits.value >= requiredCredits
   }
 
