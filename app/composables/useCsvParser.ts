@@ -87,11 +87,8 @@ export const useCsvParser = () => {
           return
         }
 
-        void new Promise((resolve) => setTimeout(() => {
-          data.value = processedData
-          isLoading.value = false
-          resolve(true)
-        }, 5000))
+        data.value = processedData
+        isLoading.value = false
       },
       error: (err) => {
         error.value = `Failed to parse CSV file: ${err.message}`
