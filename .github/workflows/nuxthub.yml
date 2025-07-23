@@ -26,7 +26,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Ensure NuxtHub module is installed
+        run: pnpx nuxthub@latest ensure
+
       - name: Build & Deploy to NuxtHub
         uses: nuxt-hub/action@v2
         with:
-          project-key: serp-apps-2gjw
+          project-key: serp-apps-ar20
