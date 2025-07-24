@@ -5,6 +5,7 @@
     </div>
 
     <UForm
+      ref="form"
       class="flex flex-col gap-6"
       :schema="schema"
       :state="state"
@@ -135,6 +136,15 @@ const toolUsageAllowed = computed(() => isToolUsageAllowed({
 
 const hasValidCsv = computed(() => {
   return validatedData.value.length > 0 && !parseError.value
+})
+
+const form = useTemplateRef('form')
+watch(hasValidCsv, (valid) => {
+  if (valid) {
+    form.value?.clear()
+    state.prompt = undefined
+    state.count = undefined
+  }
 })
 
 const canSubmit = computed(() => {
