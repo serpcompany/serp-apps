@@ -5,14 +5,14 @@
     </div>
 
     <UForm
-      @submit="onSubmit"
+      class="flex flex-col gap-6"
       :schema="schema"
       :state="state"
-      class="flex flex-col gap-6"
+      @submit="onSubmit"
     >
       <UFormField label="Image Prompt" name="prompt" :required="!hasValidCsv">
         <UTextarea
-          v-model.trim="state.prompt"
+          v-model="state.prompt"
           autoresize
           class="w-full"
           placeholder="Enter your prompt here"
@@ -21,15 +21,18 @@
           :rows="4"
         />
       </UFormField>
-      <UFormField label="Image Count (1-50)" name="imageCount" :required="!hasValidCsv">
+      <UFormField
+        name="count"
+        :label="`Image Count (${MIN_IMAGE_COUNT}-${MAX_IMAGE_COUNT})`"
+        :required="!hasValidCsv"
+      >
         <UInputNumber
           v-model="state.count"
           class="w-full"
           orientation="vertical"
           placeholder="Number of images to generate"
           variant="outline"
-          :min="1"
-          :max="50"
+          :min="MIN_IMAGE_COUNT"
           :disabled="hasValidCsv"
         />
       </UFormField>
@@ -39,8 +42,8 @@
       <UFormField
         label="Upload CSV for batch processing"
         name="csvFile"
-        help="The CSV file should have columns 'prompt' and 'count' (max 10 per prompt)."
         :error="parseError ?? ''"
+        :help="`The CSV file should have columns 'prompt' and 'count' (max ${MAX_IMAGE_PER_PROMPT} per prompt).`"
       >
         <UInput
           v-model="state.csvFile"
@@ -95,6 +98,10 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { MAX_IMAGE_PER_PROMPT } from '~/composables/useCsvParser'
+
+const MIN_IMAGE_COUNT = 1
+const MAX_IMAGE_COUNT = 20
 
 const {
   validatedData,
@@ -108,8 +115,6 @@ const {
 const handleFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input.files && input.files.length > 0) {
-    state.prompt = undefined
-    state.count = 1
     parseCsv(input.files[0]!)
   } else {
     resetParser()
@@ -122,7 +127,11 @@ const clearFileInput = () => {
 }
 
 const { isToolUsageAllowed, insufficientCreditsAlert } = useTool('bulk_ai_images')
-const toolUsageAllowed = computed(() => isToolUsageAllowed({ count: hasValidCsv.value ? csvImageCount.value : state.count || 1 }))
+const toolUsageAllowed = computed(() => isToolUsageAllowed({
+  count: hasValidCsv.value
+    ? csvImageCount.value
+    : state.count || 1,
+}))
 
 const hasValidCsv = computed(() => {
   return validatedData.value.length > 0 && !parseError.value
@@ -133,7 +142,8 @@ const canSubmit = computed(() => {
     return true
   }
 
-  return state.prompt && state.prompt.trim().length > 0 && state.count && state.count >= 1
+  return state.prompt && state.prompt.trim().length > 0
+    && state.count && state.count >= MIN_IMAGE_COUNT && state.count <= MAX_IMAGE_COUNT
 })
 
 const alert = computed(() => {
@@ -153,16 +163,37 @@ const schema = z.object({
   prompt: z.string().optional(),
   count: z.number().optional(),
   csvFile: z.string().optional(),
-}).refine((data) => {
+}).superRefine((data, ctx) => {
   if (hasValidCsv.value) {
-    return true
+    return
   }
 
-  return data.prompt && data.prompt.trim().length > 0
-    && data.count && data.count >= 1 && data.count <= 50
-}, {
-  message: 'Either upload a valid CSV file or provide both prompt and count',
-  path: ['prompt'],
+  const hasPrompt = data.prompt && data.prompt.trim().length > 0
+  const hasValidCount = data.count && data.count >= MIN_IMAGE_COUNT && data.count <= MAX_IMAGE_COUNT
+
+  if (!hasPrompt) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Prompt is required when not using CSV file',
+      path: ['prompt'],
+    })
+  }
+
+  if (!hasValidCount) {
+    if (!data.count) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Image count is required when not using CSV file',
+        path: ['count'],
+      })
+    } else if (data.count < MIN_IMAGE_COUNT || data.count > MAX_IMAGE_COUNT) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Image count must be between ${MIN_IMAGE_COUNT} and ${MAX_IMAGE_COUNT}`,
+        path: ['count'],
+      })
+    }
+  }
 })
 
 type Schema = z.output<typeof schema>
