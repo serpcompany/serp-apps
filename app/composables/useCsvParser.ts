@@ -5,6 +5,8 @@ export interface BulkImagePrompt {
   count: number
 }
 
+export const MAX_IMAGE_PER_PROMPT = 10
+
 /**
  * A composable for parsing and validating a CSV file for the Bulk AI Image Generator.
  * It ensures the CSV contains 'prompt' and 'count' columns with valid data.
@@ -72,8 +74,8 @@ export const useCsvParser = () => {
             return
           }
 
-          if (isNaN(count) || count <= 0 || !Number.isInteger(count) || count > 100) {
-            error.value = `Validation Error: 'count' must be a whole number between 1 and 100 on row ${i + 2}.`
+          if (isNaN(count) || count <= 0 || !Number.isInteger(count) || count > MAX_IMAGE_PER_PROMPT) {
+            error.value = `Validation Error: 'count' must be a whole number between 1 and ${MAX_IMAGE_PER_PROMPT} on row ${i + 2}.`
             isLoading.value = false
             return
           }
