@@ -6,6 +6,7 @@ import type { ImageGenerationTask, StreamPayload } from '~~/server/services/bulk
 
 const imagesFormDataSchema = z.object({
   type: z.literal('form'),
+  apiKey: z.string().min(1, 'OpenAI API key is required'),
   data: z.object({
     prompt: z.string().min(1),
     count: z.number().min(MIN_IMAGE_COUNT).max(MAX_IMAGE_COUNT),
@@ -14,6 +15,7 @@ const imagesFormDataSchema = z.object({
 
 const imagesCsvDataSchema = z.object({
   type: z.literal('csv'),
+  apiKey: z.string().min(1, 'OpenAI API key is required'),
   data: z.array(z.object({
     prompt: z.string().min(1),
     count: z.number().min(MIN_IMAGE_COUNT).max(MAX_IMAGE_PER_PROMPT),
@@ -39,13 +41,6 @@ export default defineEventHandler(async (event) => {
 
   const validatedData = body.data
 
-  if (!process.env.OPENAI_API_KEY) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'OpenAI API key not configured',
-    })
-  }
-
   const tasks: ImageGenerationTask[] = validatedData.type === 'form'
     ? [validatedData.data]
     : validatedData.data
@@ -68,7 +63,7 @@ export default defineEventHandler(async (event) => {
 
   event.waitUntil((async () => {
     try {
-      await generateImages(jobId, tasks, totalImages, sendStreamData)
+      await generateImages(validatedData.apiKey, jobId, tasks, totalImages, sendStreamData)
     } catch (error: any) {
       console.error(`Job ${jobId}: A fatal error occurred:`, error)
       sendStreamData({ type: 'fatal', error: error.message || 'An unexpected error terminated the job.' })

@@ -29,8 +29,7 @@ interface ImageResult {
   }
 }
 
-const getFolderPath = (jobId: string) => `batch-images-jobs/${jobId}`
-let openai: OpenAI
+const getFolderPath = (jobId: string) => `batch-image-jobs/${jobId}`
 
 async function runWithConcurrency<T>(
   taskFns: (() => Promise<T>)[],
@@ -54,7 +53,14 @@ async function runWithConcurrency<T>(
   return results
 }
 
-const generateAndUpload = async (task: ImageGenerationTask, imageNumber: number, jobId: string, totalImages: number, callback: ImageResultCallback) => {
+const generateAndUpload = async (
+  openai: OpenAI,
+  task: ImageGenerationTask,
+  imageNumber: number,
+  jobId: string,
+  totalImages: number,
+  callback: ImageResultCallback,
+) => {
   try {
     console.log(`Job ${jobId}: Generating image ${imageNumber}/${totalImages}...`)
     const response = await openai.images.generate({
@@ -69,12 +75,14 @@ const generateAndUpload = async (task: ImageGenerationTask, imageNumber: number,
     if (!response.data || !response.data[0]?.url) {
       throw new Error('No image URL returned from OpenAI.')
     }
+
     const imageUrl = response.data[0].url
-
     const imageResponse = await fetch(imageUrl)
-    if (!imageResponse.ok) throw new Error(`Failed to download image: ${imageResponse.statusText}`)
-    const imageBuffer = await imageResponse.arrayBuffer()
+    if (!imageResponse.ok) {
+      throw new Error(`Failed to download image: ${imageResponse.statusText}`)
+    }
 
+    const imageBuffer = await imageResponse.arrayBuffer()
     const safePrompt = task.prompt.replace(/[^a-zA-Z0-9\s]/g, '').substring(0, 30).trim().replace(/\s+/g, '_') || 'image'
     const filename = `${safePrompt}_${String(imageNumber).padStart(3, '0')}.png`
     const r2Key = `${getFolderPath(jobId)}/${filename}`
@@ -99,12 +107,12 @@ const generateAndUpload = async (task: ImageGenerationTask, imageNumber: number,
   }
 }
 
-export const generateImages = async (jobId: string, tasks: ImageGenerationTask[], totalImages: number, resultCallback: ImageResultCallback) => {
+export const generateImages = async (jobId: string, apiKey: string, tasks: ImageGenerationTask[], totalImages: number, resultCallback: ImageResultCallback) => {
   console.log(`Job ${jobId}: Starting generation of ${totalImages} images.`)
   resultCallback({ type: 'info', message: 'Job started.', jobId, totalImages })
 
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+  const openai = new OpenAI({
+    apiKey,
   })
 
   let imageCounter = 0
@@ -112,7 +120,7 @@ export const generateImages = async (jobId: string, tasks: ImageGenerationTask[]
   const allImagePromises: (() => Promise<ImageResult>)[] = []
   for (const task of tasks) {
     for (let i = 0; i < task.count; i++) {
-      allImagePromises.push(() => generateAndUpload(task, ++imageCounter, jobId, totalImages, resultCallback))
+      allImagePromises.push(() => generateAndUpload(openai, task, ++imageCounter, jobId, totalImages, resultCallback))
     }
   }
 
