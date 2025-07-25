@@ -11,6 +11,20 @@
       :state="state"
       @submit="onSubmit"
     >
+      <UFormField
+        help="Your API key is not stored and only used for this request"
+        label="OpenAI API Key"
+        name="apiKey"
+        required
+      >
+        <UInput
+          v-model="state.apiKey"
+          class="w-full"
+          placeholder="sk-..."
+          type="password"
+        />
+      </UFormField>
+
       <UFormField label="Image Prompt" name="prompt" :required="!hasValidCsv">
         <UTextarea
           v-model="state.prompt"
@@ -174,6 +188,7 @@ const schema = z.object({
   prompt: z.string().optional(),
   count: z.number().optional(),
   csvFile: z.string().optional(),
+  apiKey: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (hasValidCsv.value) {
     return
@@ -181,6 +196,15 @@ const schema = z.object({
 
   const hasPrompt = data.prompt && data.prompt.trim().length > 0
   const hasValidCount = data.count && data.count >= MIN_IMAGE_COUNT && data.count <= MAX_IMAGE_COUNT
+  const hasApiKey = data.apiKey && data.apiKey.trim().length > 0
+
+  if (!hasApiKey) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'OpenAI API key is required',
+      path: ['apiKey'],
+    })
+  }
 
   if (!hasPrompt) {
     ctx.addIssue({
@@ -212,6 +236,7 @@ type Schema = z.output<typeof schema>
 const state = reactive<Partial<Schema>>({
   prompt: undefined,
   count: 1,
+  apiKey: undefined,
 })
 
 const isSubmitting = ref(false)
