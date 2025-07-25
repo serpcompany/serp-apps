@@ -5,6 +5,8 @@ export interface BulkImagePrompt {
   count: number
 }
 
+export const MIN_IMAGE_COUNT = 1
+export const MAX_IMAGE_COUNT = 50
 export const MAX_IMAGE_PER_PROMPT = 10
 
 /**
@@ -63,6 +65,7 @@ export const useCsvParser = () => {
         }
 
         const processedData: BulkImagePrompt[] = []
+        let totalImages = 0
         for (let i = 0; i < results.data.length; i++) {
           const row = results.data[i]
           const prompt = row.prompt?.trim()
@@ -81,10 +84,17 @@ export const useCsvParser = () => {
           }
 
           processedData.push({ prompt, count })
+          totalImages += count
         }
 
         if (processedData.length === 0) {
           error.value = 'The CSV file is empty or contains no valid data rows.'
+          isLoading.value = false
+          return
+        }
+
+        if (totalImages > MAX_IMAGE_COUNT) {
+          error.value = `Total image count exceeds the maximum limit of ${MAX_IMAGE_COUNT}. Found: ${totalImages}.`
           isLoading.value = false
           return
         }

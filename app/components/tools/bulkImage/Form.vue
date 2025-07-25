@@ -44,7 +44,7 @@
         label="Upload CSV for batch processing"
         name="csvFile"
         :error="parseError ?? ''"
-        :help="`The CSV file should have columns 'prompt' and 'count' (max ${MAX_IMAGE_PER_PROMPT} per prompt).`"
+        :help="`The CSV file should have columns 'prompt' and 'count' (max ${MAX_IMAGE_PER_PROMPT} per prompt, and max ${MAX_IMAGE_COUNT} images in total).`"
       >
         <UInput
           v-model="state.csvFile"
@@ -99,10 +99,11 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { MAX_IMAGE_PER_PROMPT } from '~/composables/useCsvParser'
-
-const MIN_IMAGE_COUNT = 1
-const MAX_IMAGE_COUNT = 20
+import {
+  MIN_IMAGE_COUNT,
+  MAX_IMAGE_COUNT,
+  MAX_IMAGE_PER_PROMPT,
+} from '~/composables/useCsvParser'
 
 const {
   validatedData,
