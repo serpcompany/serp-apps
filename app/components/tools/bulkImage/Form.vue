@@ -103,7 +103,7 @@ import {
   MIN_IMAGE_COUNT,
   MAX_IMAGE_COUNT,
   MAX_IMAGE_PER_PROMPT,
-} from '~/composables/useCsvParser'
+} from '~~/constants'
 
 const {
   validatedData,

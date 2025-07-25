@@ -1,13 +1,10 @@
 import Papa from 'papaparse'
+import { MAX_IMAGE_COUNT, MAX_IMAGE_PER_PROMPT } from '~~/constants'
 
 export interface BulkImagePrompt {
   prompt: string
   count: number
 }
-
-export const MIN_IMAGE_COUNT = 1
-export const MAX_IMAGE_COUNT = 50
-export const MAX_IMAGE_PER_PROMPT = 10
 
 /**
  * A composable for parsing and validating a CSV file for the Bulk AI Image Generator.
@@ -53,11 +50,8 @@ export const useCsvParser = () => {
         }
 
         const requiredHeaders = ['prompt', 'count']
-
         const actualHeaders = results.meta.fields || []
-
         const missingHeaders = requiredHeaders.filter((h) => !actualHeaders.includes(h))
-
         if (missingHeaders.length > 0) {
           error.value = `Missing required columns: ${missingHeaders.join(', ')}. Found columns: ${actualHeaders.join(', ')}.`
           isLoading.value = false

@@ -41,3 +41,7 @@ export const SerpTools: readonly [
 ]
 
 export const PURCHASE_METHOD: 'one_time' | 'subscription' = 'one_time'
+
+export const MIN_IMAGE_COUNT = 1
+export const MAX_IMAGE_COUNT = 50
+export const MAX_IMAGE_PER_PROMPT = 10
