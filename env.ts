@@ -5,7 +5,7 @@ function createAppEnv() {
   console.warn('Loading environment variables...: NODE_ENV:', process.env.NODE_ENV)
   console.warn(process.argv)
 
-  const shouldValidate = !process.argv.includes('prepare')
+  const shouldValidate = !process.argv.includes('prepare') && !process.argv.includes('ensure')
   if (shouldValidate) {
     console.warn('Validating environment variables...')
     console.log(process.env)
