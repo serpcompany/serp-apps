@@ -2,13 +2,11 @@ import { createEnv } from '@t3-oss/env-nuxt'
 import { z } from 'zod'
 
 function createAppEnv() {
-  console.warn('Loading environment variables...: NODE_ENV:', process.env.NODE_ENV)
-  console.warn(process.argv)
+  console.info('Loading environment variables...: NODE_ENV:', process.env.NODE_ENV)
 
   const shouldValidate = !process.argv.includes('prepare') && !process.argv.includes('ensure')
   if (shouldValidate) {
-    console.warn('Validating environment variables...')
-    console.log(process.env)
+    console.info('Validating environment variables...')
 
     return createEnv({
       server: {
