@@ -59,6 +59,9 @@ importers:
       nuxt-auth-utils:
         specifier: 0.5.20
         version: 0.5.20(@simplewebauthn/browser@13.1.2)(@simplewebauthn/server@13.1.2)(magicast@0.3.5)
+      openai:
+        specifier: ^5.10.2
+        version: 5.10.2(ws@8.18.3)(zod@3.25.76)
       papaparse:
         specifier: ^5.5.3
         version: 5.5.3
@@ -69,8 +72,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0(@types/node@24.0.13)
       use-email:
-        specifier: ^0.0.10
-        version: 0.0.10
+        specifier: 0.0.9
+        version: 0.0.9
       vue:
         specifier: ^3.5.17
         version: 3.5.17(typescript@5.8.3)
@@ -4751,6 +4754,18 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
+  openai@5.10.2:
+    resolution: {integrity: sha512-n+vi74LzHtvlKcDPn9aApgELGiu5CwhaLG40zxLTlFQdoSJCLACORIPC2uVQ3JEYAbqapM+XyRKFy2Thej7bIw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
+
   openid-client@6.6.2:
     resolution: {integrity: sha512-Xya5TNMnnZuTM6DbHdB4q0S3ig2NTAELnii/ASie1xDEr8iiB8zZbO871OWBdrw++sd3hW6bqWjgcmSy1RTWHA==}
 
@@ -5934,8 +5949,8 @@ packages:
   urlpattern-polyfill@8.0.2:
     resolution: {integrity: sha512-Qp95D4TPJl1kC9SKigDcqgyM2VDVO4RiJc2d4qe5GrYm+zbIQCWWKAFaJNQ4BhdFeDGwBmAxqJBwWSJDb9T3BQ==}
 
-  use-email@0.0.10:
-    resolution: {integrity: sha512-e3PS8C0yY4G4CDEth59izUQqnFqe0p2XqlinsEvmhMVgQFW9hzuhLg4/rdr4V4o8HBcpFqwJQC9ljcGLAOQY0w==}
+  use-email@0.0.9:
+    resolution: {integrity: sha512-j1q09CB5Hspsa1TZehJQX67SMqIGcoPri3I5grZ+4/y3Anb8M84oauBlUKxgoXyqNnp5VV6DPxTcRYfeAlktWQ==}
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -11314,6 +11329,11 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
+  openai@5.10.2(ws@8.18.3)(zod@3.25.76):
+    optionalDependencies:
+      ws: 8.18.3
+      zod: 3.25.76
+
   openid-client@6.6.2:
     dependencies:
       jose: 6.0.11
@@ -12578,7 +12598,7 @@ snapshots:
 
   urlpattern-polyfill@8.0.2: {}
 
-  use-email@0.0.10:
+  use-email@0.0.9:
     dependencies:
       ofetch: 1.4.1
 
