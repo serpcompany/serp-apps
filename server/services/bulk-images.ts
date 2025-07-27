@@ -1,4 +1,5 @@
 import { OpenAI } from 'openai'
+import { env } from '@@/env'
 
 export type StreamPayload
   = | { type: 'info', message: string, jobId: string, totalImages: number }
@@ -53,6 +54,21 @@ async function runWithConcurrency<T>(
   return results
 }
 
+const getMockImages = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 3000))
+
+  const shouldFail = Math.random() < 0.1
+  if (shouldFail) {
+    throw new Error('Mock OpenAI API failure - rate limit exceeded')
+  }
+
+  const width = 1792
+  const height = 1024
+  const picsumUrl = `https://picsum.photos/${width}/${height}`
+
+  return await fetch(picsumUrl)
+}
+
 const generateAndUpload = async (
   openai: OpenAI,
   task: ImageGenerationTask,
@@ -63,26 +79,39 @@ const generateAndUpload = async (
 ) => {
   try {
     console.log(`Job ${jobId}: Generating image ${imageNumber}/${totalImages}...`)
-    const response = await openai.images.generate({
-      model: 'dall-e-3',
-      prompt: task.prompt,
-      n: 1,
-      size: '1792x1024',
-      quality: 'hd',
-      response_format: 'url',
-    })
 
-    if (!response.data || !response.data[0]?.url) {
-      throw new Error('No image URL returned from OpenAI.')
+    let imageBuffer: ArrayBuffer
+    if (env.USE_MOCK_IMAGES) {
+      console.log(`Job ${jobId}: Using mock image for image ${imageNumber}`)
+
+      const response = await getMockImages()
+      if (!response.ok) {
+        throw new Error(`Failed to fetch mock image from Picsum: ${response.statusText}`)
+      }
+
+      imageBuffer = await response.arrayBuffer()
+    } else {
+      const response = await openai.images.generate({
+        model: 'dall-e-3',
+        prompt: task.prompt,
+        n: 1,
+        size: '1792x1024',
+        quality: 'hd',
+        response_format: 'url',
+      })
+
+      if (!response.data || !response.data[0]?.url) {
+        throw new Error('No image URL returned from OpenAI.')
+      }
+
+      const imageResponse = await fetch(response.data[0].url)
+      if (!imageResponse.ok) {
+        throw new Error(`Failed to download image: ${imageResponse.statusText}`)
+      }
+
+      imageBuffer = await imageResponse.arrayBuffer()
     }
 
-    const imageUrl = response.data[0].url
-    const imageResponse = await fetch(imageUrl)
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to download image: ${imageResponse.statusText}`)
-    }
-
-    const imageBuffer = await imageResponse.arrayBuffer()
     const safePrompt = task.prompt.replace(/[^a-zA-Z0-9\s]/g, '').substring(0, 30).trim().replace(/\s+/g, '_') || 'image'
     const filename = `${safePrompt}_${String(imageNumber).padStart(3, '0')}.png`
     const r2Key = `${getFolderPath(jobId)}/${filename}`
