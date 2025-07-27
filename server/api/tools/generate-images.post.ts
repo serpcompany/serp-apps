@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
 
   event.waitUntil((async () => {
     try {
-      await generateImages(validatedData.apiKey, jobId, tasks, totalImages, sendStreamData)
+      await generateImages(jobId, validatedData.apiKey, tasks, totalImages, sendStreamData)
     } catch (error: any) {
       console.error(`Job ${jobId}: A fatal error occurred:`, error)
       sendStreamData({ type: 'fatal', error: error.message || 'An unexpected error terminated the job.' })
