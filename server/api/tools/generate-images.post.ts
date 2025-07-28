@@ -54,12 +54,17 @@ export default defineEventHandler(async (event) => {
 
   const eventStream = createEventStream(event)
   const sendStreamData = (payload: StreamPayload) => {
-    void eventStream.push(JSON.stringify(payload))
+    eventStream.push(JSON.stringify(payload)).catch(() => {})
   }
 
   const heartbeat = setInterval(() => {
     sendStreamData({ type: 'heartbeat', timestamp: Date.now() })
-  }, 30000)
+  }, 3000)
+
+  eventStream.onClosed(async () => {
+    clearInterval(heartbeat)
+    await eventStream.close()
+  })
 
   event.waitUntil((async () => {
     try {
@@ -69,8 +74,7 @@ export default defineEventHandler(async (event) => {
       sendStreamData({ type: 'fatal', error: error.message || 'An unexpected error terminated the job.' })
     } finally {
       console.log(`Job ${jobId}: Closing stream.`)
-      clearInterval(heartbeat)
-      void eventStream.close()
+      await eventStream.close()
     }
   })())
 
