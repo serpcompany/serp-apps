@@ -36,7 +36,7 @@ export const SerpTools: readonly [
     description: 'Create hundreds of unique visuals from a single prompt or a CSV file.',
     path: '/tools/bulk-ai-images',
     type: 'bulk_ai_images',
-    cost: 4,
+    cost: 1,
   },
 ]
 

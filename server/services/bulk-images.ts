@@ -57,7 +57,7 @@ async function runWithConcurrency<T>(
 const getMockImages = async () => {
   await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 3000))
 
-  const shouldFail = Math.random() < 0.1
+  const shouldFail = Math.random() < 0.06
   if (shouldFail) {
     throw new Error('Mock OpenAI API failure - rate limit exceeded')
   }
