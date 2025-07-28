@@ -48,10 +48,36 @@ export default defineEventHandler(async (event) => {
     : validatedData.data
 
   const totalImages = tasks.reduce((sum, task) => sum + task.count, 0)
-  if (totalImages === 0) {
-    return { success: true, message: 'No images requested.' }
+
+  const eventStream = createEventStream(event)
+  const sendStreamData = (payload: StreamPayload) => {
+    eventStream.push(JSON.stringify(payload)).catch(() => {})
   }
 
+  if (totalImages === 0) {
+    event.waitUntil((async () => {
+      try {
+        sendStreamData({
+          type: 'complete',
+          metadata: {
+            totalRequested: 0,
+            totalSize: 0,
+            prompts: tasks,
+            message: 'No images requested.',
+          },
+        })
+
+        await new Promise((resolve) => setTimeout(resolve, 500))
+      } finally {
+        console.log('Closing stream (no images requested).')
+        await eventStream.close()
+      }
+    })())
+
+    return eventStream.send()
+  }
+
+  const jobId = crypto.randomUUID()
   const { deductCredits, refundCredits, getRequiredCredits } = useServerTool('bulk_ai_images')
 
   const deductedCredits = await deductCredits({
@@ -59,13 +85,6 @@ export default defineEventHandler(async (event) => {
     description: `Bulk AI images generation (${totalImages} images)`,
     options: { count: totalImages },
   })
-
-  const jobId = crypto.randomUUID()
-
-  const eventStream = createEventStream(event)
-  const sendStreamData = (payload: StreamPayload) => {
-    eventStream.push(JSON.stringify(payload)).catch(() => {})
-  }
 
   const heartbeat = setInterval(() => {
     sendStreamData({ type: 'heartbeat', timestamp: Date.now() })

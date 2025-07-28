@@ -126,7 +126,7 @@
             label: 'Start New Job',
             color: 'neutral',
             variant: 'subtle',
-            onClick: resetGenerationState,
+            onClick: startNewJob,
           },
         ]"
         :color="failureCount === 0 ? 'primary' : 'warning'"
@@ -136,11 +136,11 @@
 
       <div v-else class="flex items-center gap-6 mt-3 text-sm">
         <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-check-circle" class="text-green-500" />
+          <UIcon name="i-lucide-check-circle" class="text-success" />
           <span>Succeeded: {{ successCount }}</span>
         </div>
         <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-alert-triangle" class="text-red-500" />
+          <UIcon name="i-lucide-alert-triangle" class="text-error" />
           <span>Failed: {{ failureCount }}</span>
         </div>
       </div>
@@ -280,12 +280,15 @@ const failureCount = ref(0)
 
 function resetGenerationState() {
   isProcessing.value = false
-  isFinished.value = false
   jobId.value = null
   generationProgress.value = 0
   totalImagesToGenerate.value = 0
   successCount.value = 0
   failureCount.value = 0
+}
+
+function startNewJob() {
+  resetGenerationState()
   clearFileInput()
   resetPrompt()
 }
@@ -311,6 +314,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 
   isProcessing.value = true
+  isFinished.value = false
 
   try {
     const response = await $fetch<ReadableStream>('/api/tools/generate-images', {
@@ -363,13 +367,26 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 break
               case 'complete':
                 isFinished.value = true
-                toast.add({
-                  title: 'Generation Complete!',
-                  description: 'Your ZIP file will download automatically.',
-                  color: 'success',
-                  icon: 'i-lucide-party-popper',
-                })
-                downloadZip()
+                if (eventData.metadata.totalRequested === 0) {
+                  toast.add({
+                    title: 'No images requested!',
+                    description: 'The total images requested were 0.',
+                    color: 'warning',
+                    icon: 'i-lucide-alert-triangle',
+                  })
+
+                  resetGenerationState()
+                } else {
+                  toast.add({
+                    title: 'Generation Complete!',
+                    description: 'Your ZIP file will download automatically.',
+                    color: 'success',
+                    icon: 'i-lucide-party-popper',
+                  })
+
+                  downloadZip()
+                }
+
                 await reader.cancel()
                 break
               case 'fatal':
