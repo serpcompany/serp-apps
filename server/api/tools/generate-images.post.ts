@@ -30,6 +30,8 @@ const imagesCsvDataSchema = z.object({
 const bulkImagesRequestSchema = z.union([imagesFormDataSchema, imagesCsvDataSchema])
 
 export default defineEventHandler(async (event) => {
+  const { user } = await requireUserSession(event)
+
   const body = await readValidatedBody(event, (data) => bulkImagesRequestSchema.safeParse(data))
   if (body.error) {
     throw createError({
@@ -50,6 +52,14 @@ export default defineEventHandler(async (event) => {
     return { success: true, message: 'No images requested.' }
   }
 
+  const { deductCredits, refundCredits, getRequiredCredits } = useServerTool('bulk_ai_images')
+
+  const deductedCredits = await deductCredits({
+    userId: user.id,
+    description: `Bulk AI images generation (${totalImages} images)`,
+    options: { count: totalImages },
+  })
+
   const jobId = crypto.randomUUID()
 
   const eventStream = createEventStream(event)
@@ -68,9 +78,26 @@ export default defineEventHandler(async (event) => {
 
   event.waitUntil((async () => {
     try {
-      await generateImages(jobId, validatedData.apiKey, tasks, totalImages, sendStreamData)
+      const result = await generateImages(jobId, validatedData.apiKey, tasks, totalImages, sendStreamData)
+      if (result.totalFailed > 0) {
+        const creditsToRefund = getRequiredCredits({ count: result.totalFailed })
+        await refundCredits({
+          userId: user.id,
+          credits: creditsToRefund,
+          description: `Refund for ${result.totalFailed} failed image generations out of ${totalImages} total`,
+        })
+
+        console.log(`Job ${jobId}: Refunded ${creditsToRefund} credits for ${result.totalFailed} failed images`)
+      }
     } catch (error: any) {
       console.error(`Job ${jobId}: A fatal error occurred:`, error)
+
+      await refundCredits({
+        userId: user.id,
+        credits: deductedCredits,
+        description: 'Refund for failed bulk images generation',
+      })
+
       sendStreamData({ type: 'fatal', error: error.message || 'An unexpected error terminated the job.' })
     } finally {
       console.log(`Job ${jobId}: Closing stream.`)
