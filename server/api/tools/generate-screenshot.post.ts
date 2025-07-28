@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { validateBody } from '@@/server/utils/bodyValidation'
 import { generateScreenshot } from '@@/server/services/screenshot'
-import { addCreditsToUser, deductCreditsFromUser } from '~~/server/database/queries/credits'
+import type { ScreenshotMode } from '~~/types/tool'
 
 const schema = z.object({
   url: z.string().url('Invalid URL format'),
@@ -14,17 +14,19 @@ export default defineEventHandler(async (event) => {
 
   const { url, fullPage, scrollingAnimation } = await validateBody(event, schema)
 
-  const creditsNeeded = scrollingAnimation ? 1000 : (fullPage ? 300 : 100)
-
-  try {
-    await deductCreditsFromUser(user.id, creditsNeeded, 'Screenshot tool usage')
-  } catch (error) {
-    console.error(error)
-    throw createError({
-      statusCode: 422,
-      statusMessage: 'Insufficient credits for this request.',
-    })
+  const { deductCredits, refundCredits } = useServerTool('website_screenshot')
+  let mode: ScreenshotMode = 'visible'
+  if (scrollingAnimation) {
+    mode = 'scrollingAnimation'
+  } else if (fullPage) {
+    mode = 'fullPage'
   }
+
+  const deductedCredits = await deductCredits({
+    userId: user.id,
+    description: 'Screenshot tool usage',
+    options: { mode },
+  })
 
   try {
     const response = await generateScreenshot(url, fullPage, scrollingAnimation)
@@ -39,7 +41,13 @@ export default defineEventHandler(async (event) => {
     await sendStream(event, response.stream); return
   } catch (error) {
     console.error('Screenshot generation error:', error)
-    await addCreditsToUser(user.id, creditsNeeded, 'refund', 'Refund for failed screenshot')
+
+    await refundCredits({
+      userId: user.id,
+      credits: deductedCredits,
+      description: 'Refund for failed screenshot generation',
+    })
+
     throw createError({
       statusCode: 500,
       statusMessage: 'Screenshot generation failed',

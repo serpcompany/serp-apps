@@ -14,7 +14,7 @@
 import { SerpTools } from '@@/constants'
 
 const serpLinks = SerpTools.map((tool) => ({
-  label: tool.title,
+  label: tool.shortTitle,
   icon: tool.icon,
   to: `/dashboard${tool.path || ''}`,
 }))

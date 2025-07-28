@@ -1,3 +1,5 @@
+import type { Tool } from '~~/types/tool'
+
 export enum UserRole {
   MEMBER = 'member',
   ADMIN = 'admin',
@@ -10,43 +12,36 @@ export enum OneTimePasswordTypes {
   forgotPassword = 'FORGOT_PASSWORD',
 }
 
-export const SerpTools = [
+export const SerpTools: readonly [
+  Tool<'website_screenshot'>,
+  Tool<'bulk_ai_images'>,
+] = [
   {
     icon: 'i-lucide-scan-eye',
-    title: 'Website Screenshots',
+    title: 'Website Screenshot Generator',
+    shortTitle: 'Website Screenshot',
     description: 'Capture and analyze screenshots of your website.',
     path: '/tools/screenshots',
+    type: 'website_screenshot',
+    cost: {
+      visible: 2,
+      fullPage: 4,
+      scrollingAnimation: 6,
+    },
   },
-  // {
-  //   icon: 'i-lucide-search',
-  //   title: 'Keyword Finder',
-  //   description: 'Discover trending keywords for your SEO campaigns.',
-  // },
-  // {
-  //   icon: 'i-lucide-bar-chart-3',
-  //   title: 'Rank Tracker',
-  //   description: 'Track your website rankings across search engines.',
-  // },
-  // {
-  //   icon: 'i-lucide-globe',
-  //   title: 'SERP Analyzer',
-  //   description: 'Analyze search engine result pages for any keyword.',
-  // },
-  // {
-  //   icon: 'i-lucide-users',
-  //   title: 'Competitor Research',
-  //   description: 'Uncover your competitors’ strategies and keywords.',
-  // },
-  // {
-  //   icon: 'i-lucide-file-text',
-  //   title: 'Content Optimizer',
-  //   description: 'Get suggestions to improve your content for SEO.',
-  // },
-  // {
-  //   icon: 'i-lucide-link',
-  //   title: 'Backlink Checker',
-  //   description: 'Check and monitor backlinks to your website.',
-  // },
+  {
+    icon: 'i-lucide-images',
+    title: 'Bulk AI Images Generator',
+    shortTitle: 'Bulk AI Images',
+    description: 'Create hundreds of unique visuals from a single prompt or a CSV file.',
+    path: '/tools/bulk-ai-images',
+    type: 'bulk_ai_images',
+    cost: 1,
+  },
 ]
 
 export const PURCHASE_METHOD: 'one_time' | 'subscription' = 'one_time'
+
+export const MIN_IMAGE_COUNT = 1
+export const MAX_IMAGE_COUNT = 50
+export const MAX_IMAGE_PER_PROMPT = 10

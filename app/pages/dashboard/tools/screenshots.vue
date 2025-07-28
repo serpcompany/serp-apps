@@ -1,52 +1,32 @@
 <template>
-  <AppContainer title="Screenshots Generator" :padding="false">
-    <UContainer class="py-4 sm:py-6 lg:py-8">
-      <div class="flex flex-col gap-6 md:gap-8">
-        <div class="flex items-center justify-between gap-4 mb-8">
-          <h1 class="text-3xl font-bold tracking-tight text-highlighted">
-            Screenshots Generator
-          </h1>
-
-          <UBadge color="neutral" variant="subtle" size="lg">
-            Credits: <span class="font-bold">{{ user?.credits }}</span>
-          </UBadge>
-        </div>
-        <ToolsScreenshotForm @screenshot-generated="handleScreenshot" @clear-screenshot="revokeMedia" />
-        <ToolsScreenshotViewer
-          v-if="mediaUrl"
-          :media-url
-          :media-type
-          :is-full-page="isFullPage && !isScrollingAnimation"
-          @download="downloadMedia"
-        >
-          <template #header>
-            <h3 class="text-lg md:text-xl font-semibold">
-              <span>
-                {{ titlePrefix }}
-              </span>
-              <span class="text-primary-500 ml-1">{{ url }}</span>
-            </h3>
-          </template>
-        </ToolsScreenshotViewer>
-        <h3 class="text-2xl font-semibold ">How It Works</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <ToolsHowItWorksCard
-            v-for="howItWorksInfo in howItWorks"
-            :key="howItWorksInfo.title"
-            :icon="howItWorksInfo.icon"
-            :title="howItWorksInfo.title"
-            :description="howItWorksInfo.description"
-          />
-        </div>
-      </div>
-    </UContainer>
-  </AppContainer>
+  <ToolsContainer
+    :title="tool.title"
+    :how-it-works="howItWorks"
+  >
+    <ToolsScreenshotForm @screenshot-generated="handleScreenshot" @clear-screenshot="revokeMedia" />
+    <ToolsScreenshotViewer
+      v-if="mediaUrl"
+      :media-url
+      :media-type
+      :is-full-page="isFullPage && !isScrollingAnimation"
+      @download="downloadMedia"
+    >
+      <template #header>
+        <h3 class="text-lg md:text-xl font-semibold">
+          <span>
+            {{ titlePrefix }}
+          </span>
+          <span class="text-primary-500 ml-1">{{ url }}</span>
+        </h3>
+      </template>
+    </ToolsScreenshotViewer>
+  </ToolsContainer>
 </template>
 
 <script setup lang="ts">
 import type { ScreenshotEventData } from '@/components/tools/screenshot/Form.vue'
 
-const { user, fetch: refreshUser } = useUserSession()
+const { tool, refreshUserCredits } = useTool('website_screenshot')
 
 const howItWorks = [
   {
@@ -98,7 +78,7 @@ const handleScreenshot = async (data: ScreenshotEventData) => {
   isFullPage.value = data.fullPage
   isScrollingAnimation.value = data.scrollingAnimation
 
-  await refreshUser()
+  await refreshUserCredits()
 }
 
 const revokeMedia = () => {
