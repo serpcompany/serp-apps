@@ -41,6 +41,9 @@ importers:
       '@vue-email/render':
         specifier: ^0.0.9
         version: 0.0.9(typescript@5.8.3)
+      archiver:
+        specifier: ^7.0.1
+        version: 7.0.1
       cobe:
         specifier: ^0.6.4
         version: 0.6.4
@@ -90,6 +93,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.11)
+      '@types/archiver':
+        specifier: ^6.0.3
+        version: 6.0.3
       '@types/papaparse':
         specifier: ^5.3.16
         version: 5.3.16
@@ -2054,6 +2060,9 @@ packages:
   '@tybys/wasm-util@0.10.0':
     resolution: {integrity: sha512-VyyPYFlOMNylG45GoAe0xDoLwWuowvf92F9kySqzYh8vmYm7D2u4iUJKa1tOUpS70Ku13ASrOkS4ScXFsTaCNQ==}
 
+  '@types/archiver@6.0.3':
+    resolution: {integrity: sha512-a6wUll6k3zX6qs5KlxIggs1P1JcYJaTCx2gnlr+f0S1yd2DoaEwoIK10HmBaLnZwWneBz+JBm0dwcZu0zECBcQ==}
+
   '@types/bytes@3.1.5':
     resolution: {integrity: sha512-VgZkrJckypj85YxEsEavcMmmSOIzkUHqWmM4CCyia5dc54YwsXzJ5uT4fYxBQNEXx+oF1krlhgCbvfubXqZYsQ==}
 
@@ -2084,6 +2093,9 @@ packages:
 
   '@types/pluralize@0.0.33':
     resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
+
+  '@types/readdir-glob@1.1.5':
+    resolution: {integrity: sha512-raiuEPUYqXu+nvtY2Pe8s8FEmZ3x5yAH4VkLdihcPdalvsHltomrRC9BzuStrJ9yk06470hS0Crw0f1pXqD+Hg==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -8295,6 +8307,10 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@types/archiver@6.0.3':
+    dependencies:
+      '@types/readdir-glob': 1.1.5
+
   '@types/bytes@3.1.5': {}
 
   '@types/estree@1.0.8': {}
@@ -8324,6 +8340,10 @@ snapshots:
       parse-path: 7.1.0
 
   '@types/pluralize@0.0.33': {}
+
+  '@types/readdir-glob@1.1.5':
+    dependencies:
+      '@types/node': 24.0.13
 
   '@types/resolve@1.20.2': {}
 
